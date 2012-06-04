@@ -31,6 +31,9 @@ public class DonorList extends Composite {
 		}
 		public String getColumnText(Object element, int columnIndex) {
 			Donor donor = (Donor) element;
+			if (columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
+				return LibreFundraiser.toMoney(donor.getData(columns[columnIndex][1]));
+			}
 			return donor.getData(columns[columnIndex][1]);
 		}
 	}

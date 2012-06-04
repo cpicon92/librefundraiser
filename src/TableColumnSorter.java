@@ -108,6 +108,11 @@ public class TableColumnSorter extends ViewerComparator {
 			t1 = addr1 + String.format(" %05d", num1);
 			t2 = addr2 + String.format(" %05d", num2);
 		}
+		if (DonorList.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
+			Double d1 = LibreFundraiser.fromMoney(t1);
+			Double d2 = LibreFundraiser.fromMoney(t2);
+			return d1.compareTo(d2);
+		}
 		if (t1 == null) t1 = "";
 		if (t2 == null) t2 = "";
 		int result = t1.compareTo(t2);

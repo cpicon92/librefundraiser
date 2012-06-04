@@ -1,4 +1,5 @@
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -23,11 +24,23 @@ public class LibreFundraiser {
 		if (localDB == null) localDB = new SQLite();
 		return localDB;
 	}
-	public static String money(double amount) {
+	public static String toMoney(double amount) {
 		if (currency == null) currency = NumberFormat.getCurrencyInstance();
 		return currency.format(amount);
 	}
-	public static String money(String amount) {
-		return money(Double.parseDouble(amount));
+	public static String toMoney(String amount) {
+		try {
+			return toMoney(Double.parseDouble(amount));
+		} catch (Exception e) {
+			System.err.println("Value could not be parsed as money.");
+			return amount;
+		}
+	}
+	public static double fromMoney(String amount) {
+		if (currency == null) currency = NumberFormat.getCurrencyInstance();
+		try {
+			return currency.parse(amount).doubleValue();
+		} catch (ParseException e) {}
+		return 0;
 	}
 }

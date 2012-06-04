@@ -61,7 +61,7 @@ public class GiftTable extends Composite {
 		for (Integer g : gifts.keySet().toArray(new Integer[0])) {
 			Donor.Gift gift = gifts.get(g);
 			TableItem tableItem = new TableItem(tableGifts, SWT.NONE);
-			String[] itemData = new String[] { LibreFundraiser.money(gift.getIc("amount")),
+			String[] itemData = new String[] { LibreFundraiser.toMoney(gift.getIc("amount")),
 					gift.getIc("dategiven"), gift.getIc("letter"),
 					gift.getIc("dt_entry"), gift.getIc("source"),
 					gift.getIc("note"), gift.getIc("recnum") };
