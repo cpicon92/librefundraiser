@@ -1,16 +1,18 @@
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.MenuItem;
 
 
 public class MainWindow {
@@ -18,6 +20,7 @@ public class MainWindow {
 	protected Shell shell;
 	private Text txtSearch;
 	private ToolItem tltmSave;
+	private Composite compositeDonorList;
 
 	/**
 	 * Open the window.
@@ -61,6 +64,29 @@ public class MainWindow {
 		
 		MenuItem mntmOpenDatabase = new MenuItem(menuFile, SWT.NONE);
 		mntmOpenDatabase.setText("Open Database...");
+		
+		new MenuItem(menuFile, SWT.SEPARATOR);
+		
+		MenuItem mntmImport = new MenuItem(menuFile, SWT.CASCADE);
+		mntmImport.setText("Import");
+		
+		Menu menuImport = new Menu(mntmImport);
+		mntmImport.setMenu(menuImport);
+		
+		MenuItem mntmFromFundraiserBasic = new MenuItem(menuImport, SWT.NONE);
+		mntmFromFundraiserBasic.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDBASE db = new FileDBASE("C:\\FRBW");
+				db.loadTable("Master.dbf","donors");
+				db.loadTable("Gifts.dbf","gifts");
+				((DonorList)compositeDonorList).refresh();
+			}
+		});
+		mntmFromFundraiserBasic.setText("From FundRaiser Basic...");
+		
+		MenuItem mntmFromCsvFile = new MenuItem(menuImport, SWT.NONE);
+		mntmFromCsvFile.setText("From CSV File...");
 		
 		new MenuItem(menuFile, SWT.SEPARATOR);
 		
@@ -111,8 +137,8 @@ public class MainWindow {
 		txtSearch.setLayoutData(gd_txtSearch);
 		txtSearch.setBounds(0, 0, 76, 19);
 		
-		Composite compositeMain = new DonorList(shell, SWT.NONE);
-		compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		compositeDonorList = new DonorList(shell, SWT.NONE);
+		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 	}
 	public ToolItem getSaveButton() {

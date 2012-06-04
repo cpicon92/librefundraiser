@@ -24,6 +24,8 @@ public class DonorList extends Composite {
 	
 	final static public String[][] columns = {{"Account","account"},{"Type","type"},{"Last Name/Business","lastname"},{"First Name","firstname"},{"Spouse/Contact Last","spouselast"},{"Spouse/Contact First","spousefrst"},{"Salutation","salutation"},{"Home Phone","homephone"},{"Work Phone","workphone"},{"Fax","fax"},{"Category","category1"},{"Donor Source","category2"},{"Mail Name","mailname"},{"Address 1","address1"},{"Address 2","address2"},{"City","city"},{"State","state"},{"Zip","zip"},{"Country","country"},{"Email","email"},{"Last Change","changedate"},{"Last Gift Date","lastgivedt"},{"Last Gift","lastamt"},{"Total Gifts","alltime"},{"Year-to-date","yeartodt"},{"First Gift","firstgift"},{"Largest Gift","largest"}};
 	static public Donor[] donors = null;
+
+	private TableViewer tableViewer;
 	
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -63,7 +65,7 @@ public class DonorList extends Composite {
 		CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
 		tbtmDonors.setText("Donors");
 		
-		TableViewer tableViewer = new TableViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -93,6 +95,11 @@ public class DonorList extends Composite {
 		}
 	}
 
+	public void refresh() {
+		donors = LibreFundraiser.getLocalDB().getDonors();
+		tableViewer.refresh();
+	}
+	
 	private int columnSearch(String columnName) {
 		for (int i = 0; i < columns.length; i++) {
 			if (columns[i][1].equals(columnName)) return i;

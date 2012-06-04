@@ -12,9 +12,6 @@ public class LibreFundraiser {
 
 	public static void main(String args[]) {
 		try {
-			FileDBASE db = new FileDBASE("C:\\FRBW");
-			db.loadTable("Master.dbf","donors");
-			db.loadTable("Gifts.dbf","gifts");
 			window = new MainWindow();
 			window.open();
 			Display.getCurrent().dispose();
