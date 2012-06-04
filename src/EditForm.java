@@ -57,15 +57,20 @@ public class EditForm extends Composite {
 	private Composite compositeBusiNames;
 	private Composite compositeNames;
 	private Label lblOptional;
+	private Label lblContact;
+	private Composite compositeOptional;
+	private DonorTab donorTab;
+	private boolean edited = false;
 
 	/**
 	 * Create the composite.
 	 * @param parent
 	 * @param style
 	 */
-	public EditForm(Composite parent, int style, Donor donor) {
+	public EditForm(Composite parent, int style, DonorTab donorTab) {
 		super(parent, style);
-		this.donor = donor;
+		this.donorTab = donorTab;
+		this.donor = donorTab.getDonor();
 		setLayout(new GridLayout(1, false));
 		
 		Composite compositeBasic = new Composite(this, SWT.NONE);
@@ -240,10 +245,17 @@ public class EditForm extends Composite {
 		tbtmAddress.setControl(compositeAddress);
 		compositeAddress.setLayout(new GridLayout(4, false));
 		
-		lblOptional = new Label(compositeAddress, SWT.NONE);
-		lblOptional.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblOptional.setBounds(0, 0, 55, 15);
+		compositeOptional = new Composite(compositeAddress, SWT.NONE);
+		compositeOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		compositeOptional.setLayout(new StackLayout());
+		
+		lblOptional = new Label(compositeOptional, SWT.NONE);
+		lblOptional.setAlignment(SWT.RIGHT);
 		lblOptional.setText("(optional)");
+		
+		lblContact = new Label(compositeOptional, SWT.NONE);
+		lblContact.setAlignment(SWT.RIGHT);
+		lblContact.setText("Contact");
 		
 		txtOptional = new Text(compositeAddress, SWT.BORDER);
 		txtOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -468,6 +480,7 @@ public class EditForm extends Composite {
 		
 		this.fillOut();
 		this.setBusiness(!donor.getData("type").equals("I"));
+		this.setEdited(false);
 	}
 
 	@Override
@@ -522,12 +535,28 @@ public class EditForm extends Composite {
 				txtSpouseLast.setText(txtContactLast.getText());
 			}
 		}
-		lblOptional.setText(business?"Contact":"(optional)");
 		btnIndividual.setSelection(!business);
 		btnBusinessother.setSelection(business);
 		compositeIndvNames.setVisible(!business);
 		compositeBusiNames.setVisible(business);
+		lblOptional.setVisible(!business);
+		lblContact.setVisible(business);
 		((StackLayout)compositeNames.getLayout()).topControl = business?compositeBusiNames:compositeIndvNames;
+		((StackLayout)compositeOptional.getLayout()).topControl = business?lblContact:lblOptional;
 		this.getShell().layout();
+		this.setEdited(true);
+	}
+
+	public boolean isEdited() {
+		return edited;
+	}
+
+	public void setEdited(boolean edited) {
+		this.edited = edited;
+		String lastname = donor.getData("lastname");
+		String firstname = donor.getData("firstname");
+		String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
+		if (tabTitle.equals("")) tabTitle = donor.getData("account");
+		donorTab.setText((edited?"*":"")+tabTitle);
 	}
 }
