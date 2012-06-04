@@ -1,97 +1,121 @@
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.wb.swt.ResourceManager;
-
-public class MainWindow extends ApplicationWindow {
-	private Action actExit;
-	private Action actionNewDonor;
-	private Action actionSave;
-
-
-	public MainWindow() {
-		super(null);
-		createActions();
-		addToolBar(SWT.FLAT | SWT.WRAP);
-		addMenuBar();
-		addStatusLine();
-	}
-
-	protected Control createContents(Composite parent) {
-		setStatus("I'll find something to put here...");
-
-		Composite container = new DonorList(parent, SWT.NONE);
-		return container;
-	}
-
-	private void createActions() {
-
-		actExit = new Action("Exit") {
-
-		};
-
-		actionNewDonor = new Action("New Donor") {
-
-		};
-		actionNewDonor.setImageDescriptor(ResourceManager.getImageDescriptor(MainWindow.class, "/icons/new-donor.png"));
-
-		actionSave = new Action("Save") {
-
-		};
-		actionSave.setEnabled(false);
-		actionSave.setImageDescriptor(ResourceManager.getImageDescriptor(MainWindow.class, "/icons/save.png"));
-
-	}
-
-	protected MenuManager createMenuManager() {
-		MenuManager menuManager = new MenuManager("menu");
-
-		MenuManager menuFile = new MenuManager("File");
-		menuManager.add(menuFile);
-		menuFile.add(actExit);
-		return menuManager;
-	}
-
-	protected ToolBarManager createToolBarManager(int style) {
-		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT | SWT.WRAP);
-		toolBarManager.add(actionNewDonor);
-		toolBarManager.add(actionSave);
-		toolBarManager.add(new Separator());
-		return toolBarManager;
-	}
-
-	@Override
-	protected StatusLineManager createStatusLineManager() {
-		StatusLineManager statusLineManager = new StatusLineManager();
-		return statusLineManager;
-	}
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.widgets.MenuItem;
 
 
+public class MainWindow {
+
+	protected Shell shell;
+	private Text txtSearch;
+	private ToolItem tltmSave;
 
 	/**
-	 * Configure the shell.
-	 * 
-	 * @param newShell
+	 * Open the window.
 	 */
-	@Override
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText("LibreFundraiser");
+	public void open() {
+		Display display = Display.getDefault();
+		createContents();
+		shell.open();
+		shell.layout();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
 	}
 
 	/**
-	 * Return the initial size of the window.
+	 * Create contents of the window.
+	 * @wbp.parser.entryPoint
 	 */
-	@Override
-	protected Point getInitialSize() {
-		return new Point(461, 212);
+	protected void createContents() {
+		shell = new Shell();
+		shell.setSize(883, 670);
+		shell.setText("LibreFundraiser");
+		GridLayout gl_shell = new GridLayout(1, false);
+		gl_shell.marginWidth = 0;
+		gl_shell.marginHeight = 0;
+		shell.setLayout(gl_shell);
+		
+		Menu menu = new Menu(shell, SWT.BAR);
+		shell.setMenuBar(menu);
+		
+		MenuItem mntmFile = new MenuItem(menu, SWT.CASCADE);
+		mntmFile.setText("File");
+		
+		Menu menuFile = new Menu(mntmFile);
+		mntmFile.setMenu(menuFile);
+		
+		MenuItem mntmNewDatabase = new MenuItem(menuFile, SWT.NONE);
+		mntmNewDatabase.setText("New Database...");
+		
+		MenuItem mntmOpenDatabase = new MenuItem(menuFile, SWT.NONE);
+		mntmOpenDatabase.setText("Open Database...");
+		
+		new MenuItem(menuFile, SWT.SEPARATOR);
+		
+		MenuItem mntmExit = new MenuItem(menuFile, SWT.NONE);
+		mntmExit.setText("Exit");
+		
+		MenuItem mntmDonor = new MenuItem(menu, SWT.CASCADE);
+		mntmDonor.setText("Donor");
+		
+		Menu menuDonor = new Menu(mntmDonor);
+		mntmDonor.setMenu(menuDonor);
+		
+		MenuItem mntmNewDonor = new MenuItem(menuDonor, SWT.NONE);
+		mntmNewDonor.setText("New Donor");
+		
+		MenuItem mntmSaveCurrentDonor = new MenuItem(menuDonor, SWT.NONE);
+		mntmSaveCurrentDonor.setText("Save Current Donor");
+		
+		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
+		mntmSaveAllDonors.setText("Save All Donors");
+		
+		Composite compositeToolbar = new Composite(shell, SWT.NONE);
+		compositeToolbar.setLayout(new GridLayout(3, false));
+		
+		ToolBar toolBar = new ToolBar(compositeToolbar, SWT.FLAT | SWT.RIGHT);
+		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		toolBar.setBounds(0, 0, 80, 21);
+		
+		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
+		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/icons/new-donor.png"));
+		tltmNewDonor.setText("New Donor");
+		
+		tltmSave = new ToolItem(toolBar, SWT.NONE);
+		tltmSave.setToolTipText("Save");
+		tltmSave.setEnabled(false);
+		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/icons/save.png"));
+		
+		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
+		tltmSep.setText("sep");
+		
+		Label lblSearch = new Label(compositeToolbar, SWT.NONE);
+		lblSearch.setBounds(0, 0, 49, 13);
+		lblSearch.setText("Search");
+		
+		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.SEARCH);
+		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_txtSearch.widthHint = 150;
+		txtSearch.setLayoutData(gd_txtSearch);
+		txtSearch.setBounds(0, 0, 76, 19);
+		
+		Composite compositeMain = new DonorList(shell, SWT.NONE);
+		compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
+	}
+	public ToolItem getSaveButton() {
+		return tltmSave;
 	}
 }

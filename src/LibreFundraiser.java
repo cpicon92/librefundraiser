@@ -2,18 +2,20 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ToolItem;
 
 
 public class LibreFundraiser {
 	private static SQLite localDB = null;
 	private static NumberFormat currency = null;
+	private static MainWindow window;
+
 	public static void main(String args[]) {
 		try {
 			FileDBASE db = new FileDBASE("C:\\FRBW");
 			db.loadTable("Master.dbf","donors");
 			db.loadTable("Gifts.dbf","gifts");
-			MainWindow window = new MainWindow();
-			window.setBlockOnOpen(true);
+			window = new MainWindow();
 			window.open();
 			Display.getCurrent().dispose();
 		} catch (Exception e) {
@@ -42,5 +44,8 @@ public class LibreFundraiser {
 			return currency.parse(amount).doubleValue();
 		} catch (ParseException e) {}
 		return 0;
+	}
+	public static ToolItem getSaveButton() {
+		return window.getSaveButton();
 	}
 }

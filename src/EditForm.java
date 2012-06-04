@@ -525,6 +525,7 @@ public class EditForm extends Composite {
 	protected void setBusiness(boolean business) {
 		if (this.business != business) {
 			this.business = business;
+			this.setEdited(true);
 			if (business) {
 				txtBusinessName.setText(txtLastName.getText());
 				txtContactLast.setText(txtSpouseLast.getText());
@@ -544,7 +545,6 @@ public class EditForm extends Composite {
 		((StackLayout)compositeNames.getLayout()).topControl = business?compositeBusiNames:compositeIndvNames;
 		((StackLayout)compositeOptional.getLayout()).topControl = business?lblContact:lblOptional;
 		this.getShell().layout();
-		this.setEdited(true);
 	}
 
 	public boolean isEdited() {
@@ -558,5 +558,6 @@ public class EditForm extends Composite {
 		String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
 		if (tabTitle.equals("")) tabTitle = donor.getData("account");
 		donorTab.setText((edited?"*":"")+tabTitle);
+		LibreFundraiser.getSaveButton().setEnabled(edited);
 	}
 }
