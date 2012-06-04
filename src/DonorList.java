@@ -97,6 +97,7 @@ public class DonorList extends Composite {
 
 	public void refresh() {
 		donors = LibreFundraiser.getLocalDB().getDonors();
+		tableViewer.setInput(donors);
 		tableViewer.refresh();
 	}
 	
