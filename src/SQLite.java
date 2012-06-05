@@ -73,7 +73,9 @@ public class SQLite {
 			rs.close();
 			output = donors.toArray(new Donor[0]);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
 		}
 		try {
 			conn.close();
