@@ -47,6 +47,7 @@ public class MainWindow {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setSize(880, 670);
+		shell.setImages(LibreFundraiser.logo);
 		shell.setText("LibreFundraiser");
 		GridLayout gl_shell = new GridLayout(1, false);
 		gl_shell.marginWidth = 0;

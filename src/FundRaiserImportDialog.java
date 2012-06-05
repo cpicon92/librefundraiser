@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 public class FundRaiserImportDialog extends Dialog {
 
 	protected Object result;
-	protected Shell shlImportingFromFundraiser;
+	protected Shell shell;
 	private ProgressBar progressBar;
 	private Composite compositeProgress;
 	private ProgressBar progressBarIndeterminate;
@@ -40,12 +40,12 @@ public class FundRaiserImportDialog extends Dialog {
 	 */
 	public boolean open() {
 		createContents();
-		shlImportingFromFundraiser.open();
-		shlImportingFromFundraiser.layout();
+		shell.open();
+		shell.layout();
 		display = getParent().getDisplay();
 		Rectangle bounds = getParent().getBounds();
-		shlImportingFromFundraiser.setLocation(bounds.x+(bounds.width/2)-160, bounds.y+(bounds.height/2)-65);
-		while (!shlImportingFromFundraiser.isDisposed()) {
+		shell.setLocation(bounds.x+(bounds.width/2)-160, bounds.y+(bounds.height/2)-65);
+		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
@@ -57,18 +57,19 @@ public class FundRaiserImportDialog extends Dialog {
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shlImportingFromFundraiser = new Shell(getParent(), SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
-		shlImportingFromFundraiser.setSize(320, 130);
-		shlImportingFromFundraiser.setText("Importing from FundRaiser Basic...");
+		shell = new Shell(getParent(), SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
+		shell.setSize(320, 130);
+		shell.setImages(LibreFundraiser.logo);
+		shell.setText("Importing from FundRaiser Basic...");
 		GridLayout gl_shlImportingFromFundraiser = new GridLayout(1, false);
 		gl_shlImportingFromFundraiser.verticalSpacing = 10;
-		shlImportingFromFundraiser.setLayout(gl_shlImportingFromFundraiser);
+		shell.setLayout(gl_shlImportingFromFundraiser);
 
-		lblImporting = new Label(shlImportingFromFundraiser, SWT.NONE);
+		lblImporting = new Label(shell, SWT.NONE);
 		lblImporting.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		lblImporting.setText("Importing...");
 
-		compositeProgress = new Composite(shlImportingFromFundraiser, SWT.NONE);
+		compositeProgress = new Composite(shell, SWT.NONE);
 		compositeProgress.setLayout(new StackLayout());
 		compositeProgress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 
@@ -82,7 +83,7 @@ public class FundRaiserImportDialog extends Dialog {
 		progressBar.setVisible(false);
 
 
-		btnCancel = new Button(shlImportingFromFundraiser, SWT.NONE);
+		btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
 		btnCancel.setText("Cancel");
 
@@ -104,7 +105,7 @@ public class FundRaiserImportDialog extends Dialog {
 	}
 	public void dispose() {
 		this.canceled = false;
-		shlImportingFromFundraiser.dispose();
+		shell.dispose();
 	}
 	public void setCancelable(boolean cancelable) {
 		btnCancel.setEnabled(cancelable);

@@ -9,6 +9,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Properties;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -18,9 +19,20 @@ public class LibreFundraiser {
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
+	public static Image[] logo;
 
 	public static void main(String args[]) {
 		loadSettings();
+		Display display = Display.getDefault();
+		logo = new Image[]{
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon16.png")),
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon24.png")),
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon32.png")),
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon48.png")),
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon64.png")),
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon128.png")),
+				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon256.png"))
+				};
 		if (getSetting("lastDB") == null) {
 			NewDatabaseDialog dialog = new NewDatabaseDialog();
 			dialog.open();

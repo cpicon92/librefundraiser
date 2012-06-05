@@ -41,7 +41,7 @@ public class NewDatabaseDialog {
 				display.sleep();
 			}
 		}
-		return txtFilename.getText();
+		return "";
 	}
 
 	/**
@@ -56,6 +56,7 @@ public class NewDatabaseDialog {
 			}
 		});
 		shell.setSize(450, 370);
+		shell.setImages(LibreFundraiser.logo);
 		shell.setText("LibreFundraiser");
 		GridLayout gl_shlLibreFundraiser = new GridLayout(1, false);
 		gl_shlLibreFundraiser.marginWidth = 0;
