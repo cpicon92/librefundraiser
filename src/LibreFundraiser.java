@@ -1,5 +1,13 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Properties;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
@@ -9,8 +17,14 @@ public class LibreFundraiser {
 	private static SQLite localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
+	private final static Properties settings = new Properties();
 
 	public static void main(String args[]) {
+		loadSettings();
+		if (getSetting("lastDB") == null) {
+			NewDatabaseDialog dialog = new NewDatabaseDialog();
+			dialog.open();
+		}
 		try {
 			window = new MainWindow();
 			window.open();
@@ -44,5 +58,44 @@ public class LibreFundraiser {
 	}
 	public static ToolItem getSaveButton() {
 		return window.getSaveButton();
+	}
+	public static void loadSettings() {
+		String path = System.getenv("AppData");
+		if (path == null) {
+			path = System.getProperty("user.home")+"/.librefundraiser/settings.xml";
+		} else {
+			path = path + "\\LibreFundraiser\\settings.xml";
+		}
+		try {
+			settings.loadFromXML(new BufferedInputStream(new FileInputStream(path)));
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+	}
+	public static void saveSettings() {
+		String path = System.getenv("AppData");
+		if (path == null) {
+			new File(System.getProperty("user.home")+"/.librefundraiser").mkdirs();
+			path = System.getProperty("user.home")+"/.librefundraiser/settings.xml";
+		} else {
+			new File(path + "\\LibreFundraiser").mkdirs();
+			path = path + "\\LibreFundraiser\\settings.xml";
+		}
+		try {
+			settings.storeToXML(new BufferedOutputStream(new FileOutputStream(path)),"LibreFundraiser");
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+	}
+	public static void addSetting(String key, String value) {
+		settings.setProperty(key, value);
+		new Thread(new Runnable() {
+			public void run() {
+				saveSettings();
+			}
+		}).start();
+	}
+	public static String getSetting(String key) {
+		return settings.getProperty(key);
 	}
 }
