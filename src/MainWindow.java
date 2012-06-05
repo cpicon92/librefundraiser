@@ -91,7 +91,7 @@ public class MainWindow {
 						db.loadTable("Gifts.dbf","gifts");
 						display.asyncExec(new Runnable() {
 							public void run() {
-								dialog.setProgress(90);
+								dialog.setProgress(80);
 							}
 						});
 						((DonorList)compositeDonorList).donors = LibreFundraiser.getLocalDB().getDonors();
