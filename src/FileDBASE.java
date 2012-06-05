@@ -25,7 +25,7 @@ public class FileDBASE {
 		database = new Database(new File(URL), Version.DBASE_3);
 	}
 
-	public void loadTable(String sourceTableName, String destTableName) {
+	public boolean loadTable(String sourceTableName, String destTableName) {
 		final Table table = database.getTable(sourceTableName);
 		try {
 			table.open(IfNonExistent.ERROR);
@@ -65,17 +65,23 @@ public class FileDBASE {
 		} catch (IOException e) {
 			System.err.println("Trouble reading table or table not found");
 			e.printStackTrace();
+			return false;
 		} catch (DbfLibException e) {
 			System.err.println("Problem getting raw value");
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		} finally {
 			try {
 				table.close();
 			} catch (IOException ex) {
-				System.out.println("Unable to close the table");
+				System.err.println("Unable to close the table");
+				return false;
+			} catch (NullPointerException ex) {
+				return false;
 			}
 		}
+		return true;
 	}
 }
