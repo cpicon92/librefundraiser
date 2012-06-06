@@ -26,6 +26,8 @@ public class DonorList extends Composite {
 	public Donor[] donors = null;
 
 	private TableViewer tableViewer;
+
+	public CTabFolder tabFolder;
 	
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -58,12 +60,23 @@ public class DonorList extends Composite {
 		super(parent, style);
 		donors = LibreFundraiser.getLocalDB().getDonors();
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
-		final CTabFolder tabFolder = new CTabFolder(this, SWT.BORDER);
+		tabFolder = new CTabFolder(this, SWT.BORDER);
 		tabFolder.setSelectionBackground(new Color[]{SWTResourceManager.getColor(SWT.COLOR_WHITE), SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{100}, true);
 
 		
-		CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
+		final CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
 		tbtmDonors.setText("Donors");
+		
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				CTabItem t = tabFolder.getSelection();
+				if (!t.getClass().getName().equals("DonorTab")) {
+					LibreFundraiser.getSaveButton().setEnabled(false);
+				} else {
+					((DonorTab)t).alterSaveButton();
+				}
+			}
+		});
 		
 		tableViewer = new TableViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();

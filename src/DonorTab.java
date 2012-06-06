@@ -13,12 +13,17 @@ public class DonorTab extends CTabItem {
 		this.id = id;
 		this.setShowClose(true);
 		donor = LibreFundraiser.getLocalDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"")[0];
-		EditForm editForm = new EditForm(this.getParent(),SWT.NONE,this);
+		DonorEditForm editForm = new DonorEditForm(this.getParent(),SWT.NONE,this);
 		this.setControl(editForm);
 	}
 	
 	public Donor getDonor() {
 		return donor;
+	}
+
+	public void alterSaveButton() {
+		DonorEditForm form = ((DonorEditForm)this.getControl());
+		form.setEdited(form.isEdited());
 	}
 	
 }

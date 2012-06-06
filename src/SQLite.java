@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 
 public class SQLite {
 	private final File dbFile;
@@ -26,6 +27,28 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	public HashMap<String,String> quickSearch(String query) {
+		Connection conn = this.getConnection();
+		HashMap<String,String> output = new HashMap<String,String>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from donors where account like \"%"+query+"%\" or firstname like \"%"+query+"%\" or lastname like \"%"+query+"%\"");
+			while(rs.next()) {
+				output.put(rs.getString("account"),rs.getString("lastname")+", "+rs.getString("firstname"));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return output;
 	}
 	public Donor[] getDonors(String query) {
 		Connection conn = this.getConnection();

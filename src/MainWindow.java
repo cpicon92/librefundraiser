@@ -1,15 +1,25 @@
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -115,18 +125,18 @@ public class MainWindow {
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveAllDonors.setText("Save All Donors");
-		
+
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");
-		
+
 		Menu menuHelp = new Menu(mntmHelp);
 		mntmHelp.setMenu(menuHelp);
-		
+
 		MenuItem mntmAbout = new MenuItem(menuHelp, SWT.NONE);
 		mntmAbout.setText("About...");
 
 		Composite compositeToolbar = new Composite(shell, SWT.NONE);
-		compositeToolbar.setLayout(new GridLayout(3, false));
+		compositeToolbar.setLayout(new GridLayout(2, false));
 
 		ToolBar toolBar = new ToolBar(compositeToolbar, SWT.FLAT | SWT.RIGHT);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -144,15 +154,76 @@ public class MainWindow {
 		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
 		tltmSep.setText("sep");
 
-		Label lblSearch = new Label(compositeToolbar, SWT.NONE);
-		lblSearch.setBounds(0, 0, 49, 13);
-		lblSearch.setText("Search");
+		Composite compositeSearch = new Composite(compositeToolbar, SWT.NONE);
+		GridData gd_compositeSearch = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+		gd_compositeSearch.widthHint = 150;
+		compositeSearch.setLayoutData(gd_compositeSearch);
+		compositeSearch.setLayout(new StackLayout());
 
-		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.SEARCH);
-		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
-		gd_txtSearch.widthHint = 150;
-		txtSearch.setLayoutData(gd_txtSearch);
+		txtSearch = new Text(compositeSearch, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtSearch.setBounds(0, 0, 76, 19);
+		txtSearch.setMessage("Quick Find");
+
+		final Combo comboSearch = new Combo(compositeSearch, SWT.NONE);
+
+		txtSearch.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					comboSearch.select(comboSearch.getSelectionIndex()+1);
+				}
+				if (e.keyCode == SWT.ARROW_UP) {
+					comboSearch.select(comboSearch.getSelectionIndex()-1);
+				}
+			}
+		});
+		txtSearch.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
+					display.timerExec(1, new Runnable() {
+						public void run() {
+							txtSearch.setSelection(txtSearch.getCharCount()+1);
+						}
+					});
+				}
+				if (e.detail == SWT.TRAVERSE_RETURN) {
+					@SuppressWarnings("unchecked")
+					ArrayList<String> keys = (ArrayList<String>)comboSearch.getData();
+					try {
+						if (keys != null && !keys.isEmpty()) {
+							String key = keys.get(comboSearch.getSelectionIndex());
+							int id = Integer.parseInt(key);
+							DonorTab newTab = new DonorTab(id,((DonorList)compositeDonorList).tabFolder);
+							comboSearch.setListVisible(false);
+							comboSearch.setItems(new String[]{});
+							txtSearch.setText("");
+							((DonorList)compositeDonorList).tabFolder.setSelection(newTab);
+							((DonorList)compositeDonorList).tabFolder.setFocus();
+						}
+					} catch (Exception e1) {}
+				}
+			}
+		});
+		txtSearch.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				comboSearch.setListVisible(false);
+				comboSearch.setItems(new String[]{});
+				if (txtSearch.getCharCount() > 1) {
+					HashMap<String,String> results = LibreFundraiser.getLocalDB().quickSearch(txtSearch.getText());
+					ArrayList<String> keys = new ArrayList<String>();
+					for (Entry<String, String> entry : results.entrySet()) {
+						String key = entry.getKey();
+						String value = entry.getValue();
+						keys.add(key);
+						comboSearch.add(value);
+					}
+					comboSearch.setData(keys);
+					comboSearch.setListVisible(true);
+					comboSearch.select(0);
+				}
+			}
+		});
+		((StackLayout)compositeSearch.getLayout()).topControl = txtSearch;
+
 
 		compositeDonorList = new DonorList(shell, SWT.NONE);
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
