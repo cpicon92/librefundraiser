@@ -10,7 +10,7 @@ public class SQLite {
 	private final File dbFile;
 	public SQLite() {
 		long unixTime = System.currentTimeMillis() / 1000L;
-		String filename = System.getProperty("java.io.tmpdir")+"temp"+unixTime+".db";
+		String filename = System.getProperty("java.io.tmpdir")+"/temp"+unixTime+".db";
 		dbFile = new File(filename);
 	}
 	public SQLite(String filename) {
