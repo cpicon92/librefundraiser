@@ -37,6 +37,7 @@ public class MainWindow {
 	private ToolItem tltmSave;
 	private Composite compositeDonorList;
 	private Display display;
+	private Combo comboSearch;
 
 	/**
 	 * Open the window.
@@ -164,7 +165,12 @@ public class MainWindow {
 		txtSearch.setBounds(0, 0, 76, 19);
 		txtSearch.setMessage("Quick Find");
 
-		final Combo comboSearch = new Combo(compositeSearch, SWT.NONE);
+		comboSearch = new Combo(compositeSearch, SWT.NONE);
+		comboSearch.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				quickSearchOpen();
+			}
+		});
 
 		txtSearch.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -176,6 +182,7 @@ public class MainWindow {
 				}
 			}
 		});
+
 		txtSearch.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
@@ -186,20 +193,7 @@ public class MainWindow {
 					});
 				}
 				if (e.detail == SWT.TRAVERSE_RETURN) {
-					@SuppressWarnings("unchecked")
-					ArrayList<String> keys = (ArrayList<String>)comboSearch.getData();
-					try {
-						if (keys != null && !keys.isEmpty()) {
-							String key = keys.get(comboSearch.getSelectionIndex());
-							int id = Integer.parseInt(key);
-							DonorTab newTab = new DonorTab(id,((DonorList)compositeDonorList).tabFolder);
-							comboSearch.setListVisible(false);
-							comboSearch.setItems(new String[]{});
-							txtSearch.setText("");
-							((DonorList)compositeDonorList).tabFolder.setSelection(newTab);
-							((DonorList)compositeDonorList).tabFolder.setFocus();
-						}
-					} catch (Exception e1) {}
+					quickSearchOpen();
 				}
 			}
 		});
@@ -299,5 +293,21 @@ public class MainWindow {
 			}
 		}).start();
 		dialog.open();
+	}
+	private void quickSearchOpen() {
+		@SuppressWarnings("unchecked")
+		ArrayList<String> keys = (ArrayList<String>)comboSearch.getData();
+		try {
+			if (keys != null && !keys.isEmpty()) {
+				String key = keys.get(comboSearch.getSelectionIndex());
+				int id = Integer.parseInt(key);
+				DonorTab newTab = new DonorTab(id,((DonorList)compositeDonorList).tabFolder);
+				comboSearch.setListVisible(false);
+				comboSearch.setItems(new String[]{});
+				txtSearch.setText("");
+				((DonorList)compositeDonorList).tabFolder.setSelection(newTab);
+				((DonorList)compositeDonorList).tabFolder.setFocus();
+			}
+		} catch (Exception e1) {}
 	}
 }
