@@ -35,7 +35,12 @@ public class SQLite {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("select * from donors where account like \"%"+query+"%\" or firstname like \"%"+query+"%\" or lastname like \"%"+query+"%\"");
 			while(rs.next()) {
-				output.put(rs.getString("account"),rs.getString("lastname")+", "+rs.getString("firstname"));
+				String firstname = rs.getString("firstname");
+				String lastname = rs.getString("lastname");
+				String account = rs.getString("account");
+				String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
+				if (tabTitle.equals("")) tabTitle = account;
+				output.put(account,tabTitle);
 			}
 			rs.close();
 		} catch (SQLException e) {
