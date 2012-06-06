@@ -33,10 +33,11 @@ public class LibreFundraiser {
 				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon128.png")),
 				new Image(display,LibreFundraiser.class.getResourceAsStream("logo/balloon256.png"))
 				};
-		if (getSetting("lastDB") == null) {
+		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
 			NewDatabaseDialog dialog = new NewDatabaseDialog();
-			dialog.open();
+			addSetting("lastDB",dialog.open());
 		}
+		localDB = new SQLite(getSetting("lastDB"));
 		try {
 			window = new MainWindow();
 			window.open();

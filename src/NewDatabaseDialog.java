@@ -3,6 +3,8 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
@@ -27,6 +29,9 @@ public class NewDatabaseDialog {
 	private Button btnRemoteDatabase;
 	private Button btnBrowse;
 	private boolean canceled = true;
+	private Display display;
+	private Button btnNext;
+	private Object currentSelection;
 	/**
 	 * Open the dialog.
 	 * @return the result
@@ -35,13 +40,13 @@ public class NewDatabaseDialog {
 		createContents();
 		shell.open();
 		shell.layout();
-		Display display = Display.getDefault();
+		display = Display.getDefault();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
-		return "";
+		return result;
 	}
 
 	/**
@@ -73,7 +78,9 @@ public class NewDatabaseDialog {
 		compositeBanner.setLayout(new GridLayout(2, false));
 		
 		Label lblFirstStart = new Label(compositeBanner, SWT.SHADOW_NONE);
-		lblFirstStart.setFont(SWTResourceManager.getFont("Tahoma", 14, SWT.NORMAL));
+		FontData[] fD = lblFirstStart.getFont().getFontData();
+		fD[0].setHeight(14);
+		lblFirstStart.setFont(new Font(display,fD[0]));
 		GridData gd_lblFirstStart = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_lblFirstStart.horizontalIndent = 10;
 		lblFirstStart.setLayoutData(gd_lblFirstStart);
@@ -101,9 +108,15 @@ public class NewDatabaseDialog {
 		
 		SelectionAdapter dbType = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean browse = e.getSource().equals(btnExistingLocalDatabase);
+				currentSelection = e.getSource();
+				boolean browse = currentSelection.equals(btnExistingLocalDatabase);
 				txtFilename.setEnabled(browse);
 				btnBrowse.setEnabled(browse);
+				if (currentSelection.equals(btnExistingLocalDatabase)||currentSelection.equals(btnLocalDatabase)) {
+					btnNext.setText("Finish >");
+				} else {
+					btnNext.setText("Next >");
+				}
 			}
 		};
 		
@@ -146,8 +159,8 @@ public class NewDatabaseDialog {
 		btnBrowse.setText("Browse...");
 		
 		btnRemoteDatabase = new Button(compositeMain, SWT.RADIO);
-		btnRemoteDatabase.addSelectionListener(dbType);
 		btnRemoteDatabase.setEnabled(false);
+		btnRemoteDatabase.addSelectionListener(dbType);
 		btnRemoteDatabase.setBounds(0, 0, 83, 16);
 		btnRemoteDatabase.setText("Connect to remote database");
 		
@@ -163,16 +176,25 @@ public class NewDatabaseDialog {
 		rl_compositeButtons.spacing = 5;
 		compositeButtons.setLayout(rl_compositeButtons);
 		
-		Button btnNext = new Button(compositeButtons, SWT.NONE);
+		btnNext = new Button(compositeButtons, SWT.NONE);
 		btnNext.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				if (currentSelection == null) return;
+				if (currentSelection.equals(btnLocalDatabase)) {
+					FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
+					fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
+					fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
+					result = fileDialog.open();
+				} else if (currentSelection.equals(btnExistingLocalDatabase)) {
+					result = txtFilename.getText();
+				}
 				canceled = false;
 				shell.dispose();
 			}
 		});
 		btnNext.setLayoutData(new RowData(70, SWT.DEFAULT));
 		btnNext.setBounds(0, 0, 68, 23);
-		btnNext.setText("Next >");
+		btnNext.setText("Finish >");
 		
 		Button btnCancel = new Button(compositeButtons, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -182,6 +204,6 @@ public class NewDatabaseDialog {
 		});
 		btnCancel.setLayoutData(new RowData(70, SWT.DEFAULT));
 		btnCancel.setText("Cancel");
-
+		currentSelection = btnLocalDatabase;
 	}
 }

@@ -22,7 +22,7 @@ public class FileDBASE {
 	final Database database;
 
 	public FileDBASE(String URL) {
-		database = new Database(new File(URL), Version.DBASE_3);
+		database = new Database(new File(URL), Version.DBASE_3, "ISO-8859-1");
 	}
 
 	public boolean loadTable(String sourceTableName, String destTableName) {

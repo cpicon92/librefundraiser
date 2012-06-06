@@ -1,3 +1,5 @@
+import java.io.File;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -6,6 +8,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -48,7 +51,12 @@ public class MainWindow {
 		shell = new Shell();
 		shell.setSize(880, 670);
 		shell.setImages(LibreFundraiser.logo);
-		shell.setText("LibreFundraiser");
+		String filename = null;
+		try {
+			filename = new File(LibreFundraiser.getSetting("lastDB")).getName();
+		} catch (Exception e) {}
+		if (filename != null) filename = " - " + filename;
+		shell.setText("LibreFundraiser"+filename);
 		GridLayout gl_shell = new GridLayout(1, false);
 		gl_shell.marginWidth = 0;
 		gl_shell.marginHeight = 0;
@@ -79,64 +87,8 @@ public class MainWindow {
 
 		MenuItem mntmFromFundraiserBasic = new MenuItem(menuImport, SWT.NONE);
 		mntmFromFundraiserBasic.addSelectionListener(new SelectionAdapter() {
-			@Override
 			public void widgetSelected(SelectionEvent e) {
-				final FundRaiserImportDialog dialog = new FundRaiserImportDialog(shell,SWT.NONE);
-				DirectoryDialog fileDialog = new DirectoryDialog(shell);
-				fileDialog.setMessage("Please indicate the FundRaiser Basic installation folder");
-				String systemDrive = System.getenv("SystemDrive");
-				fileDialog.setFilterPath(systemDrive+"\\FRBW");
-				final String result = fileDialog.open();
-				if (result == null) return;
-				new Thread(new Runnable() {
-					public void run() {
-						FileDBASE db = new FileDBASE(result);
-						display.asyncExec(new Runnable() {
-							public void run() {
-								dialog.setCancelable(false);
-								dialog.setStatusText("Importing donor list...");
-							}
-						});
-						if (!db.loadTable("Master.dbf","donors")) {
-							display.asyncExec(new Runnable() {
-								public void run() {
-									MessageBox error = new MessageBox(shell,SWT.ICON_ERROR);
-									error.setText("LibreFundraiser Error");
-									error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
-									dialog.dispose();
-								}
-							});
-							return;
-						}
-						display.asyncExec(new Runnable() {
-							public void run() {
-								dialog.setProgress(25);
-								dialog.setStatusText("Importing gifts...");
-							}
-						});
-						db.loadTable("Gifts.dbf","gifts");
-						display.asyncExec(new Runnable() {
-							public void run() {
-								dialog.setProgress(50);
-								dialog.setStatusText("Consolidating donors and gifts...");
-							}
-						});
-						((DonorList)compositeDonorList).donors = LibreFundraiser.getLocalDB().getDonors();
-						display.asyncExec(new Runnable() {
-							public void run() {
-								dialog.setProgress(75);
-								dialog.setStatusText("Refreshing donor list...");
-							}
-						});
-						display.asyncExec(new Runnable() {
-							public void run() {
-								((DonorList)compositeDonorList).refresh();
-								dialog.dispose();
-							}
-						});
-					}
-				}).start();
-				dialog.open();
+				importFRBW();
 			}
 		});
 		mntmFromFundraiserBasic.setText("From FundRaiser Basic...");
@@ -163,6 +115,15 @@ public class MainWindow {
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveAllDonors.setText("Save All Donors");
+		
+		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
+		mntmHelp.setText("Help");
+		
+		Menu menuHelp = new Menu(mntmHelp);
+		mntmHelp.setMenu(menuHelp);
+		
+		MenuItem mntmAbout = new MenuItem(menuHelp, SWT.NONE);
+		mntmAbout.setText("About...");
 
 		Composite compositeToolbar = new Composite(shell, SWT.NONE);
 		compositeToolbar.setLayout(new GridLayout(3, false));
@@ -199,5 +160,73 @@ public class MainWindow {
 	}
 	public ToolItem getSaveButton() {
 		return tltmSave;
+	}
+	public String newDBfile() {
+		FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
+		fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
+		fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
+		return fileDialog.open();
+	}
+	public void importFRBW() {
+		MessageBox warning = new MessageBox(shell,SWT.ICON_WARNING|SWT.YES|SWT.NO);
+		warning.setText("LibreFundraiser Warning");
+		warning.setMessage("The imported data will overwrite anything you currently have in your database. Do you want to continue?");
+		if (warning.open() == SWT.NO) return;
+		final FundRaiserImportDialog dialog = new FundRaiserImportDialog(shell,SWT.NONE);
+		DirectoryDialog fileDialog = new DirectoryDialog(shell);
+		fileDialog.setMessage("Please indicate the FundRaiser Basic installation folder");
+		String systemDrive = System.getenv("SystemDrive");
+		fileDialog.setFilterPath(systemDrive+"\\FRBW");
+		final String result = fileDialog.open();
+		if (result == null) return;
+		new Thread(new Runnable() {
+			public void run() {
+				FileDBASE db = new FileDBASE(result);
+				display.asyncExec(new Runnable() {
+					public void run() {
+						dialog.setCancelable(false);
+						dialog.setStatusText("Importing donor list...");
+					}
+				});
+				if (!db.loadTable("Master.dbf","donors")) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							MessageBox error = new MessageBox(shell,SWT.ICON_ERROR);
+							error.setText("LibreFundraiser Error");
+							error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
+							dialog.dispose();
+						}
+					});
+					return;
+				}
+				display.asyncExec(new Runnable() {
+					public void run() {
+						dialog.setProgress(25);
+						dialog.setStatusText("Importing gifts...");
+					}
+				});
+				db.loadTable("Gifts.dbf","gifts");
+				display.asyncExec(new Runnable() {
+					public void run() {
+						dialog.setProgress(50);
+						dialog.setStatusText("Consolidating donors and gifts...");
+					}
+				});
+				((DonorList)compositeDonorList).donors = LibreFundraiser.getLocalDB().getDonors();
+				display.asyncExec(new Runnable() {
+					public void run() {
+						dialog.setProgress(75);
+						dialog.setStatusText("Refreshing donor list...");
+					}
+				});
+				display.asyncExec(new Runnable() {
+					public void run() {
+						((DonorList)compositeDonorList).refresh();
+						dialog.dispose();
+					}
+				});
+			}
+		}).start();
+		dialog.open();
 	}
 }
