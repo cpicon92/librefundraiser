@@ -1,5 +1,5 @@
 package net.sf.librefundraiser.gui;
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -64,7 +64,7 @@ public class NewDatabaseDialog {
 			}
 		});
 		shell.setSize(450, 370);
-		shell.setImages(LibreFundraiser.logo);
+		shell.setImages(Main.logo);
 		shell.setText("LibreFundraiser");
 		GridLayout gl_shlLibreFundraiser = new GridLayout(1, false);
 		gl_shlLibreFundraiser.marginWidth = 0;

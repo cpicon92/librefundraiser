@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
 
-public class LibreFundraiser {
+public class Main {
 	private static SQLite localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
@@ -30,13 +30,13 @@ public class LibreFundraiser {
 		loadSettings();
 		Display display = Display.getDefault();
 		logo = new Image[]{
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon16.png")),
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon24.png")),
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon32.png")),
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon48.png")),
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon64.png")),
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon128.png")),
-				new Image(display,LibreFundraiser.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon256.png"))
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon16.png")),
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon24.png")),
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon32.png")),
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon48.png")),
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon64.png")),
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon128.png")),
+				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon256.png"))
 				};
 		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
 			NewDatabaseDialog dialog = new NewDatabaseDialog();

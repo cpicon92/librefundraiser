@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.db.FileDBASE;
 
 import org.eclipse.swt.SWT;
@@ -65,10 +65,10 @@ public class MainWindow {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setSize(880, 670);
-		shell.setImages(LibreFundraiser.logo);
+		shell.setImages(Main.logo);
 		String filename = null;
 		try {
-			filename = new File(LibreFundraiser.getSetting("lastDB")).getName();
+			filename = new File(Main.getSetting("lastDB")).getName();
 		} catch (Exception e) {}
 		if (filename != null) filename = " - " + filename;
 		shell.setText("LibreFundraiser"+filename);
@@ -206,7 +206,7 @@ public class MainWindow {
 				comboSearch.setListVisible(false);
 				comboSearch.setItems(new String[]{});
 				if (txtSearch.getCharCount() > 1) {
-					HashMap<String,String> results = LibreFundraiser.getLocalDB().quickSearch(txtSearch.getText());
+					HashMap<String,String> results = Main.getLocalDB().quickSearch(txtSearch.getText());
 					ArrayList<String> keys = new ArrayList<String>();
 					for (Entry<String, String> entry : results.entrySet()) {
 						String key = entry.getKey();
@@ -281,7 +281,7 @@ public class MainWindow {
 						dialog.setStatusText("Consolidating donors and gifts...");
 					}
 				});
-				((DonorList)compositeDonorList).donors = LibreFundraiser.getLocalDB().getDonors();
+				((DonorList)compositeDonorList).donors = Main.getLocalDB().getDonors();
 				display.asyncExec(new Runnable() {
 					public void run() {
 						dialog.setProgress(75);

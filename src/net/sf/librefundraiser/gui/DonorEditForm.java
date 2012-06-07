@@ -1,6 +1,6 @@
 package net.sf.librefundraiser.gui;
 import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -562,6 +562,6 @@ public class DonorEditForm extends Composite {
 		String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
 		if (tabTitle.equals("")) tabTitle = donor.getData("account");
 		donorTab.setText((edited?"*":"")+tabTitle);
-		LibreFundraiser.getSaveButton().setEnabled(edited);
+		Main.getSaveButton().setEnabled(edited);
 	}
 }

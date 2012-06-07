@@ -2,7 +2,7 @@ package net.sf.librefundraiser.gui;
 import java.util.HashMap;
 
 import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -65,7 +65,7 @@ public class GiftTable extends Composite {
 		for (Integer g : gifts.keySet().toArray(new Integer[0])) {
 			Donor.Gift gift = gifts.get(g);
 			TableItem tableItem = new TableItem(tableGifts, SWT.NONE);
-			String[] itemData = new String[] { LibreFundraiser.toMoney(gift.getIc("amount")),
+			String[] itemData = new String[] { Main.toMoney(gift.getIc("amount")),
 					gift.getIc("dategiven"), gift.getIc("letter"),
 					gift.getIc("dt_entry"), gift.getIc("source"),
 					gift.getIc("note"), gift.getIc("recnum") };

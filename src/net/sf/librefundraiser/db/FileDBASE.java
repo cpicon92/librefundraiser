@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 import nl.knaw.dans.common.dbflib.Database;
 import nl.knaw.dans.common.dbflib.DbfLibException;
 import nl.knaw.dans.common.dbflib.Field;
@@ -32,7 +32,7 @@ public class FileDBASE {
 		try {
 			table.open(IfNonExistent.ERROR);
 			final Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			SQLite sqLite = LibreFundraiser.getLocalDB();
+			SQLite sqLite = Main.getLocalDB();
 			Connection conn = sqLite.getConnection();
 			final List<Field> fields = table.getFields();
 			Statement stat = conn.createStatement();

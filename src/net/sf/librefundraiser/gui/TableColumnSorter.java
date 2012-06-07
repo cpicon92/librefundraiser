@@ -1,5 +1,5 @@
 package net.sf.librefundraiser.gui;
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -112,8 +112,8 @@ public class TableColumnSorter extends ViewerComparator {
 			t2 = addr2 + String.format(" %05d", num2);
 		}
 		if (DonorList.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
-			Double d1 = LibreFundraiser.fromMoney(t1);
-			Double d2 = LibreFundraiser.fromMoney(t2);
+			Double d1 = Main.fromMoney(t1);
+			Double d2 = Main.fromMoney(t2);
 			return d1.compareTo(d2);
 		}
 		if (t1 == null) t1 = "";

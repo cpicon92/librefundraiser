@@ -1,6 +1,6 @@
 package net.sf.librefundraiser.gui;
 import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.Main;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -40,7 +40,7 @@ public class DonorList extends Composite {
 		public String getColumnText(Object element, int columnIndex) {
 			Donor donor = (Donor) element;
 			if (columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
-				return LibreFundraiser.toMoney(donor.getData(columns[columnIndex][1]));
+				return Main.toMoney(donor.getData(columns[columnIndex][1]));
 			}
 			return donor.getData(columns[columnIndex][1]);
 		}
@@ -62,7 +62,7 @@ public class DonorList extends Composite {
 	 */
 	public DonorList(Composite parent, int style) {
 		super(parent, style);
-		donors = LibreFundraiser.getLocalDB().getDonors();
+		donors = Main.getLocalDB().getDonors();
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
 		tabFolder = new CTabFolder(this, SWT.BORDER);
 		tabFolder.setSelectionBackground(new Color[]{SWTResourceManager.getColor(SWT.COLOR_WHITE), SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{100}, true);
@@ -75,7 +75,7 @@ public class DonorList extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				CTabItem t = tabFolder.getSelection();
 				if (!t.getClass().getName().equals("DonorTab")) {
-					LibreFundraiser.getSaveButton().setEnabled(false);
+					Main.getSaveButton().setEnabled(false);
 				} else {
 					((DonorTab)t).alterSaveButton();
 				}
