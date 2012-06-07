@@ -90,7 +90,7 @@ public class NewDatabaseDialog {
 		lblFirstStart.setText("Welcome to LibreFundraiser! ");
 		
 		Label lblLogo = new Label(compositeBanner, SWT.NONE);
-		lblLogo.setImage(SWTResourceManager.getImage(NewDatabaseDialog.class, "/logo/balloon48.png"));
+		lblLogo.setImage(SWTResourceManager.getImage(NewDatabaseDialog.class, "/net/sf/librefundraiser/logo/balloon48.png"));
 		lblLogo.setBounds(0, 0, 49, 13);
 		
 		new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
