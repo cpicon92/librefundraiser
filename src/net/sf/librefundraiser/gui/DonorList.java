@@ -1,3 +1,7 @@
+package net.sf.librefundraiser.gui;
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.LibreFundraiser;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;

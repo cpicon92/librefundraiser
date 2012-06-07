@@ -1,7 +1,11 @@
+package net.sf.librefundraiser.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import net.sf.librefundraiser.LibreFundraiser;
+import net.sf.librefundraiser.db.FileDBASE;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -144,13 +148,13 @@ public class MainWindow {
 		toolBar.setBounds(0, 0, 80, 21);
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
-		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/icons/new-donor.png"));
+		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/new-donor.png"));
 		tltmNewDonor.setText("New Donor");
 
 		tltmSave = new ToolItem(toolBar, SWT.NONE);
 		tltmSave.setToolTipText("Save");
 		tltmSave.setEnabled(false);
-		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/icons/save.png"));
+		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/save.png"));
 
 		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
 		tltmSep.setText("sep");

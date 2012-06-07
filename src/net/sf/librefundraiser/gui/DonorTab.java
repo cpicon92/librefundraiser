@@ -1,3 +1,7 @@
+package net.sf.librefundraiser.gui;
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.LibreFundraiser;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;

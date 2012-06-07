@@ -1,3 +1,4 @@
+package net.sf.librefundraiser.db;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.librefundraiser.LibreFundraiser;
 import nl.knaw.dans.common.dbflib.Database;
 import nl.knaw.dans.common.dbflib.DbfLibException;
 import nl.knaw.dans.common.dbflib.Field;

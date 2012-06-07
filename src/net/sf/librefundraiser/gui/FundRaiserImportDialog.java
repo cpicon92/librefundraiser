@@ -1,3 +1,6 @@
+package net.sf.librefundraiser.gui;
+import net.sf.librefundraiser.LibreFundraiser;
+
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;

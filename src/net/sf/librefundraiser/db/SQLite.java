@@ -1,3 +1,4 @@
+package net.sf.librefundraiser.db;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayDeque;
 import java.util.HashMap;
+
+import net.sf.librefundraiser.Donor;
 
 public class SQLite {
 	private final File dbFile;
