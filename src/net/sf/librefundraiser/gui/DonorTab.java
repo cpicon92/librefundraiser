@@ -1,3 +1,7 @@
+package net.sf.librefundraiser.gui;
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Main;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -12,7 +16,7 @@ public class DonorTab extends CTabItem {
 		super(tabFolder, SWT.NONE);
 		this.id = id;
 		this.setShowClose(true);
-		donor = LibreFundraiser.getLocalDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"")[0];
+		donor = Main.getLocalDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"")[0];
 		DonorEditForm editForm = new DonorEditForm(this.getParent(),SWT.NONE,this);
 		this.setControl(editForm);
 	}

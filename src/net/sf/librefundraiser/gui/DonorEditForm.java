@@ -1,3 +1,7 @@
+package net.sf.librefundraiser.gui;
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Main;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -366,7 +370,7 @@ public class DonorEditForm extends Composite {
 		ToolBar toolBar = new ToolBar(grpWeb, SWT.FLAT | SWT.RIGHT);
 		
 		ToolItem tltmAddALink = new ToolItem(toolBar, SWT.NONE);
-		tltmAddALink.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/icons/add-link.png"));
+		tltmAddALink.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/add-link.png"));
 		tltmAddALink.setText("Add a link...");
 		
 		TabItem tbtmNotes = new TabItem(tabFolder, SWT.NONE);
@@ -388,19 +392,19 @@ public class DonorEditForm extends Composite {
 		tbrGifts.setBounds(0, 0, 89, 23);
 		
 		ToolItem tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
-		tltmAdd.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/icons/new-gift.png"));
+		tltmAdd.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/new-gift.png"));
 		tltmAdd.setText("Add");
 		
 		ToolItem tltmSep = new ToolItem(tbrGifts, SWT.SEPARATOR);
 		tltmSep.setText("sep");
 		
 		ToolItem tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
-		tltmEdit.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/icons/edit-gift.png"));
+		tltmEdit.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/edit-gift.png"));
 		tltmEdit.setEnabled(false);
 		tltmEdit.setText("Edit");
 		
 		ToolItem tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
-		tltmDelete.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/icons/delete-gift.png"));
+		tltmDelete.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/delete-gift.png"));
 		tltmDelete.setEnabled(false);
 		tltmDelete.setText("Delete");
 		
@@ -560,6 +564,6 @@ public class DonorEditForm extends Composite {
 		String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
 		if (tabTitle.equals("")) tabTitle = donor.getData("account");
 		donorTab.setText((edited?"*":"")+tabTitle);
-		LibreFundraiser.getSaveButton().setEnabled(edited);
+		Main.getSaveButton().setEnabled(edited);
 	}
 }

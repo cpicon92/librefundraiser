@@ -1,7 +1,11 @@
+package net.sf.librefundraiser.gui;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.db.FileDBASE;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -61,10 +65,10 @@ public class MainWindow {
 	protected void createContents() {
 		shell = new Shell();
 		shell.setSize(880, 670);
-		shell.setImages(LibreFundraiser.logo);
+		shell.setImages(Main.logo);
 		String filename = null;
 		try {
-			filename = new File(LibreFundraiser.getSetting("lastDB")).getName();
+			filename = new File(Main.getSetting("lastDB")).getName();
 		} catch (Exception e) {}
 		if (filename != null) filename = " - " + filename;
 		shell.setText("LibreFundraiser"+filename);
@@ -144,13 +148,13 @@ public class MainWindow {
 		toolBar.setBounds(0, 0, 80, 21);
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
-		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/icons/new-donor.png"));
+		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/new-donor.png"));
 		tltmNewDonor.setText("New Donor");
 
 		tltmSave = new ToolItem(toolBar, SWT.NONE);
 		tltmSave.setToolTipText("Save");
 		tltmSave.setEnabled(false);
-		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/icons/save.png"));
+		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/save.png"));
 
 		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
 		tltmSep.setText("sep");
@@ -202,7 +206,7 @@ public class MainWindow {
 				comboSearch.setListVisible(false);
 				comboSearch.setItems(new String[]{});
 				if (txtSearch.getCharCount() > 1) {
-					HashMap<String,String> results = LibreFundraiser.getLocalDB().quickSearch(txtSearch.getText());
+					HashMap<String,String> results = Main.getLocalDB().quickSearch(txtSearch.getText());
 					ArrayList<String> keys = new ArrayList<String>();
 					for (Entry<String, String> entry : results.entrySet()) {
 						String key = entry.getKey();
@@ -277,7 +281,7 @@ public class MainWindow {
 						dialog.setStatusText("Consolidating donors and gifts...");
 					}
 				});
-				((DonorList)compositeDonorList).donors = LibreFundraiser.getLocalDB().getDonors();
+				((DonorList)compositeDonorList).donors = Main.getLocalDB().getDonors();
 				display.asyncExec(new Runnable() {
 					public void run() {
 						dialog.setProgress(75);
