@@ -361,6 +361,7 @@ public class DonorEditForm extends Composite {
 		grpWeb.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpWeb.setText("Web");
 		grpWeb.setBounds(0, 0, 70, 82);
+		grpWeb.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		ToolBar toolBar = new ToolBar(grpWeb, SWT.FLAT | SWT.RIGHT);
 		
@@ -380,6 +381,7 @@ public class DonorEditForm extends Composite {
 		Composite compositeGifts = new Composite(tabFolder, SWT.NONE);
 		tbtmGifts.setControl(compositeGifts);
 		compositeGifts.setLayout(new GridLayout(1, false));
+		compositeGifts.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		ToolBar tbrGifts = new ToolBar(compositeGifts, SWT.FLAT | SWT.RIGHT);
 		tbrGifts.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
