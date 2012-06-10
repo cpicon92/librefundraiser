@@ -48,6 +48,10 @@ public class FileDBASE {
 				fieldNames += ", RECNUM";
 				fieldValues += ", ?";
 			}
+			if (sourceTableName.equals("Master.dbf")) {
+				fieldNames += ", EMAIL2, WEB";
+				fieldValues += ", ?, ?";
+			}
 			stat.executeUpdate("create table "+destTableName+" ("+fieldNames+");");
 			PreparedStatement prep = conn.prepareStatement("insert into "+destTableName+" values ("+fieldValues+");");
 			final Iterator<Record> recordIterator = table.recordIterator();

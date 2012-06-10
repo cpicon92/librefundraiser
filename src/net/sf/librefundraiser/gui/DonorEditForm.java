@@ -514,7 +514,7 @@ public class DonorEditForm extends Composite {
 		txtNotes.setText(donor.getData("notes"));
 		txtTotalGiven.setText(donor.getData("alltime"));
 		txtMain.setText(donor.getData("email"));
-		txtOther.setText("");
+		txtOther.setText(donor.getData("email2"));
 		txtYearToDate.setText(donor.getData("yeartodt"));
 		txtLargestGift.setText(donor.getData("largest"));
 		txtFirstGiftDate.setText(donor.getData("firstgift"));

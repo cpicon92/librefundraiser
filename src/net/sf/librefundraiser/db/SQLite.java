@@ -79,7 +79,7 @@ public class SQLite {
 					try {
 						value = rs.getString(column);
 					} catch (SQLException e1) {}
-					donor.putData(column, value);
+					donor.putData(column, value!=null?value:"");
 				}
 				donors.add(donor);
 			}
@@ -98,7 +98,7 @@ public class SQLite {
 							try {
 								value = rsGifts.getString(column);
 							} catch (SQLException e1) {}
-							gift.putIc(column, value);
+							gift.putIc(column, value!=null?value:"");
 						}
 						donor.addGift(gift);
 					}
