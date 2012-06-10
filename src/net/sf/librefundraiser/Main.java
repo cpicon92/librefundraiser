@@ -39,10 +39,13 @@ public class Main {
 				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon256.png"))
 				};
 		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
+			System.out.println("Last database file doesn't exist. Prompting for new one.");
 			NewDatabaseDialog dialog = new NewDatabaseDialog();
 			addSetting("lastDB",dialog.open());
 		}
+		System.out.println("Opening database... ");
 		localDB = new SQLite(getSetting("lastDB"));
+		System.out.println("Database opened. Opening main window... ");
 		try {
 			window = new MainWindow();
 			window.open();

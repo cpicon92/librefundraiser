@@ -37,17 +37,21 @@ public class FileDBASE {
 			final List<Field> fields = table.getFields();
 			Statement stat = conn.createStatement();
 			String fieldNames = "";
-			String fieldTypes = "";
+			String fieldValues = "";
 			for (Field f : fields) {
 				fieldNames += f.getName() + ", ";
-				fieldTypes += "?, ";
+				fieldValues += "?, ";
 			}
 			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
-			fieldTypes = fieldTypes.substring(0,fieldTypes.length()-2);
+			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
+			if (sourceTableName.equals("Gifts.dbf")) {
+				fieldNames += ", RECNUM";
+				fieldValues += ", ?";
+			}
 			stat.executeUpdate("create table "+destTableName+" ("+fieldNames+");");
-			PreparedStatement prep = conn.prepareStatement("insert into "+destTableName+" values ("+fieldTypes+");");
+			PreparedStatement prep = conn.prepareStatement("insert into "+destTableName+" values ("+fieldValues+");");
 			final Iterator<Record> recordIterator = table.recordIterator();
-			while (recordIterator.hasNext()) {
+			for (int recNum = 1; recordIterator.hasNext(); recNum++) {
 				final Record record = recordIterator.next();
 				int currentField = 1;
 				for (final Field field : fields) {
@@ -56,6 +60,9 @@ public class FileDBASE {
 					String rawValue = value != null ? value.toString() : "";
 					prep.setString(currentField, rawValue.trim());
 					currentField++;
+				}
+				if (sourceTableName.equals("Gifts.dbf")) {
+					prep.setString(fields.size()+1, String.format("%06d", recNum));
 				}
 				prep.addBatch();
 			}

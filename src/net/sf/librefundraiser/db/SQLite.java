@@ -58,7 +58,8 @@ public class SQLite {
 		}
 		return output;
 	}
-	public Donor[] getDonors(String query) {
+	public Donor[] getDonors(String query, boolean fetchGifts) {
+		System.out.println("Fetching donors... ");
 		Connection conn = this.getConnection();
 		ArrayDeque<String> columns = new ArrayDeque<String>();
 		Donor[] output = null;
@@ -74,6 +75,7 @@ public class SQLite {
 			ArrayDeque<Donor> donors = new ArrayDeque<Donor>();
 			while(rs.next()) {
 				Donor donor = new Donor(rs.getInt("account"));
+				System.out.println("Fetched "+rs.getString("lastname")+".");
 				for (String column : columns) {
 					String value = "";
 					try {
@@ -83,29 +85,34 @@ public class SQLite {
 				}
 				donors.add(donor);
 			}
-			for (Donor donor : donors) {
-				ArrayDeque<String> giftColumns = new ArrayDeque<String>();
-				ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
-				while (rsGifts.next()) {
-					giftColumns.add(rsGifts.getString("name"));
-				}
-				rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
-				for (int i = 0; rsGifts.next(); i++) {
-					Donor.Gift gift = new Donor.Gift(i);
-					gift.putIc("recnum", String.format("%06d", i));
-					for (String column : giftColumns) {
-						String value = "";
-						try {
-							value = rsGifts.getString(column);
-						} catch (SQLException e1) {}
-						gift.putIc(column, value);
+			if (fetchGifts) {
+				System.out.println("Fetching gifts...");
+				for (Donor donor : donors) {
+					ArrayDeque<String> giftColumns = new ArrayDeque<String>();
+					ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
+					while (rsGifts.next()) {
+						giftColumns.add(rsGifts.getString("name"));
 					}
-					donor.addGift(gift);
+					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
+					for (int i = 0; rsGifts.next(); i++) {
+						Donor.Gift gift = new Donor.Gift(i);
+						for (String column : giftColumns) {
+							String value = "";
+							try {
+								value = rsGifts.getString(column);
+							} catch (SQLException e1) {}
+							gift.putIc(column, value);
+						}
+						System.out.println("Fetched "+gift.getIc("recnum")+" (for "+donor.getData("lastname")+").");
+						donor.addGift(gift);
+					}
+					rsGifts.close();
 				}
-				rsGifts.close();
 			}
 			rs.close();
+
 			output = donors.toArray(new Donor[0]);
+			System.out.println("Done.");
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
@@ -119,6 +126,6 @@ public class SQLite {
 		return output;
 	}
 	public Donor[] getDonors() {
-		return getDonors("");
+		return getDonors("",false);
 	}
 }
