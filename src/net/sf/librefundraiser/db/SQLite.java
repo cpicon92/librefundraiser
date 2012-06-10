@@ -59,7 +59,6 @@ public class SQLite {
 		return output;
 	}
 	public Donor[] getDonors(String query, boolean fetchGifts) {
-		System.out.println("Fetching donors... ");
 		Connection conn = this.getConnection();
 		ArrayDeque<String> columns = new ArrayDeque<String>();
 		Donor[] output = null;
@@ -75,7 +74,6 @@ public class SQLite {
 			ArrayDeque<Donor> donors = new ArrayDeque<Donor>();
 			while(rs.next()) {
 				Donor donor = new Donor(rs.getInt("account"));
-				System.out.println("Fetched "+rs.getString("lastname")+".");
 				for (String column : columns) {
 					String value = "";
 					try {
@@ -86,7 +84,6 @@ public class SQLite {
 				donors.add(donor);
 			}
 			if (fetchGifts) {
-				System.out.println("Fetching gifts...");
 				for (Donor donor : donors) {
 					ArrayDeque<String> giftColumns = new ArrayDeque<String>();
 					ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
@@ -103,7 +100,6 @@ public class SQLite {
 							} catch (SQLException e1) {}
 							gift.putIc(column, value);
 						}
-						System.out.println("Fetched "+gift.getIc("recnum")+" (for "+donor.getData("lastname")+").");
 						donor.addGift(gift);
 					}
 					rsGifts.close();
@@ -112,7 +108,6 @@ public class SQLite {
 			rs.close();
 
 			output = donors.toArray(new Donor[0]);
-			System.out.println("Done.");
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
