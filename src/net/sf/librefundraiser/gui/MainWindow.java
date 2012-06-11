@@ -290,7 +290,7 @@ public class MainWindow {
 				});
 				display.asyncExec(new Runnable() {
 					public void run() {
-						((DonorList)compositeDonorList).refresh();
+						refresh(false);
 						dialog.dispose();
 					}
 				});
@@ -298,6 +298,22 @@ public class MainWindow {
 		}).start();
 		dialog.open();
 	}
+	
+	public void refresh() {
+		refresh(true);
+	}
+	
+	public void refresh(boolean reload) {
+		if (reload) reload();
+		compositeDonorList.setVisible(false);
+		((DonorList)compositeDonorList).refresh();
+		compositeDonorList.setVisible(true);
+	}
+	
+	public void reload() {
+		((DonorList)compositeDonorList).donors = Main.getLocalDB().getDonors();
+	}
+	
 	private void quickSearchOpen() {
 		@SuppressWarnings("unchecked")
 		ArrayList<String> keys = (ArrayList<String>)comboSearch.getData();

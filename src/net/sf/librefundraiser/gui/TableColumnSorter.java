@@ -41,6 +41,11 @@ public class TableColumnSorter extends ViewerComparator {
 		for (TableColumn tableColumn : viewer.getTable().getColumns()) {
 			tableColumn.addSelectionListener(selectionHandler);
 		}
+		try {
+			TableColumn selectedColumn = viewer.getTable().getColumns()[0];
+			Assert.isTrue(TableColumnSorter.this.viewer.getTable() == selectedColumn.getParent());
+			TableColumnSorter.this.setColumn(selectedColumn);
+		} catch (Exception e) {}
 	}
 
 	public void setColumn(TableColumn selectedColumn) {

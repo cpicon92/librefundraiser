@@ -75,6 +75,7 @@ public class DonorEditForm extends Composite {
 			setEdited(true);
 		}
 	};
+	private Text txtAccountID;
 
 	/**
 	 * Create the composite.
@@ -494,6 +495,14 @@ public class DonorEditForm extends Composite {
 		txtLastEdited.setEditable(false);
 		txtLastEdited.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
+		Label lblAccountId = new Label(grpOther, SWT.NONE);
+		lblAccountId.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAccountId.setText("Account ID");
+		
+		txtAccountID = new Text(grpOther, SWT.BORDER);
+		txtAccountID.setEditable(false);
+		txtAccountID.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
 		Object[][] fields = { { txtFirstName, "firstname" },
 				{ txtLastName, "lastname" }, { txtBusinessName, "lastname" },
 				{ txtSpouseFirst, "spousefrst" }, { txtSpouseLast, "spouselast" },
@@ -510,7 +519,7 @@ public class DonorEditForm extends Composite {
 				{ txtLastGiftDate, "lastgivedt" }, { txtLastEdited, "changedate" },
 				{ comboSalutation, "salutation" }, { comboCategory, "category1" },
 				{ comboDonorSource, "category2" },
-				{ comboMailingName, "mailname" }, { comboState, "state" } };
+				{ comboMailingName, "mailname" }, { comboState, "state" }, { txtAccountID, "account" } };
 		this.fields = fields;
 		this.fillForm();
 		this.setBusiness(!donor.getData("type").equals("I"));
@@ -529,10 +538,21 @@ public class DonorEditForm extends Composite {
 	}
 	
 	private void saveForm() {
+		if (!business) {
+			txtBusinessName.setText(txtLastName.getText());
+			txtContactLast.setText(txtSpouseLast.getText());
+			txtContactFirst.setText(txtSpouseFirst.getText());
+		} else {
+			txtLastName.setText(txtBusinessName.getText());
+			txtSpouseFirst.setText(txtContactFirst.getText());
+			txtSpouseLast.setText(txtContactLast.getText());
+		}
+		donor.putData("type",business?"B":"I");
 		for (Object field[] : fields) {
 			saveField((Control)field[0],(String)field[1]);
 		}
 		Main.getLocalDB().saveDonor(this.donor);
+		Main.refresh();
 		this.setEdited(false);
 	}
 	

@@ -77,6 +77,12 @@ public class Main {
 	public static ToolItem getSaveButton() {
 		return window.getSaveButton();
 	}
+	public static void refresh() {
+		window.refresh();
+	}
+	public static void reloadDonors() {
+		window.reload();
+	}
 	public static void loadSettings() {
 		String path = System.getenv("AppData");
 		if (path == null) {
