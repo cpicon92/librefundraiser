@@ -121,14 +121,18 @@ public class DonorList extends Composite {
 		tableViewer.setInput(donors);
 		tabFolder.setSelection(0);
 		new TableColumnSorter(tableViewer);
-		for (TableColumn tc : table.getColumns()) {
-	        tc.pack();
-		}
+		packColumns();
 	}
 
 	public void refresh() {
 		tableViewer.setInput(donors);
 		tableViewer.refresh();
+		packColumns();
+	}
+	public void packColumns() {
+		for (TableColumn tc : table.getColumns()) {
+	        tc.pack();
+		}
 	}
 	
 	private int columnSearch(String columnName) {

@@ -49,7 +49,7 @@ public class FileDBASE {
 				fieldValues += ", ?";
 			}
 			if (sourceTableName.equals("Master.dbf")) {
-				fieldNames += ", EMAIL2, WEB";
+				fieldNames += ", EMAIL2, WEB, PRIMARY KEY (ACCOUNT)";
 				fieldValues += ", ?, ?";
 			}
 			stat.executeUpdate("create table "+destTableName+" ("+fieldNames+");");

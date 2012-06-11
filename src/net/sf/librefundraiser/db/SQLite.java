@@ -2,6 +2,7 @@ package net.sf.librefundraiser.db;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -119,6 +120,44 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		return output;
+	}
+	public void saveDonor(Donor donor) {
+		Connection conn = this.getConnection();
+		ArrayDeque<String> columns = new ArrayDeque<String>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
+			while(rs.next()){
+				String str = rs.getString("name");
+				columns.add(str);
+			}
+			rs.close();
+			String fieldNames = "";
+			String fieldValues = "";
+			for (String f : columns) {
+				fieldNames += f + ", ";
+				fieldValues += "?, ";
+			}
+			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
+			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
+			PreparedStatement prep = conn.prepareStatement("replace into donors values ("+fieldValues+");");
+				int currentField = 1;
+				for (final String field : columns) {
+					prep.setString(currentField, donor.getData(field));
+					currentField++;
+				}
+				prep.addBatch();
+			conn.setAutoCommit(false);
+			prep.executeBatch();
+			conn.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	public Donor[] getDonors() {
 		return getDonors("",false);

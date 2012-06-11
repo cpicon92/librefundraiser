@@ -26,7 +26,7 @@ public class Donor {
 		this.id = id;
 	}
 	public String getData(String key) {
-		return data.get(key.toLowerCase());
+		return data.get(key.toLowerCase()!=null?key.toLowerCase():"");
 	}
 	public void putData(String key, String value) {
 		data.put(key.toLowerCase(), value);

@@ -3,22 +3,26 @@ import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 
 public class DonorEditForm extends Composite {
@@ -65,6 +69,12 @@ public class DonorEditForm extends Composite {
 	private Composite compositeOptional;
 	private DonorTab donorTab;
 	private boolean edited = false;
+	private Object[][] fields;
+	private ModifyListener modifyListener = new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
+			setEdited(true);
+		}
+	};
 
 	/**
 	 * Create the composite.
@@ -484,7 +494,25 @@ public class DonorEditForm extends Composite {
 		txtLastEdited.setEditable(false);
 		txtLastEdited.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		this.fillOut();
+		Object[][] fields = { { txtFirstName, "firstname" },
+				{ txtLastName, "lastname" }, { txtBusinessName, "lastname" },
+				{ txtSpouseFirst, "spousefrst" }, { txtSpouseLast, "spouselast" },
+				{ txtContactLast, "spouselast" },
+				{ txtContactFirst, "spousefrst" }, { txtHomePhone, "homephone" },
+				{ txtWorkPhone, "workphone" }, { txtFax, "fax" },
+				{ txtOptional, "contact" }, { txtCity, "city" },
+				{ txtAddress1, "address1" }, { txtZip, "zip" },
+				{ txtAddress2, "address2" }, { txtCountry, "country" },
+				{ txtNotes, "notes" }, { txtTotalGiven, "alltime" },
+				{ txtMain, "email" }, { txtOther, "email2" },
+				{ txtYearToDate, "yeartodt" }, { txtLargestGift, "largest" },
+				{ txtFirstGiftDate, "firstgift" }, { txtLastGiftAmt, "lastamt" },
+				{ txtLastGiftDate, "lastgivedt" }, { txtLastEdited, "changedate" },
+				{ comboSalutation, "salutation" }, { comboCategory, "category1" },
+				{ comboDonorSource, "category2" },
+				{ comboMailingName, "mailname" }, { comboState, "state" } };
+		this.fields = fields;
+		this.fillForm();
 		this.setBusiness(!donor.getData("type").equals("I"));
 		this.setEdited(false);
 	}
@@ -494,38 +522,40 @@ public class DonorEditForm extends Composite {
 		// Disable the check that prevents subclassing of SWT components
 	}
 	
-	protected void fillOut() {
-		txtFirstName.setText(donor.getData("firstname"));
-		txtLastName.setText(donor.getData("lastname"));
-		txtBusinessName.setText(donor.getData("lastname"));
-		txtSpouseFirst.setText(donor.getData("spousefrst"));
-		txtSpouseLast.setText(donor.getData("spouselast"));
-		txtContactLast.setText(donor.getData("spouselast"));
-		txtContactFirst.setText(donor.getData("spousefrst"));
-		txtHomePhone.setText(donor.getData("homephone"));
-		txtWorkPhone.setText(donor.getData("workphone"));
-		txtFax.setText(donor.getData("fax"));
-		txtOptional.setText(donor.getData("contact"));
-		txtCity.setText(donor.getData("city"));
-		txtAddress1.setText(donor.getData("address1"));
-		txtZip.setText(donor.getData("zip"));
-		txtAddress2.setText(donor.getData("address2"));
-		txtCountry.setText(donor.getData("country"));
-		txtNotes.setText(donor.getData("notes"));
-		txtTotalGiven.setText(donor.getData("alltime"));
-		txtMain.setText(donor.getData("email"));
-		txtOther.setText(donor.getData("email2"));
-		txtYearToDate.setText(donor.getData("yeartodt"));
-		txtLargestGift.setText(donor.getData("largest"));
-		txtFirstGiftDate.setText(donor.getData("firstgift"));
-		txtLastGiftAmt.setText(donor.getData("lastamt"));
-		txtLastGiftDate.setText(donor.getData("lastgivedt"));
-		txtLastEdited.setText(donor.getData("changedate"));
-		comboSalutation.setText(donor.getData("salutation"));
-		comboCategory.setText(donor.getData("category1"));
-		comboDonorSource.setText(donor.getData("category2"));
-		comboMailingName.setText(donor.getData("mailname"));
-		comboState.setText(donor.getData("state"));
+	private void fillForm() {
+		for (Object field[] : fields) {
+			fillField((Control)field[0],(String)field[1]);
+		}
+	}
+	
+	private void saveForm() {
+		for (Object field[] : fields) {
+			saveField((Control)field[0],(String)field[1]);
+		}
+		Main.getLocalDB().saveDonor(this.donor);
+		this.setEdited(false);
+	}
+	
+	private void fillField(Control field, String key) {
+		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+			((Text)field).setText(donor.getData(key));
+			((Text)field).addModifyListener(modifyListener);
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+			((Combo)field).setText(donor.getData(key));
+			((Combo)field).addModifyListener(modifyListener);
+		} else {
+			System.err.println("The field for \""+key+"\" cannot contain text.");
+		}
+	}
+	
+	private void saveField(Control field, String key) {
+		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+			donor.putData(key,((Text)field).getText());
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+			donor.putData(key,((Combo)field).getText());
+		} else {
+			System.err.println("The field for \""+key+"\" cannot contain text.");
+		}
 	}
 	
 	protected void setBusiness(boolean business) {
@@ -564,6 +594,19 @@ public class DonorEditForm extends Composite {
 		String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
 		if (tabTitle.equals("")) tabTitle = donor.getData("account");
 		donorTab.setText((edited?"*":"")+tabTitle);
-		Main.getSaveButton().setEnabled(edited);
+		ToolItem saveButton = Main.getSaveButton();
+		saveButton.setEnabled(edited);
+		if (edited) {
+			final DonorEditForm me = this;
+			saveButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					me.saveForm();
+				}
+			});
+		} else {
+			for (Listener l : saveButton.getListeners(SWT.Selection)) {
+				saveButton.removeListener(SWT.Selection,l);
+			}
+		}
 	}
 }
