@@ -66,7 +66,7 @@ public class FileDBASE {
 					String fieldData = rawValue.trim();
 					if (field.getName().equals("EMAIL")) {
 						try {
-						String[] emails = fieldData.split(";");
+						String[] emails = fieldData.split(";",2);
 						fieldData = emails[0];
 						email2 = emails[1];
 						} catch (Exception e) {
