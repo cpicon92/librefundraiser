@@ -146,5 +146,11 @@ public class DonorList extends Composite {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+	
+	public void newDonor() {
+		int id = Main.getLocalDB().getMaxAccount()+1;
+		System.out.println(id);
+		new DonorTab(id,tabFolder);
+	}
 
 }

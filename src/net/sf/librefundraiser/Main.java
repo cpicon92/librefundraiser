@@ -63,7 +63,7 @@ public class Main {
 		try {
 			return toMoney(Double.parseDouble(amount));
 		} catch (Exception e) {
-			System.err.println("Value could not be parsed as money.");
+			System.err.println("Value \""+amount+"\" could not be parsed as money.");
 			return amount;
 		}
 	}

@@ -148,6 +148,11 @@ public class MainWindow {
 		toolBar.setBounds(0, 0, 80, 21);
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
+		tltmNewDonor.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				newDonor();
+			}
+		});
 		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/new-donor.png"));
 		tltmNewDonor.setText("New Donor");
 
@@ -329,5 +334,9 @@ public class MainWindow {
 				((DonorList)compositeDonorList).tabFolder.setFocus();
 			}
 		} catch (Exception e1) {}
+	}
+	
+	public void newDonor() {
+		((DonorList)compositeDonorList).newDonor();
 	}
 }

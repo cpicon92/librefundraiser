@@ -162,4 +162,26 @@ public class SQLite {
 	public Donor[] getDonors() {
 		return getDonors("",false);
 	}
+	public int getMaxAccount() {
+		Connection conn = this.getConnection();
+		int output = 0;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT MAX(ACCOUNT) AS max_account FROM donors");
+			while(rs.next()){
+				output = rs.getInt("max_account");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 }

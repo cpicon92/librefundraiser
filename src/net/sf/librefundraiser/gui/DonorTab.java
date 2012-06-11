@@ -16,7 +16,13 @@ public class DonorTab extends CTabItem {
 		super(tabFolder, SWT.NONE);
 		this.id = id;
 		this.setShowClose(true);
-		donor = Main.getLocalDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
+		Donor donor;
+		try {
+			donor = Main.getLocalDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			donor = new Donor(id);
+		}
+		this.donor = donor;
 		DonorEditForm editForm = new DonorEditForm(this.getParent(),SWT.NONE,this);
 		this.setControl(editForm);
 	}
