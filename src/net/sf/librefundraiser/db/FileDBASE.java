@@ -57,7 +57,7 @@ public class FileDBASE {
 			final Iterator<Record> recordIterator = table.recordIterator();
 			for (int recNum = 1; recordIterator.hasNext(); recNum++) {
 				final Record record = recordIterator.next();
-				String email2 = null;
+				String email2 = "";
 				int currentField = 1;
 				for (final Field field : fields) {
 					Object value = record.getTypedValue(field.getName());
@@ -66,17 +66,16 @@ public class FileDBASE {
 					String fieldData = rawValue.trim();
 					if (field.getName().equals("EMAIL")) {
 						try {
-						String[] emails = fieldData.split(";",2);
-						fieldData = emails[0];
-						email2 = emails[1];
+							String[] emails = fieldData.split("(;|,) *",2);
+							fieldData = emails[0];
+							email2 = emails[1];
 						} catch (Exception e) {
-							e.printStackTrace();
 						}
 					}
 					prep.setString(currentField, fieldData);
 					currentField++;
 				}
-				if (sourceTableName.equals("Master.dbf") && email2 != null) {
+				if (sourceTableName.equals("Master.dbf")) {
 					prep.setString(fields.size()+1, email2);
 				}
 				if (sourceTableName.equals("Gifts.dbf")) {
