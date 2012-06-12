@@ -15,15 +15,20 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -41,7 +46,8 @@ public class MainWindow {
 	private ToolItem tltmSave;
 	private Composite compositeDonorList;
 	private Display display;
-	private Combo comboSearch;
+	private List listSearch;
+	private Shell shellSearch;
 
 	/**
 	 * Open the window.
@@ -169,13 +175,33 @@ public class MainWindow {
 		gd_compositeSearch.widthHint = 150;
 		compositeSearch.setLayoutData(gd_compositeSearch);
 		compositeSearch.setLayout(new StackLayout());
+		
+		shellSearch = new Shell(shell, SWT.NO_TRIM);
+		listSearch = new List(shellSearch, SWT.SINGLE);
+		shellSearch.setLayout(new FillLayout());
+		shellSearch.addShellListener(new ShellListener() {
+			public void shellActivated(ShellEvent e) {
+				shellSearch.pack();
+				txtSearch.setFocus();
+				Rectangle bounds = txtSearch.getBounds();
+				Point location = txtSearch.toDisplay(0, bounds.height);
+				shellSearch.setLocation(location);
+			}
+			public void shellClosed(ShellEvent e) {
+			}
+			public void shellDeactivated(ShellEvent e) {
+			}
+			public void shellDeiconified(ShellEvent e) {
+			}
+			public void shellIconified(ShellEvent e) {
+			}
+		});
 
 		txtSearch = new Text(compositeSearch, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtSearch.setBounds(0, 0, 76, 19);
 		txtSearch.setMessage("Quick Find");
 
-		comboSearch = new Combo(compositeSearch, SWT.NONE);
-		comboSearch.addSelectionListener(new SelectionAdapter() {
+		listSearch.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				quickSearchOpen();
 			}
@@ -184,10 +210,10 @@ public class MainWindow {
 		txtSearch.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
-					comboSearch.select(comboSearch.getSelectionIndex()+1);
+					listSearch.select(listSearch.getSelectionIndex()+1);
 				}
 				if (e.keyCode == SWT.ARROW_UP) {
-					comboSearch.select(comboSearch.getSelectionIndex()-1);
+					listSearch.select(listSearch.getSelectionIndex()-1);
 				}
 			}
 		});
@@ -208,20 +234,24 @@ public class MainWindow {
 		});
 		txtSearch.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				comboSearch.setListVisible(false);
-				comboSearch.setItems(new String[]{});
+				shellSearch.setVisible(false);
+				listSearch.setItems(new String[]{});
 				if (txtSearch.getCharCount() > 1) {
 					HashMap<String,String> results = Main.getLocalDB().quickSearch(txtSearch.getText());
 					ArrayList<String> keys = new ArrayList<String>();
+					int maxItems = 10;
+					int items = 0;
 					for (Entry<String, String> entry : results.entrySet()) {
+						items++;
+						if (items >= maxItems) break;
 						String key = entry.getKey();
 						String value = entry.getValue();
 						keys.add(key);
-						comboSearch.add(value);
+						listSearch.add(value);
 					}
-					comboSearch.setData(keys);
-					comboSearch.setListVisible(true);
-					comboSearch.select(0);
+					listSearch.setData(keys);
+					shellSearch.setVisible(true);
+					listSearch.select(0);
 				}
 			}
 		});
@@ -321,14 +351,14 @@ public class MainWindow {
 	
 	private void quickSearchOpen() {
 		@SuppressWarnings("unchecked")
-		ArrayList<String> keys = (ArrayList<String>)comboSearch.getData();
+		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
 		try {
 			if (keys != null && !keys.isEmpty()) {
-				String key = keys.get(comboSearch.getSelectionIndex());
+				String key = keys.get(listSearch.getSelectionIndex());
 				int id = Integer.parseInt(key);
 				DonorTab newTab = new DonorTab(id,((DonorList)compositeDonorList).tabFolder);
-				comboSearch.setListVisible(false);
-				comboSearch.setItems(new String[]{});
+				shellSearch.setVisible(false);
+				listSearch.setItems(new String[]{});
 				txtSearch.setText("");
 				((DonorList)compositeDonorList).tabFolder.setSelection(newTab);
 				((DonorList)compositeDonorList).tabFolder.setFocus();
