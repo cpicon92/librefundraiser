@@ -176,7 +176,7 @@ public class MainWindow {
 		compositeSearch.setLayoutData(gd_compositeSearch);
 		compositeSearch.setLayout(new StackLayout());
 		
-		shellSearch = new Shell(shell, SWT.NO_TRIM);
+		shellSearch = new Shell(shell, SWT.NO_TRIM | SWT.TOOL);
 		listSearch = new List(shellSearch, SWT.SINGLE);
 		shellSearch.setLayout(new FillLayout());
 		shellSearch.addShellListener(new ShellListener() {
