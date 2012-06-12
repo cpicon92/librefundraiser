@@ -127,7 +127,6 @@ public class GiftEditForm extends Composite {
 	}
 
 	private void inheritForeground(Control control) {
-		System.out.println(control.getClass().getName());
 		try {
 			for (Control c : ((Composite)control).getChildren()) {
 				c.setForeground(control.getForeground());
@@ -148,10 +147,11 @@ public class GiftEditForm extends Composite {
 	}
 	
 	private void fillField(Control field, String key) {
+		String value = gift.getIc(key)!=null?gift.getIc(key):"";
 		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
-			((Text)field).setText(gift.getIc(key)!=null?gift.getIc(key):"");
+			((Text)field).setText(value);
 		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
-			((Combo)field).setText(gift.getIc(key)!=null?gift.getIc(key):"");
+			((Combo)field).setText(value);
 		} else {
 			System.err.println("The field for \""+key+"\" cannot contain text.");
 		}

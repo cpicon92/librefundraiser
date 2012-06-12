@@ -92,8 +92,8 @@ public class SQLite {
 						giftColumns.add(rsGifts.getString("name"));
 					}
 					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
-					for (int i = 0; rsGifts.next(); i++) {
-						Donor.Gift gift = new Donor.Gift(i);
+					while (rsGifts.next()) {
+						Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
 						for (String column : giftColumns) {
 							String value = "";
 							try {

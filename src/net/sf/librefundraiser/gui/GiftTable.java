@@ -84,4 +84,8 @@ public class GiftTable extends Composite {
 		tableGifts.setEnabled(e);
 	}
 
+	public Table getTable() {
+		return tableGifts;
+	}
+
 }

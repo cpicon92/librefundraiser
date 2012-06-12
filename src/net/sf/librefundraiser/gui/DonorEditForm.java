@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -432,8 +433,14 @@ public class DonorEditForm extends Composite {
 		tltmSep.setText("sep");
 		
 		tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
+		tltmEdit.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TableItem selectedItem = giftTable.getTable().getSelection()[0];
+				int id = Integer.parseInt(selectedItem.getText(6));
+				editGift(donor.getGifts().get(id));
+			}
+		});
 		tltmEdit.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/edit-gift.png"));
-		tltmEdit.setEnabled(false);
 		tltmEdit.setText("Edit");
 		
 		tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
