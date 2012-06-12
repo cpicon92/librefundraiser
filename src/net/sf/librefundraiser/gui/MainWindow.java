@@ -8,8 +8,12 @@ import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.db.FileDBASE;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,8 +40,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 
 
 public class MainWindow {
@@ -50,6 +52,7 @@ public class MainWindow {
 	private List listSearch;
 	private Shell shellSearch;
 	private long popupTimer = System.currentTimeMillis();
+	private Runnable saveCurrent;
 
 	/**
 	 * Open the window.
@@ -131,9 +134,25 @@ public class MainWindow {
 		mntmDonor.setMenu(menuDonor);
 
 		MenuItem mntmNewDonor = new MenuItem(menuDonor, SWT.NONE);
+		mntmNewDonor.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				newDonor();
+			}
+		});
 		mntmNewDonor.setText("New Donor");
 
-		MenuItem mntmSaveCurrentDonor = new MenuItem(menuDonor, SWT.NONE);
+		final MenuItem mntmSaveCurrentDonor = new MenuItem(menuDonor, SWT.NONE);
+		mntmSaveCurrentDonor.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (saveCurrent == null) return;
+				saveCurrent.run();
+			}
+		});
+		menuDonor.addMenuListener(new MenuAdapter() {
+			public void menuShown(MenuEvent e) {
+				mntmSaveCurrentDonor.setEnabled(tltmSave.getEnabled());
+			}
+		});
 		mntmSaveCurrentDonor.setText("Save Current Donor");
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
@@ -168,12 +187,17 @@ public class MainWindow {
 		tltmSave.setToolTipText("Save");
 		tltmSave.setEnabled(false);
 		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/save.png"));
-
+		tltmSave.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (saveCurrent == null) return;
+				saveCurrent.run();
+			}
+		});
 		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
 		tltmSep.setText("sep");
 		
 		shellSearch = new Shell(shell, SWT.NO_TRIM | SWT.TOOL);
-		listSearch = new List(shellSearch, SWT.SINGLE);
+		listSearch = new List(shellSearch, SWT.SINGLE | SWT.BORDER);
 		shellSearch.setLayout(new FillLayout());
 		shellSearch.addShellListener(new ShellListener() {
 			public void shellActivated(ShellEvent e) {
@@ -282,6 +306,9 @@ public class MainWindow {
 	}
 	public ToolItem getSaveButton() {
 		return tltmSave;
+	}
+	public void setSaveAction(Runnable r) {
+		saveCurrent = r;
 	}
 	public String newDBfile() {
 		FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);

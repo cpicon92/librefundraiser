@@ -45,7 +45,7 @@ public class FileDBASE {
 			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
 			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
 			if (sourceTableName.equals("Gifts.dbf")) {
-				fieldNames += ", RECNUM";
+				fieldNames += ", RECNUM, PRIMARY KEY (RECNUM)";
 				fieldValues += ", ?";
 			}
 			if (sourceTableName.equals("Master.dbf")) {

@@ -1,13 +1,22 @@
 package net.sf.librefundraiser.gui;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -16,7 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -76,6 +84,13 @@ public class DonorEditForm extends Composite {
 		}
 	};
 	private Text txtAccountID;
+	private Composite compositeEditForm;
+	private GridData gd_compositeEditForm;
+	private ToolItem tltmAdd;
+	private ToolItem tltmEdit;
+	private ToolItem tltmDelete;
+	private GiftTable giftTable;
+	private Composite compositeGifts;
 
 	/**
 	 * Create the composite.
@@ -393,7 +408,7 @@ public class DonorEditForm extends Composite {
 		TabItem tbtmGifts = new TabItem(tabFolder, SWT.NONE);
 		tbtmGifts.setText("Gifts");
 		
-		Composite compositeGifts = new Composite(tabFolder, SWT.NONE);
+		compositeGifts = new Composite(tabFolder, SWT.NONE);
 		tbtmGifts.setControl(compositeGifts);
 		compositeGifts.setLayout(new GridLayout(1, false));
 		compositeGifts.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -402,25 +417,37 @@ public class DonorEditForm extends Composite {
 		tbrGifts.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		tbrGifts.setBounds(0, 0, 89, 23);
 		
-		ToolItem tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
+		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
+		tltmAdd.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Gift gift = new Gift(Main.getLocalDB().getMaxRecNum());
+				gift.putIc("account", donor.getData("account"));
+				editGift(gift);
+			}
+		});
 		tltmAdd.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/new-gift.png"));
 		tltmAdd.setText("Add");
 		
 		ToolItem tltmSep = new ToolItem(tbrGifts, SWT.SEPARATOR);
 		tltmSep.setText("sep");
 		
-		ToolItem tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
+		tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
 		tltmEdit.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/edit-gift.png"));
 		tltmEdit.setEnabled(false);
 		tltmEdit.setText("Edit");
 		
-		ToolItem tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
+		tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
 		tltmDelete.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/delete-gift.png"));
 		tltmDelete.setEnabled(false);
 		tltmDelete.setText("Delete");
 		
-		Composite compositeGiftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
-		compositeGiftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		compositeEditForm = new Composite(compositeGifts, SWT.NONE);
+		gd_compositeEditForm = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_compositeEditForm.exclude = true;
+		compositeEditForm.setLayoutData(gd_compositeEditForm);
+		compositeEditForm.setLayout(new FillLayout(SWT.HORIZONTAL));
+		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
+		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
 		TabItem tbtmDetails = new TabItem(tabFolder, SWT.NONE);
 		tbtmDetails.setText("Details");
@@ -548,6 +575,8 @@ public class DonorEditForm extends Composite {
 			txtSpouseLast.setText(txtContactLast.getText());
 		}
 		donor.putData("type",business?"B":"I");
+		Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		txtLastEdited.setText(dateFormat.format(new Date()));
 		for (Object field[] : fields) {
 			saveField((Control)field[0],(String)field[1]);
 		}
@@ -618,15 +647,37 @@ public class DonorEditForm extends Composite {
 		saveButton.setEnabled(edited);
 		if (edited) {
 			final DonorEditForm me = this;
-			saveButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
+			Main.setSaveAction(new Runnable() {
+				public void run() {
 					me.saveForm();
 				}
 			});
-		} else {
-			for (Listener l : saveButton.getListeners(SWT.Selection)) {
-				saveButton.removeListener(SWT.Selection,l);
-			}
+		}
+	}
+	
+	public void editGift(Gift gift) {
+		if (compositeEditForm.getChildren().length == 0) {
+			GiftEditForm giftEditForm = new GiftEditForm(compositeEditForm, SWT.NONE, gift);
+			giftEditForm.addDisposeListener(new DisposeListener(){
+				public void widgetDisposed(DisposeEvent e) {
+					try {
+						compositeEditForm.setVisible(false);
+						gd_compositeEditForm.exclude = true;
+						compositeEditForm.layout();
+						compositeGifts.layout();
+						giftTable.setEnabled(true);
+						tltmAdd.setEnabled(true);
+					} catch (SWTException e1) {}
+				}
+			});
+			compositeEditForm.setVisible(true);
+			gd_compositeEditForm.exclude = false;
+			compositeEditForm.layout();
+			compositeGifts.layout();
+			tltmAdd.setEnabled(false);
+			tltmEdit.setEnabled(false);
+			tltmDelete.setEnabled(false);
+			giftTable.setEnabled(false);
 		}
 	}
 }

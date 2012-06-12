@@ -79,5 +79,9 @@ public class GiftTable extends Composite {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+	
+	public void setEnabled(boolean e) {
+		tableGifts.setEnabled(e);
+	}
 
 }

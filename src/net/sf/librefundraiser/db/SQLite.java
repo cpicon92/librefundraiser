@@ -184,4 +184,27 @@ public class SQLite {
 		}
 		return output;
 	}
+	
+	public int getMaxRecNum() {
+		Connection conn = this.getConnection();
+		int output = 0;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT MAX(RECNUM) AS max_recnum FROM gifts");
+			while(rs.next()){
+				output = rs.getInt("max_recnum");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return output;
+	}
 }

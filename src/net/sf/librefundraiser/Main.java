@@ -60,6 +60,7 @@ public class Main {
 		return currency.format(amount);
 	}
 	public static String toMoney(String amount) {
+		if (amount.trim().equals("")) amount = "0.00";
 		try {
 			return toMoney(Double.parseDouble(amount));
 		} catch (Exception e) {
@@ -76,6 +77,9 @@ public class Main {
 	}
 	public static ToolItem getSaveButton() {
 		return window.getSaveButton();
+	}
+	public static void setSaveAction(Runnable r) {
+		window.setSaveAction(r);
 	}
 	public static void refresh() {
 		window.refresh();
@@ -121,5 +125,8 @@ public class Main {
 	}
 	public static String getSetting(String key) {
 		return settings.getProperty(key);
+	}
+	public static MainWindow getWindow() {
+		return window;
 	}
 }
