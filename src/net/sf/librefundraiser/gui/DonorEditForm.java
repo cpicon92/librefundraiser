@@ -421,7 +421,7 @@ public class DonorEditForm extends Composite {
 		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
 		tltmAdd.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Gift gift = new Gift(Main.getLocalDB().getMaxRecNum());
+				Gift gift = new Gift(Main.getLocalDB().getMaxRecNum()+1);
 				gift.putIc("account", donor.getData("account"));
 				editGift(gift);
 			}
@@ -433,6 +433,7 @@ public class DonorEditForm extends Composite {
 		tltmSep.setText("sep");
 		
 		tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
+		tltmEdit.setEnabled(false);
 		tltmEdit.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem selectedItem = giftTable.getTable().getSelection()[0];
@@ -455,6 +456,11 @@ public class DonorEditForm extends Composite {
 		compositeEditForm.setLayout(new FillLayout(SWT.HORIZONTAL));
 		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
 		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		giftTable.getTable().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				tltmEdit.setEnabled(true);
+			}
+		});
 		
 		TabItem tbtmDetails = new TabItem(tabFolder, SWT.NONE);
 		tbtmDetails.setText("Details");
@@ -588,7 +594,15 @@ public class DonorEditForm extends Composite {
 			saveField((Control)field[0],(String)field[1]);
 		}
 		Main.getLocalDB().saveDonor(this.donor);
+		donor.putData("alltime", ""+Main.getLocalDB().getTotalGifts(donor));
+		donor.putData("yeartodt", ""+Main.getLocalDB().getYTD(donor));
+		donor.putData("largest", ""+Main.getLocalDB().getLargestGift(donor));
+		donor.putData("lastgivedt", Main.getLocalDB().getLastGiftDate(donor));
+		donor.putData("firstgift", Main.getLocalDB().getFirstGiftDate(donor));
+		donor.putData("lastamt", ""+Main.getLocalDB().getLastGift(donor));
+		Main.getLocalDB().saveDonor(this.donor);
 		Main.refresh();
+		this.fillForm();
 		this.setEdited(false);
 	}
 	
@@ -664,10 +678,15 @@ public class DonorEditForm extends Composite {
 	
 	public void editGift(Gift gift) {
 		if (compositeEditForm.getChildren().length == 0) {
-			GiftEditForm giftEditForm = new GiftEditForm(compositeEditForm, SWT.NONE, gift);
+			final GiftEditForm giftEditForm = new GiftEditForm(compositeEditForm, SWT.NONE, gift);
 			giftEditForm.addDisposeListener(new DisposeListener(){
 				public void widgetDisposed(DisposeEvent e) {
 					try {
+						if (!giftEditForm.canceled) {
+							Gift gift = giftEditForm.getGift();
+							donor.addGift(gift);
+							setEdited(true);
+						}
 						compositeEditForm.setVisible(false);
 						gd_compositeEditForm.exclude = true;
 						compositeEditForm.layout();

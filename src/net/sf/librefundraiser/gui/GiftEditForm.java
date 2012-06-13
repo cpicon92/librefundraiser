@@ -1,6 +1,12 @@
 package net.sf.librefundraiser.gui;
 
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -24,6 +30,7 @@ public class GiftEditForm extends Composite {
 	private Text txtNote;
 	private final Gift gift;
 	private final Object[][] fields;
+	public boolean canceled = true;
 
 	/**
 	 * Create the composite.
@@ -110,6 +117,8 @@ public class GiftEditForm extends Composite {
 		Button btnSave = new Button(compositeBottom, SWT.NONE);
 		btnSave.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				canceled = false;
+				saveForm();
 				dispose();
 			}
 		});
@@ -146,14 +155,59 @@ public class GiftEditForm extends Composite {
 		}
 	}
 	
+	private void saveForm() {
+		for (Object field[] : fields) {
+			saveField((Control)field[0],(String)field[1]);
+		}
+		gift.putIc("dt_entry",Main.getDateFormat().format(new Date()));
+		gift.putIc("recnum", String.format("%06d",gift.recnum));
+	}
+	
 	private void fillField(Control field, String key) {
 		String value = gift.getIc(key)!=null?gift.getIc(key):"";
 		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
 			((Text)field).setText(value);
 		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
 			((Combo)field).setText(value);
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.DateTime")) {
+			try {
+				Calendar date = Calendar.getInstance();
+				date.setTime(Main.getDateFormat().parse(value));
+				((DateTime)field).setYear(date.get(Calendar.YEAR));
+				((DateTime)field).setMonth(date.get(Calendar.MONTH));
+				((DateTime)field).setDay(date.get(Calendar.DAY_OF_MONTH));
+			} catch (ParseException e) {}
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Button")) {
+			Button b = ((Button)field);
+			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
+				b.setSelection(value.toLowerCase().equals("true"));
+				System.out.println(value);
+			}
 		} else {
 			System.err.println("The field for \""+key+"\" cannot contain text.");
 		}
+	}
+	
+	private void saveField(Control field, String key) {
+		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+			gift.putIc(key,((Text)field).getText());
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+			gift.putIc(key,((Combo)field).getText());
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.DateTime")) {
+			Calendar cal = new GregorianCalendar(((DateTime)field).getYear(),((DateTime)field).getMonth(),((DateTime)field).getDay());
+			Date date = new Date(cal.getTimeInMillis());
+			gift.putIc(key, Main.getDateFormat().format(date));
+		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Button")) {
+			Button b = ((Button)field);
+			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
+				gift.putIc(key, ""+b.getSelection());
+			}
+		} else {
+			System.err.println("The field for \""+key+"\" cannot contain text.");
+		}
+	}
+
+	public Gift getGift() {
+		return gift;
 	}
 }

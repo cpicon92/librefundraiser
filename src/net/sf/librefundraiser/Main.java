@@ -6,8 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import net.sf.librefundraiser.db.SQLite;
@@ -25,6 +27,7 @@ public class Main {
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
 	public static Image[] logo;
+	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 	public static void main(String args[]) {
 		loadSettings();
@@ -128,5 +131,8 @@ public class Main {
 	}
 	public static MainWindow getWindow() {
 		return window;
+	}
+	public static DateFormat getDateFormat() {
+		return dateFormat;
 	}
 }

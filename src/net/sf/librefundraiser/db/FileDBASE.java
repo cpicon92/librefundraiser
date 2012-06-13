@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class FileDBASE {
 		final Table table = database.getTable(sourceTableName);
 		try {
 			table.open(IfNonExistent.ERROR);
-			final Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			final Format dateFormat = Main.getDateFormat();
 			SQLite sqLite = Main.getLocalDB();
 			Connection conn = sqLite.getConnection();
 			final List<Field> fields = table.getFields();
