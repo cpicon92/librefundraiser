@@ -87,5 +87,10 @@ public class GiftTable extends Composite {
 	public Table getTable() {
 		return tableGifts;
 	}
+	
+	public void refresh() {
+		tableGifts.removeAll();
+		fillTable();
+	}
 
 }

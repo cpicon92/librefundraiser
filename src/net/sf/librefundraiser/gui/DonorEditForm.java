@@ -691,6 +691,7 @@ public class DonorEditForm extends Composite {
 						gd_compositeEditForm.exclude = true;
 						compositeEditForm.layout();
 						compositeGifts.layout();
+						giftTable.refresh();
 						giftTable.setEnabled(true);
 						tltmAdd.setEnabled(true);
 					} catch (SWTException e1) {}
