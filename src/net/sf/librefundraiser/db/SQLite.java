@@ -398,12 +398,12 @@ public class SQLite {
 		return output;
 	}
 	
-	public String[] getPreviousValues(String column) {
+	public String[] getPreviousValues(String column, String table) {
 		Connection conn = this.getConnection();
 		ArrayDeque<String> results = new ArrayDeque<String>();
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select distinct "+column+" from donors");
+			ResultSet rs = stmt.executeQuery("select distinct "+column+" from "+table);
 			while(rs.next()){
 				results.add(rs.getString(column));
 			}

@@ -236,7 +236,7 @@ public class DonorEditForm extends Composite {
 		comboCategory = new Combo(compositeMisc, SWT.NONE);
 		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCategory.setBounds(0, 0, 91, 23);
-		comboCategory.setItems(Main.getLocalDB().getPreviousValues("category1"));
+		comboCategory.setItems(Main.getLocalDB().getPreviousValues("category1", "donors"));
 		
 		Label lblWorkPhone = new Label(compositeMisc, SWT.NONE);
 		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -255,7 +255,7 @@ public class DonorEditForm extends Composite {
 		comboDonorSource = new Combo(compositeMisc, SWT.NONE);
 		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboDonorSource.setBounds(0, 0, 91, 23);
-		comboDonorSource.setItems(Main.getLocalDB().getPreviousValues("category2"));
+		comboDonorSource.setItems(Main.getLocalDB().getPreviousValues("category2", "donors"));
 		
 		
 		Label lblFax = new Label(compositeMisc, SWT.NONE);
@@ -302,7 +302,7 @@ public class DonorEditForm extends Composite {
 		comboCity = new Combo(compositeAddress, SWT.BORDER);
 		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCity.setBounds(0, 0, 76, 21);
-		comboCity.setItems(Main.getLocalDB().getPreviousValues("city"));
+		comboCity.setItems(Main.getLocalDB().getPreviousValues("city", "donors"));
 		
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
 		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -340,7 +340,7 @@ public class DonorEditForm extends Composite {
 		comboZip = new Combo(compositeAddress, SWT.BORDER);
 		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboZip.setBounds(0, 0, 76, 21);
-		comboZip.setItems(Main.getLocalDB().getPreviousValues("zip"));
+		comboZip.setItems(Main.getLocalDB().getPreviousValues("zip", "donors"));
 		
 		Label lblAddress2 = new Label(compositeAddress, SWT.NONE);
 		lblAddress2.setToolTipText("This is the primary address the post office will deliver to. ");
@@ -360,7 +360,7 @@ public class DonorEditForm extends Composite {
 		comboCountry = new Combo(compositeAddress, SWT.BORDER);
 		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCountry.setBounds(0, 0, 76, 21);
-		comboCountry.setItems(Main.getLocalDB().getPreviousValues("country"));
+		comboCountry.setItems(Main.getLocalDB().getPreviousValues("country", "donors"));
 		
 		TabItem tbtmOther = new TabItem(tabFolder, SWT.NONE);
 		tbtmOther.setText("Email/Web");
