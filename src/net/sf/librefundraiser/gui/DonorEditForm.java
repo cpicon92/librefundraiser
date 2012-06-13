@@ -41,11 +41,11 @@ public class DonorEditForm extends Composite {
 	private Text txtWorkPhone;
 	private Text txtFax;
 	private Text txtOptional;
-	private Text txtCity;
+	private Combo comboCity;
 	private Text txtAddress1;
-	private Text txtZip;
+	private Combo comboZip;
 	private Text txtAddress2;
-	private Text txtCountry;
+	private Combo comboCountry;
 	private Text txtNotes;
 	private Text txtTotalGiven;
 	private Text txtMain;
@@ -236,6 +236,7 @@ public class DonorEditForm extends Composite {
 		comboCategory = new Combo(compositeMisc, SWT.NONE);
 		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCategory.setBounds(0, 0, 91, 23);
+		comboCategory.setItems(Main.getLocalDB().getPreviousValues("category1"));
 		
 		Label lblWorkPhone = new Label(compositeMisc, SWT.NONE);
 		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -254,6 +255,7 @@ public class DonorEditForm extends Composite {
 		comboDonorSource = new Combo(compositeMisc, SWT.NONE);
 		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboDonorSource.setBounds(0, 0, 91, 23);
+		comboDonorSource.setItems(Main.getLocalDB().getPreviousValues("category2"));
 		
 		
 		Label lblFax = new Label(compositeMisc, SWT.NONE);
@@ -297,9 +299,10 @@ public class DonorEditForm extends Composite {
 		lblCity.setBounds(0, 0, 55, 15);
 		lblCity.setText("City");
 		
-		txtCity = new Text(compositeAddress, SWT.BORDER);
-		txtCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtCity.setBounds(0, 0, 76, 21);
+		comboCity = new Combo(compositeAddress, SWT.BORDER);
+		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboCity.setBounds(0, 0, 76, 21);
+		comboCity.setItems(Main.getLocalDB().getPreviousValues("city"));
 		
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
 		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -334,9 +337,10 @@ public class DonorEditForm extends Composite {
 		lblZip.setBounds(0, 0, 55, 15);
 		lblZip.setText("Zip");
 		
-		txtZip = new Text(compositeAddress, SWT.BORDER);
-		txtZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtZip.setBounds(0, 0, 76, 21);
+		comboZip = new Combo(compositeAddress, SWT.BORDER);
+		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboZip.setBounds(0, 0, 76, 21);
+		comboZip.setItems(Main.getLocalDB().getPreviousValues("zip"));
 		
 		Label lblAddress2 = new Label(compositeAddress, SWT.NONE);
 		lblAddress2.setToolTipText("This is the primary address the post office will deliver to. ");
@@ -353,9 +357,10 @@ public class DonorEditForm extends Composite {
 		lblCountry.setBounds(0, 0, 55, 15);
 		lblCountry.setText("Country");
 		
-		txtCountry = new Text(compositeAddress, SWT.BORDER);
-		txtCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtCountry.setBounds(0, 0, 76, 21);
+		comboCountry = new Combo(compositeAddress, SWT.BORDER);
+		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboCountry.setBounds(0, 0, 76, 21);
+		comboCountry.setItems(Main.getLocalDB().getPreviousValues("country"));
 		
 		TabItem tbtmOther = new TabItem(tabFolder, SWT.NONE);
 		tbtmOther.setText("Email/Web");
@@ -554,9 +559,9 @@ public class DonorEditForm extends Composite {
 				{ txtContactLast, "spouselast" },
 				{ txtContactFirst, "spousefrst" }, { txtHomePhone, "homephone" },
 				{ txtWorkPhone, "workphone" }, { txtFax, "fax" },
-				{ txtOptional, "contact" }, { txtCity, "city" },
-				{ txtAddress1, "address1" }, { txtZip, "zip" },
-				{ txtAddress2, "address2" }, { txtCountry, "country" },
+				{ txtOptional, "contact" }, { comboCity, "city" },
+				{ txtAddress1, "address1" }, { comboZip, "zip" },
+				{ txtAddress2, "address2" }, { comboCountry, "country" },
 				{ txtNotes, "notes" }, { txtTotalGiven, "alltime" },
 				{ txtMain, "email" }, { txtOther, "email2" },
 				{ txtYearToDate, "yeartodt" }, { txtLargestGift, "largest" },

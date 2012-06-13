@@ -397,4 +397,27 @@ public class SQLite {
 		}
 		return output;
 	}
+	
+	public String[] getPreviousValues(String column) {
+		Connection conn = this.getConnection();
+		ArrayDeque<String> results = new ArrayDeque<String>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("select distinct "+column+" from donors");
+			while(rs.next()){
+				results.add(rs.getString(column));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return results.toArray(new String[]{});
+	}
 }
