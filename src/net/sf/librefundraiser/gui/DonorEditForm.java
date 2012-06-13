@@ -316,6 +316,7 @@ public class DonorEditForm extends Composite {
 		lblState.setText("State/Province");
 		
 		comboState = new Combo(compositeAddress, SWT.NONE);
+		comboState.setItems(new String[] {"Alabama", "Alaska", "Alberta", "Arizona", "Arkansas", "British Columbia", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Manitoba", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Brunswick", "New Hampshire", "New Jersey", "New Mexico", "New York", "Newfoundland", "North Carolina", "North Dakota", "Northwest Territories", "Nova Scotia", "Nunavut", "Ohio", "Oklahoma", "Ontario", "Oregon", "Pennsylvania", "Prince Edward Island", "Quebec", "Rhode Island", "Saskatchewan", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virgin Islands", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming", "Yukon"});
 		comboState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboState.setBounds(0, 0, 91, 23);
 		
@@ -482,6 +483,7 @@ public class DonorEditForm extends Composite {
 		txtTotalGiven.setEditable(false);
 		txtTotalGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtTotalGiven.setBounds(0, 0, 76, 21);
+		txtTotalGiven.setData("money");
 		
 		Label lblLargestGift = new Label(grpGifts, SWT.NONE);
 		lblLargestGift.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -490,6 +492,7 @@ public class DonorEditForm extends Composite {
 		txtLargestGift = new Text(grpGifts, SWT.BORDER);
 		txtLargestGift.setEditable(false);
 		txtLargestGift.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtLargestGift.setData("money");
 		
 		Label lblYearToDate = new Label(grpGifts, SWT.NONE);
 		lblYearToDate.setText("Year to Date");
@@ -497,6 +500,7 @@ public class DonorEditForm extends Composite {
 		txtYearToDate = new Text(grpGifts, SWT.BORDER);
 		txtYearToDate.setEditable(false);
 		txtYearToDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtYearToDate.setData("money");
 		
 		Label lblFirstGiftDate = new Label(grpGifts, SWT.NONE);
 		lblFirstGiftDate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -513,6 +517,7 @@ public class DonorEditForm extends Composite {
 		txtLastGiftAmt = new Text(grpGifts, SWT.BORDER);
 		txtLastGiftAmt.setEditable(false);
 		txtLastGiftAmt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtLastGiftAmt.setData("money");
 		
 		Label lblLastGiftDate = new Label(grpGifts, SWT.NONE);
 		lblLastGiftDate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -608,7 +613,10 @@ public class DonorEditForm extends Composite {
 	
 	private void fillField(Control field, String key) {
 		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
-			((Text)field).setText(donor.getData(key));
+			String value = donor.getData(key);
+			if (field.getData() != null && field.getData().equals("money")) 
+				value = Main.toMoney(value);
+			((Text)field).setText(value);
 			((Text)field).addModifyListener(modifyListener);
 		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
 			((Combo)field).setText(donor.getData(key));
