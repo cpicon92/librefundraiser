@@ -191,7 +191,11 @@ public class GiftEditForm extends Composite {
 	
 	private void saveField(Control field, String key) {
 		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
-			gift.putIc(key,((Text)field).getText());
+			String value = ((Text)field).getText();
+			if (field.equals(txtAmount)) {
+				value = value.replace(",", "");
+			}
+			gift.putIc(key, value);
 		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
 			gift.putIc(key,((Combo)field).getText());
 		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.DateTime")) {

@@ -5,16 +5,15 @@ import net.sf.librefundraiser.Main;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Rectangle;
 
 
 public class DonorTab extends CTabItem {
-	@SuppressWarnings("unused")
-	private final int id;
 	private final Donor donor;
+	Rectangle closeRect = new Rectangle(0, 0, 0, 0);
 	
 	public DonorTab(int id, CTabFolder tabFolder) {
 		super(tabFolder, SWT.NONE);
-		this.id = id;
 		this.setShowClose(true);
 		Donor donor;
 		try {

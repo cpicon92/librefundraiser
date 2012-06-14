@@ -452,7 +452,7 @@ public class DonorEditForm extends Composite {
 		
 		tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
 		tltmDelete.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/delete-gift.png"));
-		tltmDelete.setEnabled(false);
+		tltmDelete.setEnabled(true);
 		tltmDelete.setText("Delete");
 		
 		compositeEditForm = new Composite(compositeGifts, SWT.NONE);

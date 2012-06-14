@@ -10,13 +10,19 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -79,16 +85,70 @@ public class DonorList extends Composite {
 		donors = Main.getLocalDB().getDonors();
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
 		tabFolder = new CTabFolder(this, SWT.BORDER);
+		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			public void close(CTabFolderEvent event) {
+				CTabItem closing = ((CTabItem)event.item);
+				if (!closing.getText().substring(0, 1).equals("*")) return;
+				MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
+				verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
+				verify.setText("LibreFundraiser Warning");
+				event.doit = verify.open() == SWT.YES;
+			}
+		});
 		tabFolder.setSelectionBackground(new Color[]{SWTResourceManager.getColor(SWT.COLOR_WHITE), SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{100}, true);
+		tabFolder.setRenderer(new CTabFolderRenderer(tabFolder) {
+			protected void draw(int part, int state, Rectangle bounds, GC gc)  {
+				switch (part) {
+				case PART_BACKGROUND:
+					break;
+				case PART_BODY:
+					break;
+				case PART_HEADER:
+					break;
+				case PART_MAX_BUTTON:
+					break;
+				case PART_MIN_BUTTON:
+					break;
+				case PART_CHEVRON_BUTTON:
+					break;
+				case PART_BORDER:
+					break;
+				case PART_CLOSE_BUTTON:
+					break;
+				default:
+					if (0 <= part && part < parent.getItemCount()) {
+						if (bounds.width == 0 || bounds.height == 0) return;
+						super.draw(part, state, bounds, gc);
+						gc.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+						int x = bounds.x;
+						int y = bounds.y;
+						int width = bounds.width;
+						if (part > 0 && part < parent.getSelectionIndex()) {
+							width += 3;
+						}
+						if (part > parent.getSelectionIndex()) {
+							x -= 2;
+						}
+						if (part == parent.getSelectionIndex() && part == parent.getItemCount() - 1) {
+							width -= 10;
+						}
+						int[] shape = new int[]{x,y,x+width,y};
+						gc.drawPolyline(shape);
+					}
 
-		
+					break;
+				}
+			}
+		});
+
 		final CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
+		tbtmDonors.setImage(SWTResourceManager.getImage(DonorList.class, "/net/sf/librefundraiser/icons/home-tab.png"));
 		tbtmDonors.setText("Donors");
 		
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				CTabItem t = tabFolder.getSelection();
-				if (!t.getClass().getName().equals("DonorTab")) {
+				if (!t.getClass().equals(DonorTab.class)) {
 					Main.getSaveButton().setEnabled(false);
 				} else {
 					((DonorTab)t).alterSaveButton();
