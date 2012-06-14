@@ -25,6 +25,10 @@ import org.eclipse.swt.widgets.ToolItem;
  * disable ones that won't be implemented for 1.0
  * about dialog
  * rewrite tablecolumn sorter
+ * add delete for donors and for gifts
+ * reserve new donors/gifts
+ * initialize new database without need for frbw import
+ * consider changing .ldb file extension to something not used by access
  */
 
 public class Main {
@@ -51,7 +55,7 @@ public class Main {
 			NewDatabaseDialog dialog = new NewDatabaseDialog();
 			addSetting("lastDB",dialog.open());
 		}
-		localDB = new SQLite(getSetting("lastDB"));
+		resetLocalDB();
 		try {
 			window = new MainWindow();
 			window.open();
@@ -63,6 +67,9 @@ public class Main {
 	public static SQLite getLocalDB() {
 		if (localDB == null) localDB = new SQLite();
 		return localDB;
+	}
+	public static void resetLocalDB() {
+		localDB = new SQLite(getSetting("lastDB"));
 	}
 	public static String toMoney(double amount) {
 		if (currency == null) currency = NumberFormat.getCurrencyInstance();

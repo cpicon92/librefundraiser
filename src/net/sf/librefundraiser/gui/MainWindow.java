@@ -70,7 +70,7 @@ public class MainWindow {
 			}
 		}
 	}
-
+	
 	/**
 	 * Create contents of the window.
 	 * @wbp.parser.entryPoint
@@ -100,10 +100,32 @@ public class MainWindow {
 		mntmFile.setMenu(menuFile);
 
 		MenuItem mntmNewDatabase = new MenuItem(menuFile, SWT.NONE);
-		mntmNewDatabase.setText("New Database...");
+		mntmNewDatabase.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
+		mntmNewDatabase.setText("New Local Database...");
 
 		MenuItem mntmOpenDatabase = new MenuItem(menuFile, SWT.NONE);
-		mntmOpenDatabase.setText("Open Database...");
+		mntmOpenDatabase.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
+				fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
+				fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
+				String path = fileDialog.open();
+				if (path != null) {
+					Main.addSetting("lastDB",path);
+					Main.resetLocalDB();
+					Main.refresh();
+				}
+			}
+		});
+		mntmOpenDatabase.setText("Open Local Database...");
+		
+		MenuItem mntmConnectToRemote = new MenuItem(menuFile, SWT.NONE);
+		mntmConnectToRemote.setEnabled(false);
+		mntmConnectToRemote.setText("Connect to Remote Database...");
 
 		new MenuItem(menuFile, SWT.SEPARATOR);
 
@@ -122,11 +144,17 @@ public class MainWindow {
 		mntmFromFundraiserBasic.setText("From FundRaiser Basic...");
 
 		MenuItem mntmFromCsvFile = new MenuItem(menuImport, SWT.NONE);
+		mntmFromCsvFile.setEnabled(false);
 		mntmFromCsvFile.setText("From CSV File...");
 
 		new MenuItem(menuFile, SWT.SEPARATOR);
 
 		MenuItem mntmExit = new MenuItem(menuFile, SWT.NONE);
+		mntmExit.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				shell.close();
+			}
+		});
 		mntmExit.setText("Exit");
 
 		MenuItem mntmDonor = new MenuItem(menu, SWT.CASCADE);
@@ -158,6 +186,7 @@ public class MainWindow {
 		mntmSaveCurrentDonor.setText("Save Current Donor");
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
+		mntmSaveAllDonors.setEnabled(false);
 		mntmSaveAllDonors.setText("Save All Donors");
 
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);

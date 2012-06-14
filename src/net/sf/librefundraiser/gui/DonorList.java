@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 
 
 public class DonorList extends Composite {
@@ -84,7 +86,8 @@ public class DonorList extends Composite {
 		super(parent, style);
 		donors = Main.getLocalDB().getDonors();
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
-		tabFolder = new CTabFolder(this, SWT.BORDER);
+		tabFolder = new CTabFolder(this, SWT.FLAT);
+		tabFolder.setTabHeight(20);
 		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
 				CTabItem closing = ((CTabItem)event.item);
@@ -95,7 +98,7 @@ public class DonorList extends Composite {
 				event.doit = verify.open() == SWT.YES;
 			}
 		});
-		tabFolder.setSelectionBackground(new Color[]{SWTResourceManager.getColor(SWT.COLOR_WHITE), SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{100}, true);
+		tabFolder.setSelectionBackground(new Color[]{SWTResourceManager.getColor(SWT.COLOR_WHITE), SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{40}, true);
 		tabFolder.setRenderer(new CTabFolderRenderer(tabFolder) {
 			protected void draw(int part, int state, Rectangle bounds, GC gc)  {
 				switch (part) {
@@ -155,9 +158,14 @@ public class DonorList extends Composite {
 				}
 			}
 		});
-		
-		tableViewer = new TableViewer(tabFolder, SWT.BORDER | SWT.FULL_SELECTION);
+		Composite compositeTable = new Composite(tabFolder, SWT.NONE);
+		GridLayout gl_compositeTable = new GridLayout(1, false);
+		gl_compositeTable.marginHeight = 0;
+		gl_compositeTable.marginWidth = 0;
+		compositeTable.setLayout(gl_compositeTable);
+		tableViewer = new TableViewer(compositeTable, SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -167,7 +175,7 @@ public class DonorList extends Composite {
 			}
 		});
 		table.setHeaderVisible(true);
-		tbtmDonors.setControl(table);
+		tbtmDonors.setControl(compositeTable);
 		
 		for (String[] c : columns) {
 			TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -212,5 +220,4 @@ public class DonorList extends Composite {
 		System.out.println(id);
 		new DonorTab(id,tabFolder);
 	}
-
 }

@@ -116,7 +116,7 @@ public class NewDatabaseDialog {
 				txtFilename.setEnabled(browse);
 				btnBrowse.setEnabled(browse);
 				if (currentSelection.equals(btnExistingLocalDatabase)||currentSelection.equals(btnLocalDatabase)) {
-					btnNext.setText("Finish >");
+					btnNext.setText("Finish");
 				} else {
 					btnNext.setText("Next >");
 				}
