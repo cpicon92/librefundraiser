@@ -20,6 +20,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
+/* Left to do: 
+ * implement menu items
+ * disable ones that won't be implemented for 1.0
+ * about dialog
+ * rewrite tablecolumn sorter
+ */
 
 public class Main {
 	private static SQLite localDB = null;
