@@ -202,6 +202,10 @@ public class MainWindow {
 		shellSearch.addShellListener(new ShellListener() {
 			public void shellActivated(ShellEvent e) {
 				txtSearch.setFocus();
+				Rectangle bounds = txtSearch.getBounds();
+				Point location = txtSearch.toDisplay(-2, bounds.height-2);
+				shellSearch.setLocation(location);
+				shellSearch.pack();
 			}
 			public void shellClosed(ShellEvent e) {
 			}
@@ -216,7 +220,7 @@ public class MainWindow {
 		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtSearch.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
-				shellSearch.setVisible(false);
+				//shellSearch.setVisible(false);
 			}
 		});
 		GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
