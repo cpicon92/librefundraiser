@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 
 
 public class MainWindow {
@@ -196,8 +198,8 @@ public class MainWindow {
 		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
 		tltmSep.setText("sep");
 		
-		shellSearch = new Shell(shell, SWT.NO_TRIM | SWT.TOOL);
-		listSearch = new List(shellSearch, SWT.SINGLE | SWT.BORDER);
+		shellSearch = new Shell(shell, SWT.NONE);
+		listSearch = new List(shellSearch, SWT.SINGLE);
 		shellSearch.setLayout(new FillLayout());
 		shellSearch.addShellListener(new ShellListener() {
 			public void shellActivated(ShellEvent e) {
@@ -220,7 +222,13 @@ public class MainWindow {
 		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtSearch.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
-				//shellSearch.setVisible(false);
+				display.timerExec(100, new Runnable() {
+					public void run() {
+						if (!display.getFocusControl().equals(txtSearch) && !display.getFocusControl().equals(listSearch)) {
+							shellSearch.setVisible(false);
+						}
+					}
+				});
 			}
 		});
 		GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -303,6 +311,19 @@ public class MainWindow {
 			}
 		});
 
+		shell.addControlListener(new ControlAdapter() {
+			public void controlMoved(ControlEvent e) {
+				carryResults();
+			}
+			public void controlResized(ControlEvent e) {
+				carryResults();
+			}
+			private void carryResults() {
+				Rectangle bounds = txtSearch.getBounds();
+				Point location = txtSearch.toDisplay(-2, bounds.height-2);
+				shellSearch.setLocation(location);
+			}
+		});
 
 		compositeDonorList = new DonorList(shell, SWT.NONE);
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
