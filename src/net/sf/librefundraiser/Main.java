@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 /* Left to do: 
  * implement menu items
- * disable ones that won't be implemented for 1.0
- * about dialog
  * rewrite tablecolumn sorter
  * add delete for donors and for gifts
  * reserve new donors/gifts
@@ -38,6 +36,7 @@ public class Main {
 	private final static Properties settings = new Properties();
 	public static Image[] logo;
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	public static final String version = "(Development Snapshot)";
 
 	public static void main(String args[]) {
 		loadSettings();

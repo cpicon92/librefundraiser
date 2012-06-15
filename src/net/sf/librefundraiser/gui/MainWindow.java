@@ -196,6 +196,11 @@ public class MainWindow {
 		mntmHelp.setMenu(menuHelp);
 
 		MenuItem mntmAbout = new MenuItem(menuHelp, SWT.NONE);
+		mntmAbout.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				new AboutDialog(shell, SWT.DIALOG_TRIM).open();
+			}
+		});
 		mntmAbout.setText("About...");
 
 		Composite compositeToolbar = new Composite(shell, SWT.NONE);
