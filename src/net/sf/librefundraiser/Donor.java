@@ -24,7 +24,8 @@ public class Donor {
 		data = new HashMap<String,String>();
 		gifts = new HashMap<Integer,Gift>();
 		this.id = id;
-		data.put("account", String.format("%06d",id));
+		this.putData("account", String.format("%06d",id));
+		this.putData("type", "I"); //default to individual
 	}
 	public String getData(String key) {
 		String output = data.get(key.toLowerCase()!=null?key.toLowerCase():"");

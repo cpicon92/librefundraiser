@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * initialize new database without need for frbw import
  * consider changing .ldb file extension to something not used by access
  * implement web field editor
- * make new donor default to 'individual'
+ * make donor tab on-top upon opening
  */
 
 public class Main {
