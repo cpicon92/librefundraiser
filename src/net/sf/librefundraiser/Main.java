@@ -27,8 +27,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * reserve new donors/gifts
  * initialize new database without need for frbw import
  * consider changing .ldb file extension to something not used by access
- * add readme and a copy of the GPL
- * mention CC license for icon in about dialog and readme
+ * implement web field editor
  */
 
 public class Main {
