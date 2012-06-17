@@ -393,18 +393,9 @@ public class DonorEditForm extends Composite {
 		txtOther.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtOther.setBounds(0, 0, 76, 21);
 		
-		Group grpWeb = new Group(compositeOther, SWT.NONE);
-		grpWeb.setLayout(new GridLayout(1, false));
+		Group grpWeb = new LinkEditForm(compositeOther, SWT.NONE, donor);
 		grpWeb.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpWeb.setText("Web");
-		grpWeb.setBounds(0, 0, 70, 82);
-		grpWeb.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		
-		ToolBar toolBar = new ToolBar(grpWeb, SWT.FLAT | SWT.RIGHT);
-		
-		ToolItem tltmAddALink = new ToolItem(toolBar, SWT.NONE);
-		tltmAddALink.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/add-link.png"));
-		tltmAddALink.setText("Add a link...");
+
 		
 		TabItem tbtmNotes = new TabItem(tabFolder, SWT.NONE);
 		tbtmNotes.setText("Notes");
