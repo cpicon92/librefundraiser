@@ -171,7 +171,8 @@ public class DonorList extends Composite {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				TableItem selectedItem = table.getSelection()[0];
 				int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-				new DonorTab(id,tabFolder);
+				DonorTab newTab = new DonorTab(id,tabFolder);
+				tabFolder.setSelection(newTab);
 			}
 		});
 		table.setHeaderVisible(true);
@@ -217,7 +218,7 @@ public class DonorList extends Composite {
 	public void newDonor() {
 		int id = Main.getLocalDB().getMaxAccount()+1;
 		System.out.println(id);
-		new DonorTab(id,tabFolder);
+		tabFolder.setSelection(new DonorTab(id,tabFolder));
 	}
 	
 	public void saveAll() {
