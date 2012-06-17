@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
 /* Left to do: 
- * rewrite tablecolumn sorter
  * add delete for donors and for gifts
  * reserve new donors/gifts
  * initialize new database without need for frbw import

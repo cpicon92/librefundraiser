@@ -188,7 +188,7 @@ public class DonorList extends Composite {
 		tableViewer.setContentProvider(new ContentProvider());
 		tableViewer.setInput(donors);
 		tabFolder.setSelection(0);
-		new TableColumnSorter(tableViewer);
+		new DonorListSorter(tableViewer);
 		packColumns();
 	}
 
