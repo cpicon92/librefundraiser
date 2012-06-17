@@ -136,6 +136,7 @@ public class AboutDialog extends Dialog {
 		Link linkIcon = new Link(compositeInfo, SWT.NONE);
 		linkIcon.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 2, 1));
 		linkIcon.setText("Balloon icon by <a href=\"http://dapinographics.com/\">Pien Duijverman</a>, \r\nlicensed under <a href=\"http://dapinographics.com/license-info/#thethe-togle-content-7981\">CC Attribution-Noncommercial 3.0.</a>");
+		linkIcon.addSelectionListener(linkAdapter);
 		
 		Button btnOk = new Button(compositeInfo, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
@@ -147,8 +148,8 @@ public class AboutDialog extends Dialog {
 		gd_btnOk.widthHint = 70;
 		btnOk.setLayoutData(gd_btnOk);
 		btnOk.setText("OK");
-		
-		compositeInfo.setTabList(new Control[]{btnOk, linkGNU, linkSite});
+		compositeInfo.setTabList(new Control[]{btnOk, linkGNU, linkIcon});
+		shell.setTabList(new Control[]{compositeInfo, compositeBanner});
 
 	}
 
