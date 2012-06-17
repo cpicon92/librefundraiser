@@ -21,13 +21,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
 /* Left to do: 
- * implement menu items
  * rewrite tablecolumn sorter
  * add delete for donors and for gifts
  * reserve new donors/gifts
  * initialize new database without need for frbw import
  * consider changing .ldb file extension to something not used by access
  * implement web field editor
+ * make new donor default to 'individual'
  */
 
 public class Main {

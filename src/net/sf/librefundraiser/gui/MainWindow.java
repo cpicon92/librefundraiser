@@ -102,7 +102,15 @@ public class MainWindow {
 		MenuItem mntmNewDatabase = new MenuItem(menuFile, SWT.NONE);
 		mntmNewDatabase.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				
+				FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
+				fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
+				fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
+				String path = fileDialog.open();
+				if (path != null) {
+					Main.addSetting("lastDB",path);
+					Main.resetLocalDB();
+					Main.refresh();
+				}
 			}
 		});
 		mntmNewDatabase.setText("New Local Database...");
@@ -186,7 +194,11 @@ public class MainWindow {
 		mntmSaveCurrentDonor.setText("Save Current Donor");
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
-		mntmSaveAllDonors.setEnabled(false);
+		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				((DonorList)compositeDonorList).saveAll();
+			}
+		});
 		mntmSaveAllDonors.setText("Save All Donors");
 
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);

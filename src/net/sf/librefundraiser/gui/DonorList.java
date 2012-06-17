@@ -210,7 +210,6 @@ public class DonorList extends Composite {
 		return -1;
 	}
 	
-	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
@@ -219,5 +218,19 @@ public class DonorList extends Composite {
 		int id = Main.getLocalDB().getMaxAccount()+1;
 		System.out.println(id);
 		new DonorTab(id,tabFolder);
+	}
+	
+	public void saveAll() {
+		for (CTabItem i : tabFolder.getItems()) {
+			if (i.getClass().equals(DonorTab.class)) {
+				((DonorTab)i).save();
+			}
+		}
+		CTabItem t = tabFolder.getSelection();
+		if (!t.getClass().equals(DonorTab.class)) {
+			Main.getSaveButton().setEnabled(false);
+		} else {
+			((DonorTab)t).alterSaveButton();
+		}
 	}
 }

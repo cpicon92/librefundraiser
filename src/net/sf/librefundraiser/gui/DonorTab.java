@@ -35,4 +35,11 @@ public class DonorTab extends CTabItem {
 		form.setEdited(form.isEdited());
 	}
 	
+	public void save() {
+		DonorEditForm form = ((DonorEditForm)this.getControl());
+		if (form.isEdited()) {
+			form.saveForm();
+		}
+	}
+	
 }

@@ -587,7 +587,7 @@ public class DonorEditForm extends Composite {
 		}
 	}
 	
-	private void saveForm() {
+	public void saveForm() {
 		if (!business) {
 			txtBusinessName.setText(txtLastName.getText());
 			txtContactLast.setText(txtSpouseLast.getText());
@@ -617,13 +617,13 @@ public class DonorEditForm extends Composite {
 	}
 	
 	private void fillField(Control field, String key) {
-		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+		if (field.getClass().equals(Text.class)) {
 			String value = donor.getData(key);
 			if (field.getData() != null && field.getData().equals("money")) 
 				value = Main.toMoney(value);
 			((Text)field).setText(value);
 			((Text)field).addModifyListener(modifyListener);
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+		} else if (field.getClass().equals(Combo.class)) {
 			((Combo)field).setText(donor.getData(key));
 			((Combo)field).addModifyListener(modifyListener);
 		} else {
@@ -632,9 +632,9 @@ public class DonorEditForm extends Composite {
 	}
 	
 	private void saveField(Control field, String key) {
-		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+		if (field.getClass().equals(Text.class)) {
 			donor.putData(key,((Text)field).getText());
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+		} else if (field.getClass().equals(Combo.class)) {
 			donor.putData(key,((Combo)field).getText());
 		} else {
 			System.err.println("The field for \""+key+"\" cannot contain text.");

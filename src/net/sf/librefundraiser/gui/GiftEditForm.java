@@ -166,11 +166,11 @@ public class GiftEditForm extends Composite {
 	
 	private void fillField(Control field, String key) {
 		String value = gift.getIc(key)!=null?gift.getIc(key):"";
-		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+		if (field.getClass().equals(Text.class)) {
 			((Text)field).setText(value);
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+		} else if (field.getClass().equals(Combo.class)) {
 			((Combo)field).setText(value);
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.DateTime")) {
+		} else if (field.getClass().equals(DateTime.class)) {
 			try {
 				Calendar date = Calendar.getInstance();
 				date.setTime(Main.getDateFormat().parse(value));
@@ -178,7 +178,7 @@ public class GiftEditForm extends Composite {
 				((DateTime)field).setMonth(date.get(Calendar.MONTH));
 				((DateTime)field).setDay(date.get(Calendar.DAY_OF_MONTH));
 			} catch (ParseException e) {}
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Button")) {
+		} else if (field.getClass().equals(Button.class)) {
 			Button b = ((Button)field);
 			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
 				b.setSelection(value.toLowerCase().equals("true"));
@@ -190,19 +190,19 @@ public class GiftEditForm extends Composite {
 	}
 	
 	private void saveField(Control field, String key) {
-		if (field.getClass().getName().equals("org.eclipse.swt.widgets.Text")) {
+		if (field.getClass().equals(Text.class)) {
 			String value = ((Text)field).getText();
 			if (field.equals(txtAmount)) {
 				value = value.replace(",", "");
 			}
 			gift.putIc(key, value);
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Combo")) {
+		} else if (field.getClass().equals(Combo.class)) {
 			gift.putIc(key,((Combo)field).getText());
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.DateTime")) {
+		} else if (field.getClass().equals(DateTime.class)) {
 			Calendar cal = new GregorianCalendar(((DateTime)field).getYear(),((DateTime)field).getMonth(),((DateTime)field).getDay());
 			Date date = new Date(cal.getTimeInMillis());
 			gift.putIc(key, Main.getDateFormat().format(date));
-		} else if (field.getClass().getName().equals("org.eclipse.swt.widgets.Button")) {
+		} else if (field.getClass().equals(Button.class)) {
 			Button b = ((Button)field);
 			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
 				gift.putIc(key, ""+b.getSelection());
