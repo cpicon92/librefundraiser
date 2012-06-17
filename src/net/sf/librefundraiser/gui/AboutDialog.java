@@ -58,7 +58,6 @@ public class AboutDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(455, 423);
 		shell.setText(getText());
 		GridLayout gl_shell = new GridLayout(1, false);
 		gl_shell.marginHeight = 0;
@@ -93,11 +92,12 @@ public class AboutDialog extends Dialog {
 		lblLogo.setImage(SWTResourceManager.getImage(AboutDialog.class, "/net/sf/librefundraiser/logo/balloon128.png"));
 		
 		Label lblVersion = new Label(compositeBanner, SWT.NONE);
-		lblVersion.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		lblVersion.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1));
 		lblVersion.setText(Main.version);
 		
 		Link linkSite = new Link(compositeBanner, SWT.NONE);
-		linkSite.setText("Please visit our website: <a href=\"http://librefundraiser.sf.net/\">http://librefundraiser.sf.net/</a>");
+		linkSite.setLayoutData(new GridData(SWT.LEFT, SWT.BOTTOM, true, true, 1, 1));
+		linkSite.setText("Please visit our website: <a href=\"http://librefundraiser.sf.net/\">librefundraiser.sf.net</a>");
 		linkSite.addSelectionListener(linkAdapter);
 		
 		Label lblSep = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -114,7 +114,7 @@ public class AboutDialog extends Dialog {
 		
 		Label lblCopyright = new Label(compositeInfo, SWT.NONE);
 		lblCopyright.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
-		lblCopyright.setText("Copyright \u00A9 2012 The LibreFundraiser developers. All rights reserved. \r\n");
+		lblCopyright.setText("Copyright © 2012 The LibreFundraiser developers. All rights reserved. ");
 		
 		Label lblGpl = new Label(compositeInfo, SWT.NONE);
 		lblGpl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -150,6 +150,8 @@ public class AboutDialog extends Dialog {
 		btnOk.setText("OK");
 		compositeInfo.setTabList(new Control[]{btnOk, linkGNU, linkIcon});
 		shell.setTabList(new Control[]{compositeInfo, compositeBanner});
+		
+		shell.setSize(shell.computeSize(455, -1));
 
 	}
 
