@@ -24,6 +24,25 @@ public class SQLite {
 	}
 	public SQLite(String filename) {
 		dbFile = new File(filename);
+		Connection conn = this.getConnection();
+		try {
+			Statement stmt = conn.createStatement();
+			String donorFields = "ACCOUNT, TYPE, LASTNAME, FIRSTNAME, " +
+					"SPOUSELAST, SPOUSEFRST, SALUTATION, HOMEPHONE, " +
+					"WORKPHONE, FAX, CATEGORY1, CATEGORY2, MAILNAME, " +
+					"ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY, " +
+					"EMAIL, EMAIL2, WEB, CHANGEDATE, LASTGIVEDT, LASTAMT, " +
+					"ALLTIME, YEARTODT, FIRSTGIFT, LARGEST, NOTES, " +
+					"PRIMARY KEY (ACCOUNT)";
+			stmt.executeUpdate("create table if not exists donors ("+donorFields+");");
+			String giftFields = "ACCOUNT, AMOUNT, DATEGIVEN, LETTER, DT_ENTRY, " +
+					"SOURCE, NOTE, RECNUM, PRIMARY KEY (RECNUM)";
+			stmt.executeUpdate("create table if not exists gifts ("+giftFields+");");
+		} catch (SQLException e) {
+			System.err.println("Unable to create new database. ");
+			e.printStackTrace();
+		}
+		
 	}
 	public Connection getConnection() {
 		try {

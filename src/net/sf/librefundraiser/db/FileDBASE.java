@@ -51,6 +51,7 @@ public class FileDBASE {
 				fieldNames += ", EMAIL2, WEB, PRIMARY KEY (ACCOUNT)";
 				fieldValues += ", ?, ?";
 			}
+			stat.executeUpdate("drop table if exists "+destTableName+";");
 			stat.executeUpdate("create table "+destTableName+" ("+fieldNames+");");
 			PreparedStatement prep = conn.prepareStatement("insert into "+destTableName+" values ("+fieldValues+");");
 			final Iterator<Record> recordIterator = table.recordIterator();
