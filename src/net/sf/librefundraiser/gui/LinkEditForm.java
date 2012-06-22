@@ -1,5 +1,7 @@
 package net.sf.librefundraiser.gui;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.StringTokenizer;
 
@@ -11,6 +13,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -28,6 +31,15 @@ public class LinkEditForm extends Group {
 	private ToolBar btnNewLink;
 	private Composite compositeLinkForm;
 	private final Donor donor;
+	private static SelectionAdapter linkAdapter = new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			try {
+				Program.launch(new URL(e.text).toString());
+			} catch (MalformedURLException e1) {
+			}
+		}
+	};
+	
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -117,6 +129,7 @@ public class LinkEditForm extends Group {
 			i++;
 			Link link = new Link(compositeLinks, SWT.NONE);
 			link.setText(i + ".  <a href=\""+l+"\">"+l+"</a>");
+			link.addSelectionListener(linkAdapter);
 		}
 	}
 	
@@ -127,4 +140,5 @@ public class LinkEditForm extends Group {
 		}
 		donor.putData("web", output);
 	}
+	
 }
