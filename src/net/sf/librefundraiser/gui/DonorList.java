@@ -64,6 +64,12 @@ public class DonorList extends Composite {
 			if (columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
 				return Main.toMoney(donor.getData(columns[columnIndex][1]));
 			}
+			if (columns[columnIndex][1].matches("web")) {
+				String urls = donor.getData(columns[columnIndex][1]);
+				urls = urls.replace("\n", "; ");
+				if (urls.length() > 2) urls = urls.substring(0, urls.length()-2);
+				return urls;
+			}
 			return donor.getData(columns[columnIndex][1]);
 		}
 	}

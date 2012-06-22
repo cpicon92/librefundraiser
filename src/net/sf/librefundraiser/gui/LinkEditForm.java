@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -23,7 +24,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -66,7 +66,7 @@ public class LinkEditForm extends Group {
 		
 		compositeLinks = new Composite(this, SWT.NONE);
 		compositeLinks.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		compositeLinks.setLayout(new GridLayout(2, false));
+		compositeLinks.setLayout(new GridLayout(1, false));
 		
 		displayLinks();
 		
@@ -130,12 +130,16 @@ public class LinkEditForm extends Group {
 			c.dispose();
 		}
 		int i = 0;
-		for (String l : links) {
+		for (final String l : links) {
 			i++;
-			Link link = new Link(compositeLinks, SWT.NONE);
+			Composite cLink = new Composite(compositeLinks, SWT.NONE);
+			cLink.setLayout(new RowLayout());
+			Link link = new Link(cLink, SWT.NONE);
 			link.setText(i + ".  <a href=\""+l+"\">"+l+"</a>");
 			link.addSelectionListener(linkAdapter);
-			final Label deleteButton = new Label(compositeLinks, SWT.NONE);
+			final Label deleteButton = new Label(cLink, SWT.NONE);
+			deleteButton.setVisible(false);
+			deleteButton.setToolTipText("Delete this link");
 			deleteButton.setImage(SWTResourceManager.getImage(LinkEditForm.class, "/net/sf/librefundraiser/icons/delete-link.png"));
 			deleteButton.addMouseListener(new MouseListener() {
 				@Override
@@ -146,13 +150,13 @@ public class LinkEditForm extends Group {
 				}
 				@Override
 				public void mouseUp(MouseEvent e) {
-					MessageBox test = new MessageBox(getShell());
-					test.setMessage("works");
-					test.open();
+					links.remove(l);
+					((DonorEditForm)getParent().getParent().getParent()).setEdited(true);
+					displayLinks();
+					layout();
 				}
 			});
 			deleteButton.addMouseTrackListener(new MouseTrackListener() {
-
 				@Override
 				public void mouseEnter(MouseEvent e) {
 					deleteButton.setImage(SWTResourceManager.getImage(LinkEditForm.class, "/net/sf/librefundraiser/icons/delete-link_hover.png"));				
@@ -166,8 +170,25 @@ public class LinkEditForm extends Group {
 				@Override
 				public void mouseHover(MouseEvent e) {
 				}
-				
 			});
+			MouseTrackListener displayDelete = new MouseTrackListener() {
+				@Override
+				public void mouseEnter(MouseEvent e) {
+					deleteButton.setVisible(true);
+				}
+
+				@Override
+				public void mouseExit(MouseEvent e) {
+					deleteButton.setVisible(false);
+				}
+
+				@Override
+				public void mouseHover(MouseEvent e) {
+				}
+			};
+			cLink.addMouseTrackListener(displayDelete);
+			deleteButton.addMouseTrackListener(displayDelete);
+			link.addMouseTrackListener(displayDelete);
 		}
 	}
 	
