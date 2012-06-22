@@ -7,32 +7,32 @@ import net.sf.librefundraiser.Donor;
 
 public interface DonorDB {
 
-	public abstract Connection getConnection();
+	Connection getConnection();
 
-	public abstract HashMap<String, String> quickSearch(String query);
+	HashMap<String, String> quickSearch(String query);
 
-	public abstract Donor[] getDonors(String query, boolean fetchGifts);
+	Donor[] getDonors(String query, boolean fetchGifts);
 
-	public abstract void saveDonor(Donor donor);
+	void saveDonor(Donor donor);
 
-	public abstract Donor[] getDonors();
+	Donor[] getDonors();
 
-	public abstract int getMaxAccount();
+	int getMaxAccount();
 
-	public abstract int getMaxRecNum();
+	int getMaxRecNum();
 
-	public abstract double getTotalGifts(Donor donor);
+	double getTotalGifts(Donor donor);
 
-	public abstract double getYTD(Donor donor);
+	double getYTD(Donor donor);
 
-	public abstract double getLargestGift(Donor donor);
+	double getLargestGift(Donor donor);
 
-	public abstract String getLastGiftDate(Donor donor);
+	String getLastGiftDate(Donor donor);
 
-	public abstract String getFirstGiftDate(Donor donor);
+	String getFirstGiftDate(Donor donor);
 
-	public abstract double getLastGift(Donor donor);
+	double getLastGift(Donor donor);
 
-	public abstract String[] getPreviousValues(String column, String table);
+	String[] getPreviousValues(String column, String table);
 
 }
