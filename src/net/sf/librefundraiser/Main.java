@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * reserve new donors/gifts
  * consider changing .ldb file extension to something not used by access
  * implement web field editor
- * make new dialog actually replace old DBs
+ * make "new" dialog actually replace old DBs
  */
 
 public class Main {
