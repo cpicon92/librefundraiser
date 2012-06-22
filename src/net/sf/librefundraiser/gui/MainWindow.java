@@ -329,7 +329,7 @@ public class MainWindow {
 						shellSearch.setVisible(false);
 						listSearch.setItems(new String[]{});
 						if (txtSearch.getCharCount() > 1) {
-							HashMap<String,String> results = Main.getLocalDB().quickSearch(txtSearch.getText());
+							HashMap<String,String> results = Main.getDonorDB().quickSearch(txtSearch.getText());
 							ArrayList<String> keys = new ArrayList<String>();
 							int maxItems = 10;
 							int items = 0;
@@ -432,7 +432,7 @@ public class MainWindow {
 						dialog.setStatusText("Consolidating donors and gifts...");
 					}
 				});
-				((DonorList)compositeDonorList).donors = Main.getLocalDB().getDonors();
+				((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
 				display.asyncExec(new Runnable() {
 					public void run() {
 						dialog.setProgress(75);
@@ -462,7 +462,7 @@ public class MainWindow {
 	}
 	
 	public void reload() {
-		((DonorList)compositeDonorList).donors = Main.getLocalDB().getDonors();
+		((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
 	}
 	
 	private void quickSearchOpen() {

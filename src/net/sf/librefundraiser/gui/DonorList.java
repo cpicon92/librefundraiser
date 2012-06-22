@@ -84,7 +84,7 @@ public class DonorList extends Composite {
 	 */
 	public DonorList(Composite parent, int style) {
 		super(parent, style);
-		donors = Main.getLocalDB().getDonors();
+		donors = Main.getDonorDB().getDonors();
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
 		tabFolder = new CTabFolder(this, SWT.FLAT);
 		tabFolder.setTabHeight(20);
@@ -216,7 +216,7 @@ public class DonorList extends Composite {
 	}
 	
 	public void newDonor() {
-		int id = Main.getLocalDB().getMaxAccount()+1;
+		int id = Main.getDonorDB().getMaxAccount()+1;
 		System.out.println(id);
 		tabFolder.setSelection(new DonorTab(id,tabFolder));
 	}

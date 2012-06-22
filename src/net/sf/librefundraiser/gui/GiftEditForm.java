@@ -77,7 +77,7 @@ public class GiftEditForm extends Composite {
 		Combo comboSource = new Combo(compositeTop, SWT.NONE);
 		comboSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboSource.setSize(73, 21);
-		comboSource.setItems(Main.getLocalDB().getPreviousValues("source", "gifts"));
+		comboSource.setItems(Main.getDonorDB().getPreviousValues("source", "gifts"));
 
 		Label lblNote = new Label(this, SWT.NONE);
 		lblNote.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));

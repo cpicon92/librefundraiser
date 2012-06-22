@@ -17,7 +17,7 @@ public class DonorTab extends CTabItem {
 		this.setShowClose(true);
 		Donor donor;
 		try {
-			donor = Main.getLocalDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
+			donor = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			donor = new Donor(id);
 		}

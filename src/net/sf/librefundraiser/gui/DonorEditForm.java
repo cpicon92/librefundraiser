@@ -236,7 +236,7 @@ public class DonorEditForm extends Composite {
 		comboCategory = new Combo(compositeMisc, SWT.NONE);
 		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCategory.setBounds(0, 0, 91, 23);
-		comboCategory.setItems(Main.getLocalDB().getPreviousValues("category1", "donors"));
+		comboCategory.setItems(Main.getDonorDB().getPreviousValues("category1", "donors"));
 		
 		Label lblWorkPhone = new Label(compositeMisc, SWT.NONE);
 		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -255,7 +255,7 @@ public class DonorEditForm extends Composite {
 		comboDonorSource = new Combo(compositeMisc, SWT.NONE);
 		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboDonorSource.setBounds(0, 0, 91, 23);
-		comboDonorSource.setItems(Main.getLocalDB().getPreviousValues("category2", "donors"));
+		comboDonorSource.setItems(Main.getDonorDB().getPreviousValues("category2", "donors"));
 		
 		
 		Label lblFax = new Label(compositeMisc, SWT.NONE);
@@ -302,7 +302,7 @@ public class DonorEditForm extends Composite {
 		comboCity = new Combo(compositeAddress, SWT.BORDER);
 		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCity.setBounds(0, 0, 76, 21);
-		comboCity.setItems(Main.getLocalDB().getPreviousValues("city", "donors"));
+		comboCity.setItems(Main.getDonorDB().getPreviousValues("city", "donors"));
 		
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
 		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -340,7 +340,7 @@ public class DonorEditForm extends Composite {
 		comboZip = new Combo(compositeAddress, SWT.BORDER);
 		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboZip.setBounds(0, 0, 76, 21);
-		comboZip.setItems(Main.getLocalDB().getPreviousValues("zip", "donors"));
+		comboZip.setItems(Main.getDonorDB().getPreviousValues("zip", "donors"));
 		
 		Label lblAddress2 = new Label(compositeAddress, SWT.NONE);
 		lblAddress2.setToolTipText("This is the primary address the post office will deliver to. ");
@@ -360,7 +360,7 @@ public class DonorEditForm extends Composite {
 		comboCountry = new Combo(compositeAddress, SWT.BORDER);
 		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCountry.setBounds(0, 0, 76, 21);
-		comboCountry.setItems(Main.getLocalDB().getPreviousValues("country", "donors"));
+		comboCountry.setItems(Main.getDonorDB().getPreviousValues("country", "donors"));
 		
 		TabItem tbtmOther = new TabItem(tabFolder, SWT.NONE);
 		tbtmOther.setText("Email/Web");
@@ -418,7 +418,7 @@ public class DonorEditForm extends Composite {
 		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
 		tltmAdd.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Gift gift = new Gift(Main.getLocalDB().getMaxRecNum()+1);
+				Gift gift = new Gift(Main.getDonorDB().getMaxRecNum()+1);
 				gift.putIc("account", donor.getData("account"));
 				editGift(gift);
 			}
@@ -594,14 +594,14 @@ public class DonorEditForm extends Composite {
 		for (Object field[] : fields) {
 			saveField((Control)field[0],(String)field[1]);
 		}
-		Main.getLocalDB().saveDonor(this.donor);
-		donor.putData("alltime", ""+Main.getLocalDB().getTotalGifts(donor));
-		donor.putData("yeartodt", ""+Main.getLocalDB().getYTD(donor));
-		donor.putData("largest", ""+Main.getLocalDB().getLargestGift(donor));
-		donor.putData("lastgivedt", Main.getLocalDB().getLastGiftDate(donor));
-		donor.putData("firstgift", Main.getLocalDB().getFirstGiftDate(donor));
-		donor.putData("lastamt", ""+Main.getLocalDB().getLastGift(donor));
-		Main.getLocalDB().saveDonor(this.donor);
+		Main.getDonorDB().saveDonor(this.donor);
+		donor.putData("alltime", ""+Main.getDonorDB().getTotalGifts(donor));
+		donor.putData("yeartodt", ""+Main.getDonorDB().getYTD(donor));
+		donor.putData("largest", ""+Main.getDonorDB().getLargestGift(donor));
+		donor.putData("lastgivedt", Main.getDonorDB().getLastGiftDate(donor));
+		donor.putData("firstgift", Main.getDonorDB().getFirstGiftDate(donor));
+		donor.putData("lastamt", ""+Main.getDonorDB().getLastGift(donor));
+		Main.getDonorDB().saveDonor(this.donor);
 		Main.refresh();
 		this.fillForm();
 		this.setEdited(false);

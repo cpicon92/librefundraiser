@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
+import net.sf.librefundraiser.db.DonorDB;
 import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseDialog;
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 
 public class Main {
-	private static SQLite localDB = null;
+	private static DonorDB localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
@@ -62,7 +63,7 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	public static SQLite getLocalDB() {
+	public static DonorDB getDonorDB() {
 		if (localDB == null) localDB = new SQLite();
 		return localDB;
 	}

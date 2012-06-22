@@ -31,8 +31,8 @@ public class FileDBASE {
 		try {
 			table.open(IfNonExistent.ERROR);
 			final Format dateFormat = Main.getDateFormat();
-			SQLite sqLite = Main.getLocalDB();
-			Connection conn = sqLite.getConnection();
+			DonorDB donorDB = Main.getDonorDB();
+			Connection conn = donorDB.getConnection();
 			final List<Field> fields = table.getFields();
 			Statement stat = conn.createStatement();
 			String fieldNames = "";

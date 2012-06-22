@@ -15,7 +15,7 @@ import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 
-public class SQLite {
+public class SQLite implements DonorDB {
 	private final File dbFile;
 	public SQLite() {
 		long unixTime = System.currentTimeMillis() / 1000L;
