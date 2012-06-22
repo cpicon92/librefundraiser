@@ -92,6 +92,7 @@ public class DonorEditForm extends Composite {
 	private ToolItem tltmDelete;
 	private GiftTable giftTable;
 	private Composite compositeGifts;
+	private LinkEditForm grpWeb;
 
 	/**
 	 * Create the composite.
@@ -393,7 +394,7 @@ public class DonorEditForm extends Composite {
 		txtOther.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtOther.setBounds(0, 0, 76, 21);
 		
-		Group grpWeb = new LinkEditForm(compositeOther, SWT.NONE, donor);
+		grpWeb = new LinkEditForm(compositeOther, SWT.NONE, donor);
 		grpWeb.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		
@@ -594,6 +595,7 @@ public class DonorEditForm extends Composite {
 		for (Object field[] : fields) {
 			saveField((Control)field[0],(String)field[1]);
 		}
+		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
 		donor.putData("alltime", ""+Main.getDonorDB().getTotalGifts(donor));
 		donor.putData("yeartodt", ""+Main.getDonorDB().getYTD(donor));

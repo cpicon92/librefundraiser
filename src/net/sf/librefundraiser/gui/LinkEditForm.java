@@ -27,6 +27,7 @@ public class LinkEditForm extends Group {
 	private Text txtNewAddress;
 	private ToolBar btnNewLink;
 	private Composite compositeLinkForm;
+	private final Donor donor;
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -34,7 +35,7 @@ public class LinkEditForm extends Group {
 	 */
 	public LinkEditForm(Composite parent, int style, Donor donor) {
 		super(parent, style);
-		
+		this.donor = donor;
 		links = new ArrayDeque<String>();
 		StringTokenizer token = new StringTokenizer(donor.getData("web"),"\n");
 		while (token.hasMoreElements()) {
@@ -84,6 +85,7 @@ public class LinkEditForm extends Group {
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				links.add(txtNewAddress.getText());
+				((DonorEditForm)getParent().getParent().getParent()).setEdited(true);
 				StackLayout sl = (StackLayout)compositeNewLink.getLayout();
 				btnNewLink.setVisible(true);
 				compositeLinkForm.setVisible(false);
@@ -116,5 +118,13 @@ public class LinkEditForm extends Group {
 			Link link = new Link(compositeLinks, SWT.NONE);
 			link.setText(i + ".  <a href=\""+l+"\">"+l+"</a>");
 		}
+	}
+	
+	public void saveLinks() {
+		String output = "";
+		for (String l : links) {
+			output += l + "\n";
+		}
+		donor.putData("web", output);
 	}
 }
