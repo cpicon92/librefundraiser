@@ -115,14 +115,18 @@ public class DonorList extends Composite {
 				case PART_HEADER:
 					break;
 				case PART_MAX_BUTTON:
+					super.draw(part, state, bounds, gc);
 					break;
 				case PART_MIN_BUTTON:
+					super.draw(part, state, bounds, gc);
 					break;
 				case PART_CHEVRON_BUTTON:
+					super.draw(part, state, bounds, gc);
 					break;
 				case PART_BORDER:
 					break;
 				case PART_CLOSE_BUTTON:
+					super.draw(part, state, bounds, gc);
 					break;
 				default:
 					if (0 <= part && part < parent.getItemCount()) {

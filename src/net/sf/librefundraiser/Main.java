@@ -25,8 +25,9 @@ import org.eclipse.swt.widgets.ToolItem;
  * add delete for donors and for gifts
  * reserve new donors/gifts
  * consider changing .ldb file extension to something not used by access
- * implement web field editor
  * make "new" dialog actually replace old DBs
+ * custom draw less ugly close buttons on tabs
+ * change behavior when tabfolder fills up
  */
 
 public class Main {
