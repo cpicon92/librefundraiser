@@ -114,7 +114,7 @@ public class AboutDialog extends Dialog {
 		
 		Label lblCopyright = new Label(compositeInfo, SWT.NONE);
 		lblCopyright.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
-		lblCopyright.setText("Copyright © 2012 The LibreFundraiser developers. All rights reserved. ");
+		lblCopyright.setText("Copyright \u00A9 2012 The LibreFundraiser developers. All rights reserved. ");
 		
 		Label lblGpl = new Label(compositeInfo, SWT.NONE);
 		lblGpl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
