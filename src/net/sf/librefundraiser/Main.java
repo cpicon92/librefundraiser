@@ -30,6 +30,8 @@ import org.eclipse.swt.widgets.ToolItem;
  * change behavior when tabfolder fills up
  * allow for custom table columns on an "other" tab
  * import custom fields from frbw properly
+ * add standard edit menu (cut/copy/paste)
+ * add proper searching
  */
 
 public class Main {
