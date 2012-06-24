@@ -102,7 +102,7 @@ public class LinkEditForm extends Group {
 		btnAdd.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				links.add(txtNewAddress.getText());
-				((DonorEditForm)getParent().getParent().getParent()).setEdited(true);
+				((DonorEditForm)getParent().getParent().getParent().getParent()).setEdited(true);
 				StackLayout sl = (StackLayout)compositeNewLink.getLayout();
 				btnNewLink.setVisible(true);
 				compositeLinkForm.setVisible(false);

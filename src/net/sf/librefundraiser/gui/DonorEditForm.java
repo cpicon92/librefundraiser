@@ -10,6 +10,8 @@ import net.sf.librefundraiser.Main;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -19,6 +21,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -93,6 +96,17 @@ public class DonorEditForm extends Composite {
 	private GiftTable giftTable;
 	private Composite compositeGifts;
 	private LinkEditForm grpWeb;
+	private TabItem tbtmGifts;
+	private TabFolder tabFolder;
+	private GridLayout mainGrid;
+	private TabItem tbtmDetails;
+	private Composite compositeDetails;
+	private Composite compositeMain;
+	private TabItem tbtmAddress;
+	private Composite compositeAddressPadder;
+	private Composite compositeAddress;
+	private Composite compositeBigAddress;
+	private Label sep1;
 
 	/**
 	 * Create the composite.
@@ -101,18 +115,97 @@ public class DonorEditForm extends Composite {
 	 */
 	public DonorEditForm(Composite parent, int style, DonorTab donorTab) {
 		super(parent, style);
+		final Composite thisComposite = this;
+		addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				int width = getClientArea().width;
+				int height = getClientArea().height;
+				if (width > 1200) {
+					if (tbtmGifts != null) {
+						tbtmGifts.dispose();
+						tbtmGifts = null;
+						mainGrid.numColumns = 2;
+						compositeGifts.setParent(thisComposite);
+						compositeGifts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+						compositeGifts.setVisible(true);
+					}
+					if (tbtmDetails != null) {
+						compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
+						tbtmDetails.dispose();
+						tbtmDetails = null;
+						compositeDetails.setParent(thisComposite);
+						compositeDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+						compositeDetails.setVisible(true);
+					}
+				} else {
+					if (tbtmGifts == null) {
+						compositeGifts.setParent(tabFolder);
+						tbtmGifts = new TabItem(tabFolder, SWT.NONE);
+						tbtmGifts.setText("Gifts");
+						tbtmGifts.setControl(compositeGifts);
+						mainGrid.numColumns = 1;
+					}
+					if (tbtmDetails == null) {
+						compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+						compositeDetails.setParent(tabFolder);
+						tbtmDetails = new TabItem(tabFolder, SWT.NONE);
+						tbtmDetails.setText("Details");
+						tbtmDetails.setControl(compositeDetails);
+					}
+				}
+				if (height > 550) {
+					if (!tbtmAddress.isDisposed()) {
+						tbtmAddress.dispose();
+						sep1.setVisible(true);
+						GridData gd_compositeAddress = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
+						gd_compositeAddress.minimumWidth = 0;
+						gd_compositeAddress.minimumHeight = 0;
+						gd_compositeAddress.heightHint = SWT.DEFAULT;
+						gd_compositeAddress.widthHint = SWT.DEFAULT;
+						compositeAddress.setLayoutData(gd_compositeAddress);
+						((GridData)compositeBigAddress.getLayoutData()).exclude = false;
+						compositeAddress.setParent(compositeBigAddress);
+						compositeBigAddress.setVisible(true);
+						compositeAddress.setVisible(true);
+					}
+				} else {
+					if (tbtmAddress.isDisposed()) {
+						sep1.setVisible(false);
+						compositeAddress.setParent(compositeAddressPadder);
+						compositeAddress.setVisible(true);
+						tbtmAddress = new TabItem(tabFolder, SWT.NONE, 0);
+						tabFolder.setSelection(0);
+						tbtmAddress.setText("Postal Address");
+						tbtmAddress.setControl(compositeAddressPadder);
+						compositeBigAddress.setVisible(false);
+						((GridData)compositeBigAddress.getLayoutData()).exclude = true;
+					}
+				}
+			}
+		});
 		this.donorTab = donorTab;
 		this.donor = donorTab.getDonor();
-		setLayout(new GridLayout(1, false));
 		
-		Composite compositeBasic = new Composite(this, SWT.NONE);
-		compositeBasic.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		compositeBasic.setLayout(new GridLayout(2, false));
+		mainGrid = new GridLayout(1, true);
+		mainGrid.marginHeight = 0;
+		mainGrid.marginWidth = 0;
+		setLayout(mainGrid);
+		
+		compositeMain = new Composite(this, SWT.NONE);
+		compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		compositeMain.setLayout(new GridLayout(1, false));
+		
+		Composite compositeBasic = new Composite(compositeMain, SWT.NONE);
+		GridData gd_compositeBasic = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
+		gd_compositeBasic.widthHint = 800;
+		compositeBasic.setLayoutData(gd_compositeBasic);
+		compositeBasic.setLayout(new GridLayout(1, false));
 		
 		Group grpType = new Group(compositeBasic, SWT.NONE);
+		grpType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpType.setText("Type");
 		grpType.setBounds(0, 0, 70, 82);
-		grpType.setLayout(new GridLayout(1, false));
 		
 		SelectionAdapter typeSelect = new SelectionAdapter() {
 			@Override
@@ -121,6 +214,7 @@ public class DonorEditForm extends Composite {
 				setBusiness(business);
 			}
 		};
+		grpType.setLayout(new RowLayout(SWT.HORIZONTAL));
 		
 		btnIndividual = new Button(grpType, SWT.RADIO);
 		btnIndividual.addSelectionListener(typeSelect);
@@ -185,15 +279,13 @@ public class DonorEditForm extends Composite {
 		lblBusinessName.setText("Business Name");
 		
 		txtBusinessName = new Text(compositeBusiNames, SWT.BORDER);
-		txtBusinessName.setText("Business Name");
 		txtBusinessName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
-		Label lblContactFirst = new Label(compositeBusiNames, SWT.NONE);
+		Label lblContactFirst = new Label(compositeBusiNames, SWT.NONE); 
 		lblContactFirst.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblContactFirst.setText("Contact First");
 		
 		txtContactFirst = new Text(compositeBusiNames, SWT.BORDER);
-		txtContactFirst.setText("Contact First");
 		txtContactFirst.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblContactLast = new Label(compositeBusiNames, SWT.NONE);
@@ -201,14 +293,15 @@ public class DonorEditForm extends Composite {
 		lblContactLast.setText("Contact Last");
 		
 		txtContactLast = new Text(compositeBusiNames, SWT.BORDER);
-		txtContactLast.setText("Contact Last");
 		txtContactLast.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		Label sep = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
+		Label sep = new Label(compositeMain, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		Composite compositeMisc = new Composite(this, SWT.NONE);
-		compositeMisc.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		Composite compositeMisc = new Composite(compositeMain, SWT.NONE);
+		GridData gd_compositeMisc = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
+		gd_compositeMisc.widthHint = 800;
+		compositeMisc.setLayoutData(gd_compositeMisc);
 		compositeMisc.setLayout(new GridLayout(4, false));
 		
 		Label lblSalutation = new Label(compositeMisc, SWT.NONE);
@@ -268,27 +361,38 @@ public class DonorEditForm extends Composite {
 		txtFax.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtFax.setBounds(0, 0, 76, 21);
 		
-		TabFolder tabFolder = new TabFolder(this, SWT.NONE);
-		tabFolder.setSelection(0);
-		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		sep1 = new Label(compositeMain, SWT.SEPARATOR | SWT.HORIZONTAL);
+		sep1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		sep1.setVisible(false);
 		
-		TabItem tbtmAddress = new TabItem(tabFolder, SWT.NONE);
+		compositeBigAddress = new Composite(compositeMain, SWT.NONE);
+		GridData gd_compositeBigAddress = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
+		gd_compositeBigAddress.exclude = true;
+		gd_compositeBigAddress.widthHint = 800;
+		compositeBigAddress.setLayoutData(gd_compositeBigAddress);
+		GridLayout gl_compositeBigAddress = new GridLayout(1, false);
+		gl_compositeBigAddress.marginWidth = 0;
+		gl_compositeBigAddress.marginHeight = 0;
+		compositeBigAddress.setLayout(gl_compositeBigAddress);
+		compositeBigAddress.setVisible(false);
+		
+		tabFolder = new TabFolder(compositeMain, SWT.NONE);
+		tabFolder.setSelection(0);
+		GridData gd_tabFolder = new GridData(SWT.CENTER, SWT.FILL, true, true, 1, 1);
+		gd_tabFolder.widthHint = 800;
+		tabFolder.setLayoutData(gd_tabFolder);
+		
+		tbtmAddress = new TabItem(tabFolder, SWT.NONE);
 		tbtmAddress.setText("Postal Address");
 		
-		Composite compositeAddressPadder = new Composite(tabFolder, SWT.NONE);
+		compositeAddressPadder = new Composite(tabFolder, SWT.NONE);
 		tbtmAddress.setControl(compositeAddressPadder);
 		compositeAddressPadder.setLayout(new GridLayout(1, false));
 		
-		Composite compositeAddress = new Composite(compositeAddressPadder, SWT.NONE);
-		GridData gd_compositeAddress = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
-		gd_compositeAddress.minimumWidth = 500;
-		gd_compositeAddress.minimumHeight = 150;
-		gd_compositeAddress.heightHint = 200;
-		gd_compositeAddress.widthHint = 700;
-		compositeAddress.setLayoutData(gd_compositeAddress);
+		compositeAddress = new Composite(compositeAddressPadder, SWT.NONE);
+		compositeAddress.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
 		GridLayout gl_compositeAddress = new GridLayout(4, false);
 		gl_compositeAddress.horizontalSpacing = 10;
-		gl_compositeAddress.marginHeight = 15;
 		compositeAddress.setLayout(gl_compositeAddress);
 		
 		compositeOptional = new Composite(compositeAddress, SWT.NONE);
@@ -416,7 +520,7 @@ public class DonorEditForm extends Composite {
 		txtNotes = new Text(tabFolder, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
 		tbtmNotes.setControl(txtNotes);
 		
-		TabItem tbtmGifts = new TabItem(tabFolder, SWT.NONE);
+		tbtmGifts = new TabItem(tabFolder, SWT.NONE, 1);
 		tbtmGifts.setText("Gifts");
 		
 		compositeGifts = new Composite(tabFolder, SWT.NONE);
@@ -472,10 +576,10 @@ public class DonorEditForm extends Composite {
 			}
 		});
 		
-		TabItem tbtmDetails = new TabItem(tabFolder, SWT.NONE);
+		tbtmDetails = new TabItem(tabFolder, SWT.NONE);
 		tbtmDetails.setText("Details");
 		
-		Composite compositeDetails = new Composite(tabFolder, SWT.NONE);
+		compositeDetails = new Composite(tabFolder, SWT.NONE);
 		tbtmDetails.setControl(compositeDetails);
 		compositeDetails.setLayout(new GridLayout(2, false));
 		

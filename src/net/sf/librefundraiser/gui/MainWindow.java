@@ -77,6 +77,7 @@ public class MainWindow {
 	 */
 	protected void createContents() {
 		shell = new Shell();
+		shell.setMinimumSize(new Point(800, 552));
 		shell.setSize(880, 670);
 		shell.setImages(Main.logo);
 		String filename = null;
