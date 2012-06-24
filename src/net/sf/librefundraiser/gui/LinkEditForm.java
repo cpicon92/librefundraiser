@@ -151,7 +151,7 @@ public class LinkEditForm extends Group {
 				@Override
 				public void mouseUp(MouseEvent e) {
 					links.remove(l);
-					((DonorEditForm)getParent().getParent().getParent()).setEdited(true);
+					((DonorEditForm)getParent().getParent().getParent().getParent()).setEdited(true);
 					displayLinks();
 					layout();
 				}
