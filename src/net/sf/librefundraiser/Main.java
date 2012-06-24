@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * import custom fields from frbw properly
  * add standard edit menu (cut/copy/paste)
  * add proper searching
+ * make window remember size/position
  */
 
 public class Main {
