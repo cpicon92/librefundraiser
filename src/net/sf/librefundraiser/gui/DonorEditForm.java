@@ -275,9 +275,21 @@ public class DonorEditForm extends Composite {
 		TabItem tbtmAddress = new TabItem(tabFolder, SWT.NONE);
 		tbtmAddress.setText("Postal Address");
 		
-		Composite compositeAddress = new Composite(tabFolder, SWT.NONE);
-		tbtmAddress.setControl(compositeAddress);
-		compositeAddress.setLayout(new GridLayout(4, false));
+		Composite compositeAddressPadder = new Composite(tabFolder, SWT.NONE);
+		tbtmAddress.setControl(compositeAddressPadder);
+		compositeAddressPadder.setLayout(new GridLayout(1, false));
+		
+		Composite compositeAddress = new Composite(compositeAddressPadder, SWT.NONE);
+		GridData gd_compositeAddress = new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1);
+		gd_compositeAddress.minimumWidth = 500;
+		gd_compositeAddress.minimumHeight = 150;
+		gd_compositeAddress.heightHint = 200;
+		gd_compositeAddress.widthHint = 700;
+		compositeAddress.setLayoutData(gd_compositeAddress);
+		GridLayout gl_compositeAddress = new GridLayout(4, false);
+		gl_compositeAddress.horizontalSpacing = 10;
+		gl_compositeAddress.marginHeight = 15;
+		compositeAddress.setLayout(gl_compositeAddress);
 		
 		compositeOptional = new Composite(compositeAddress, SWT.NONE);
 		compositeOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -292,7 +304,7 @@ public class DonorEditForm extends Composite {
 		lblContact.setText("Contact");
 		
 		txtOptional = new Text(compositeAddress, SWT.BORDER);
-		txtOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		txtOptional.setBounds(0, 0, 76, 21);
 		
 		Label lblCity = new Label(compositeAddress, SWT.NONE);
@@ -301,7 +313,7 @@ public class DonorEditForm extends Composite {
 		lblCity.setText("City");
 		
 		comboCity = new Combo(compositeAddress, SWT.BORDER);
-		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboCity.setBounds(0, 0, 76, 21);
 		comboCity.setItems(Main.getDonorDB().getPreviousValues("city", "donors"));
 		
@@ -311,7 +323,7 @@ public class DonorEditForm extends Composite {
 		lblMailingName.setText("Mailing Name");
 		
 		comboMailingName = new Combo(compositeAddress, SWT.NONE);
-		comboMailingName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboMailingName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboMailingName.setBounds(0, 0, 91, 23);
 		
 		Label lblState = new Label(compositeAddress, SWT.NONE);
@@ -321,7 +333,7 @@ public class DonorEditForm extends Composite {
 		
 		comboState = new Combo(compositeAddress, SWT.NONE);
 		comboState.setItems(new String[] {"Alabama", "Alaska", "Alberta", "Arizona", "Arkansas", "British Columbia", "California", "Colorado", "Connecticut", "Delaware", "District of Columbia", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Manitoba", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Brunswick", "New Hampshire", "New Jersey", "New Mexico", "New York", "Newfoundland", "North Carolina", "North Dakota", "Northwest Territories", "Nova Scotia", "Nunavut", "Ohio", "Oklahoma", "Ontario", "Oregon", "Pennsylvania", "Prince Edward Island", "Quebec", "Rhode Island", "Saskatchewan", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virgin Islands", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming", "Yukon"});
-		comboState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboState.setBounds(0, 0, 91, 23);
 		
 		Label lblAddress1 = new Label(compositeAddress, SWT.NONE);
@@ -330,7 +342,7 @@ public class DonorEditForm extends Composite {
 		lblAddress1.setText("Address 1");
 		
 		txtAddress1 = new Text(compositeAddress, SWT.BORDER);
-		txtAddress1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtAddress1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		txtAddress1.setBounds(0, 0, 76, 21);
 		
 		Label lblZip = new Label(compositeAddress, SWT.NONE);
@@ -339,7 +351,7 @@ public class DonorEditForm extends Composite {
 		lblZip.setText("Zip");
 		
 		comboZip = new Combo(compositeAddress, SWT.BORDER);
-		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboZip.setBounds(0, 0, 76, 21);
 		comboZip.setItems(Main.getDonorDB().getPreviousValues("zip", "donors"));
 		
@@ -350,7 +362,7 @@ public class DonorEditForm extends Composite {
 		lblAddress2.setText("Address 2");
 		
 		txtAddress2 = new Text(compositeAddress, SWT.BORDER);
-		txtAddress2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtAddress2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		txtAddress2.setBounds(0, 0, 76, 21);
 		
 		Label lblCountry = new Label(compositeAddress, SWT.NONE);
@@ -359,7 +371,7 @@ public class DonorEditForm extends Composite {
 		lblCountry.setText("Country");
 		
 		comboCountry = new Combo(compositeAddress, SWT.BORDER);
-		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboCountry.setBounds(0, 0, 76, 21);
 		comboCountry.setItems(Main.getDonorDB().getPreviousValues("country", "donors"));
 		
