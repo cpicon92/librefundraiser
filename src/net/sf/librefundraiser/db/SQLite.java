@@ -439,4 +439,22 @@ public class SQLite implements DonorDB {
 		}
 		return results.toArray(new String[]{});
 	}
+
+	public void deleteDonor(int id) {
+		String account = String.format("%06d", id);
+		Connection conn = this.getConnection();
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate("delete from donors where account=\""+account+"\";");
+			stmt.executeUpdate("delete from gifts where account=\""+account+"\";");
+		} catch (SQLException e) {
+			System.err.println("Unable to delete donor. ");
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

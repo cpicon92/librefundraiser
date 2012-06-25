@@ -25,6 +25,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -173,7 +175,7 @@ public class DonorList extends Composite {
 		gl_compositeTable.marginHeight = 0;
 		gl_compositeTable.marginWidth = 0;
 		compositeTable.setLayout(gl_compositeTable);
-		tableViewer = new TableViewer(compositeTable, SWT.FULL_SELECTION);
+		tableViewer = new TableViewer(compositeTable, SWT.FULL_SELECTION | SWT.MULTI);
 		table = tableViewer.getTable();
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		table.addSelectionListener(new SelectionAdapter() {
@@ -200,14 +202,59 @@ public class DonorList extends Composite {
 		tableViewer.setInput(donors);
 		tabFolder.setSelection(0);
 		new DonorListSorter(tableViewer);
+		
+		Menu menuDonorList = new Menu(table);
+		table.setMenu(menuDonorList);
+		
+		MenuItem mntmOpenDonor = new MenuItem(menuDonorList, SWT.NONE);
+		mntmOpenDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				DonorTab newTab = null;
+				for (TableItem selectedItem : table.getSelection()) {
+					int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
+					newTab = new DonorTab(id,tabFolder);
+				}
+				if (newTab != null) tabFolder.setSelection(newTab);
+			}
+		});
+		mntmOpenDonor.setText("Open Donor(s)");
+		
+		MenuItem mntmOpenBackground = new MenuItem(menuDonorList, SWT.NONE);
+		mntmOpenBackground.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (TableItem selectedItem : table.getSelection()) {
+					int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
+					new DonorTab(id,tabFolder);
+				}
+			}
+		});
+		mntmOpenBackground.setText("Open Donor(s) in the Background");
+		
+		new MenuItem(menuDonorList, SWT.SEPARATOR);
+		
+		MenuItem mntmDeleteDonor = new MenuItem(menuDonorList, SWT.NONE);
+		mntmDeleteDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				deleteDonors();
+			}
+		});
+		mntmDeleteDonor.setText("Delete Donor(s)");
 		packColumns();
 	}
 
-	public void refresh() {
+	public void refresh(boolean pack) {
 		tableViewer.setInput(donors);
 		tableViewer.refresh();
-		packColumns();
+		if (pack) packColumns();
 	}
+	
+	public void refresh() {
+		refresh(true);
+	}
+	
 	public void packColumns() {
 		for (TableColumn tc : table.getColumns()) {
 	        tc.pack();
@@ -243,5 +290,18 @@ public class DonorList extends Composite {
 		} else {
 			((DonorTab)t).alterSaveButton();
 		}
+	}
+	
+	public void deleteDonors() {
+		MessageBox warning = new MessageBox(this.getShell(),SWT.ICON_WARNING|SWT.YES|SWT.NO);
+		warning.setText("LibreFundraiser Warning");
+		warning.setMessage("All data for these donors will be erased IRRETRIEVABLY. Do you want to continue?");
+		if (warning.open() == SWT.NO) return;
+		for (TableItem selectedItem : table.getSelection()) {
+			int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
+			Main.getDonorDB().deleteDonor(id);
+		}
+		donors = Main.getDonorDB().getDonors();
+		refresh(false);
 	}
 }

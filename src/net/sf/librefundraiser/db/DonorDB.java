@@ -14,6 +14,8 @@ public interface DonorDB {
 	Donor[] getDonors(String query, boolean fetchGifts);
 
 	void saveDonor(Donor donor);
+	
+	void deleteDonor(int account);
 
 	Donor[] getDonors();
 
