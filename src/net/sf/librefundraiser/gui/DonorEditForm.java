@@ -565,10 +565,11 @@ public class DonorEditForm extends Composite {
 				for (TableItem i : giftTable.getTable().getSelection()) {
 					int id = Integer.parseInt(i.getText(6));
 					Main.getDonorDB().deleteGift(id);
-					Main.getDonorDB().refreshGifts(donor);
-					giftTable.refresh();
-					tltmDelete.setEnabled(false);
 				}
+				Main.getDonorDB().refreshGifts(donor);
+				giftTable.refresh();
+				tltmDelete.setEnabled(false);
+				tltmEdit.setEnabled(false);
 			}
 		});
 		tltmDelete.setImage(ResourceManager.getIcon("delete-gift.png"));
