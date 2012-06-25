@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.ToolItem;
  * reserve new donors/gifts
  * consider changing .ldb file extension to something not used by access
  * make "new" dialog actually replace old DBs
- * custom draw less ugly close buttons on tabs
  * change behavior when tabfolder fills up
  * allow for custom table columns on an "other" tab
  * import custom fields from frbw properly
