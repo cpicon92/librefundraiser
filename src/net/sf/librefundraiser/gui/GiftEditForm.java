@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class GiftEditForm extends Composite {
 	private Text txtAmount;
@@ -40,7 +39,7 @@ public class GiftEditForm extends Composite {
 	public GiftEditForm(Composite parent, int style, Gift gift) {
 		super(parent, SWT.BORDER);
 		setBackgroundMode(SWT.INHERIT_DEFAULT);
-		setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
+		setBackground(this.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		this.gift = gift;
 		setLayout(new GridLayout(2, false));
 
@@ -97,7 +96,7 @@ public class GiftEditForm extends Composite {
 		GridData gd_chkLetter = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_chkLetter.verticalIndent = 1;
 		chkLetter.setLayoutData(gd_chkLetter);
-		chkLetter.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
+		chkLetter.setBackground(this.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		
 		Label lblLetter = new Label(compositeBottom, SWT.NONE);
 		lblLetter.addMouseListener(new MouseAdapter() {
@@ -131,7 +130,7 @@ public class GiftEditForm extends Composite {
 				{ comboSource, "source" }, { txtNote, "note" } };
 		this.fields = fields;
 		
-		setForeground(SWTResourceManager.getColor(SWT.COLOR_INFO_FOREGROUND));
+		setForeground(this.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		inheritForeground(this);
 		fillForm();
 	}

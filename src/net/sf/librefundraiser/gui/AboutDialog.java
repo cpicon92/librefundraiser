@@ -4,22 +4,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Control;
 
 public class AboutDialog extends Dialog {
 
@@ -75,7 +76,7 @@ public class AboutDialog extends Dialog {
 		};
 		
 		Composite compositeBanner = new Composite(shell, SWT.NONE);
-		compositeBanner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		compositeBanner.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		compositeBanner.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		compositeBanner.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		GridLayout gl_compositeBanner = new GridLayout(2, false);
@@ -84,12 +85,12 @@ public class AboutDialog extends Dialog {
 		
 		Label lblLibrefundraiser = new Label(compositeBanner, SWT.NONE);
 		lblLibrefundraiser.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-		lblLibrefundraiser.setFont(SWTResourceManager.getFont("Segoe UI", 26, SWT.NORMAL));
+		lblLibrefundraiser.setFont(new Font(shell.getDisplay(), "Segoe UI", 26, SWT.NORMAL));
 		lblLibrefundraiser.setText("LibreFundraiser");
 		
 		Label lblLogo = new Label(compositeBanner, SWT.NONE);
 		lblLogo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 3));
-		lblLogo.setImage(SWTResourceManager.getImage(AboutDialog.class, "/net/sf/librefundraiser/logo/balloon128.png"));
+		lblLogo.setImage(ResourceManager.getLogo(128));
 		
 		Label lblVersion = new Label(compositeBanner, SWT.NONE);
 		lblVersion.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 1, 1));
@@ -118,7 +119,7 @@ public class AboutDialog extends Dialog {
 		
 		Label lblGpl = new Label(compositeInfo, SWT.NONE);
 		lblGpl.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		lblGpl.setImage(SWTResourceManager.getImage(AboutDialog.class, "/net/sf/librefundraiser/icons/gpl.png"));
+		lblGpl.setImage(ResourceManager.getIcon("gpl.png"));
 		
 		Label lblGplNotice = new Label(compositeInfo, SWT.WRAP);
 		lblGplNotice.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));

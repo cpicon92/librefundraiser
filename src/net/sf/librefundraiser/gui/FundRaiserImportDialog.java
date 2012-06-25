@@ -1,5 +1,5 @@
 package net.sf.librefundraiser.gui;
-import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.swt.SWT;
@@ -62,7 +62,7 @@ public class FundRaiserImportDialog extends Dialog {
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		shell.setSize(320, 130);
-		shell.setImages(Main.logo);
+		shell.setImages(ResourceManager.getLogo());
 		shell.setText("Importing from FundRaiser Basic...");
 		GridLayout gl_shlImportingFromFundraiser = new GridLayout(1, false);
 		gl_shlImportingFromFundraiser.verticalSpacing = 10;

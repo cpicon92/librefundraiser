@@ -1,6 +1,7 @@
 package net.sf.librefundraiser.gui;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -21,14 +22,13 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.GridData;
 
 
 public class DonorList extends Composite {
@@ -104,7 +104,7 @@ public class DonorList extends Composite {
 				event.doit = verify.open() == SWT.YES;
 			}
 		});
-		tabFolder.setSelectionBackground(new Color[]{SWTResourceManager.getColor(SWT.COLOR_WHITE), SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{40}, true);
+		tabFolder.setSelectionBackground(new Color[]{this.getDisplay().getSystemColor(SWT.COLOR_WHITE), this.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{40}, true);
 		tabFolder.setRenderer(new CTabFolderRenderer(tabFolder) {
 			protected void draw(int part, int state, Rectangle bounds, GC gc)  {
 				switch (part) {
@@ -155,7 +155,7 @@ public class DonorList extends Composite {
 		});
 
 		final CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
-		tbtmDonors.setImage(SWTResourceManager.getImage(DonorList.class, "/net/sf/librefundraiser/icons/home-tab.png"));
+		tbtmDonors.setImage(ResourceManager.getIcon("home-tab.png"));
 		tbtmDonors.setText("Donors");
 		
 		tabFolder.addSelectionListener(new SelectionAdapter() {

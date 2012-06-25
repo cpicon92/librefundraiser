@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.FileDBASE;
 
 import org.eclipse.swt.SWT;
@@ -41,7 +42,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class MainWindow {
@@ -79,7 +79,7 @@ public class MainWindow {
 		shell = new Shell();
 		shell.setMinimumSize(new Point(800, 552));
 		shell.setSize(880, 670);
-		shell.setImages(Main.logo);
+		shell.setImages(ResourceManager.getLogo());
 		String filename = null;
 		try {
 			filename = new File(Main.getSetting("lastDB")).getName();
@@ -229,13 +229,13 @@ public class MainWindow {
 				newDonor();
 			}
 		});
-		tltmNewDonor.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/new-donor.png"));
+		tltmNewDonor.setImage(ResourceManager.getIcon("new-donor.png"));
 		tltmNewDonor.setText("New Donor");
 
 		tltmSave = new ToolItem(toolBar, SWT.NONE);
 		tltmSave.setToolTipText("Save");
 		tltmSave.setEnabled(false);
-		tltmSave.setImage(SWTResourceManager.getImage(MainWindow.class, "/net/sf/librefundraiser/icons/save.png"));
+		tltmSave.setImage(ResourceManager.getIcon("save.png"));
 		tltmSave.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (saveCurrent == null) return;

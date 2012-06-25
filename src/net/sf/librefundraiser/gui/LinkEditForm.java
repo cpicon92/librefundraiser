@@ -6,6 +6,7 @@ import java.util.ArrayDeque;
 import java.util.StringTokenizer;
 
 import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -14,6 +15,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -27,7 +29,6 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class LinkEditForm extends Group {
 	private ArrayDeque<String> links;
@@ -88,7 +89,7 @@ public class LinkEditForm extends Group {
 				txtNewAddress.setSelection(txtNewAddress.getCharCount());
 			}
 		});
-		tltmAddALink.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/add-link.png"));
+		tltmAddALink.setImage(ResourceManager.getIcon("add-link.png"));
 		tltmAddALink.setText("Add a link...");
 		
 		compositeLinkForm = new Composite(compositeNewLink, SWT.NONE);
@@ -140,7 +141,7 @@ public class LinkEditForm extends Group {
 			final Label deleteButton = new Label(cLink, SWT.NONE);
 			deleteButton.setVisible(false);
 			deleteButton.setToolTipText("Delete this link");
-			deleteButton.setImage(SWTResourceManager.getImage(LinkEditForm.class, "/net/sf/librefundraiser/icons/delete-link.png"));
+			deleteButton.setImage(ResourceManager.getIcon("delete-link.png"));
 			deleteButton.addMouseListener(new MouseListener() {
 				@Override
 				public void mouseDoubleClick(MouseEvent e) {
@@ -159,12 +160,12 @@ public class LinkEditForm extends Group {
 			deleteButton.addMouseTrackListener(new MouseTrackListener() {
 				@Override
 				public void mouseEnter(MouseEvent e) {
-					deleteButton.setImage(SWTResourceManager.getImage(LinkEditForm.class, "/net/sf/librefundraiser/icons/delete-link_hover.png"));				
+					deleteButton.setImage(new Image(getDisplay(), "/net/sf/librefundraiser/icons/delete-link_hover.png"));				
 				}
 
 				@Override
 				public void mouseExit(MouseEvent e) {
-					deleteButton.setImage(SWTResourceManager.getImage(LinkEditForm.class, "/net/sf/librefundraiser/icons/delete-link.png"));				
+					deleteButton.setImage(new Image(getDisplay(), "/net/sf/librefundraiser/icons/delete-link.png"));				
 				}
 
 				@Override

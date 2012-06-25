@@ -1,12 +1,12 @@
 package net.sf.librefundraiser.gui;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class DonorTab extends CTabItem {
@@ -25,7 +25,7 @@ public class DonorTab extends CTabItem {
 		this.donor = donor;
 		DonorEditForm editForm = new DonorEditForm(this.getParent(),SWT.NONE,this);
 		this.setControl(editForm);
-		this.setImage(SWTResourceManager.getImage(DonorList.class, "/net/sf/librefundraiser/icons/donor-tab.png"));
+		this.setImage(ResourceManager.getIcon("donor-tab.png"));
 	}
 	
 	public Donor getDonor() {

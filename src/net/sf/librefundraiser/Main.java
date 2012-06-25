@@ -17,7 +17,6 @@ import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseDialog;
 
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -40,22 +39,11 @@ public class Main {
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
-	public static Image[] logo;
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public static final String version = "(Development Snapshot)";
 
 	public static void main(String args[]) {
 		loadSettings();
-		Display display = Display.getDefault();
-		logo = new Image[]{
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon16.png")),
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon24.png")),
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon32.png")),
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon48.png")),
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon64.png")),
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon128.png")),
-				new Image(display,Main.class.getResourceAsStream("/net/sf/librefundraiser/logo/balloon256.png"))
-				};
 		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
 			NewDatabaseDialog dialog = new NewDatabaseDialog();
 			addSetting("lastDB",dialog.open());

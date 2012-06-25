@@ -6,6 +6,7 @@ import java.util.Date;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -34,7 +35,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class DonorEditForm extends Composite {
@@ -540,7 +540,7 @@ public class DonorEditForm extends Composite {
 				editGift(gift);
 			}
 		});
-		tltmAdd.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/new-gift.png"));
+		tltmAdd.setImage(ResourceManager.getIcon("new-gift.png"));
 		tltmAdd.setText("Add");
 		
 		ToolItem tltmSep = new ToolItem(tbrGifts, SWT.SEPARATOR);
@@ -555,11 +555,11 @@ public class DonorEditForm extends Composite {
 				editGift(donor.getGifts().get(id));
 			}
 		});
-		tltmEdit.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/edit-gift.png"));
+		tltmEdit.setImage(ResourceManager.getIcon("edit-gift.png"));
 		tltmEdit.setText("Edit");
 		
 		tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
-		tltmDelete.setImage(SWTResourceManager.getImage(DonorEditForm.class, "/net/sf/librefundraiser/icons/delete-gift.png"));
+		tltmDelete.setImage(ResourceManager.getIcon("delete-gift.png"));
 		tltmDelete.setEnabled(true);
 		tltmDelete.setText("Delete");
 		

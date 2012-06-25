@@ -1,5 +1,5 @@
 package net.sf.librefundraiser.gui;
-import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class NewDatabaseDialog {
@@ -64,7 +63,7 @@ public class NewDatabaseDialog {
 			}
 		});
 		shell.setSize(450, 370);
-		shell.setImages(Main.logo);
+		shell.setImages(ResourceManager.getLogo());
 		shell.setText("LibreFundraiser");
 		GridLayout gl_shlLibreFundraiser = new GridLayout(1, false);
 		gl_shlLibreFundraiser.marginWidth = 0;
@@ -76,7 +75,7 @@ public class NewDatabaseDialog {
 		Composite compositeBanner = new Composite(shell, SWT.NONE);
 		compositeBanner.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		compositeBanner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		compositeBanner.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+		compositeBanner.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		compositeBanner.setBounds(0, 0, 64, 64);
 		compositeBanner.setLayout(new GridLayout(2, false));
 		
@@ -90,7 +89,7 @@ public class NewDatabaseDialog {
 		lblFirstStart.setText("Welcome to LibreFundraiser! ");
 		
 		Label lblLogo = new Label(compositeBanner, SWT.NONE);
-		lblLogo.setImage(SWTResourceManager.getImage(NewDatabaseDialog.class, "/net/sf/librefundraiser/logo/balloon48.png"));
+		lblLogo.setImage(ResourceManager.getLogo(48));
 		lblLogo.setBounds(0, 0, 49, 13);
 		
 		new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
