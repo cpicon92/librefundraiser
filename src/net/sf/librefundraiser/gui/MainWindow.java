@@ -165,6 +165,21 @@ public class MainWindow {
 			}
 		});
 		mntmExit.setText("Exit");
+		
+		MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
+		mntmEdit.setText("Edit");
+		
+		Menu menuEdit = new Menu(mntmEdit);
+		mntmEdit.setMenu(menuEdit);
+		
+		MenuItem mntmCut = new MenuItem(menuEdit, SWT.NONE);
+		mntmCut.setText("Cut\tCtrl+X");
+		
+		MenuItem mntmCopy = new MenuItem(menuEdit, SWT.NONE);
+		mntmCopy.setText("Copy\tCtrl+C");
+		
+		MenuItem mntmPaste = new MenuItem(menuEdit, SWT.NONE);
+		mntmPaste.setText("Paste\tCtrl+V");
 
 		MenuItem mntmDonor = new MenuItem(menu, SWT.CASCADE);
 		mntmDonor.setText("Donor");
