@@ -559,8 +559,20 @@ public class DonorEditForm extends Composite {
 		tltmEdit.setText("Edit");
 		
 		tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
+		tltmDelete.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (TableItem i : giftTable.getTable().getSelection()) {
+					int id = Integer.parseInt(i.getText(6));
+					Main.getDonorDB().deleteGift(id);
+					Main.getDonorDB().refreshGifts(donor);
+					giftTable.refresh();
+					tltmDelete.setEnabled(false);
+				}
+			}
+		});
 		tltmDelete.setImage(ResourceManager.getIcon("delete-gift.png"));
-		tltmDelete.setEnabled(true);
+		tltmDelete.setEnabled(false);
 		tltmDelete.setText("Delete");
 		
 		compositeEditForm = new Composite(compositeGifts, SWT.NONE);
@@ -572,7 +584,9 @@ public class DonorEditForm extends Composite {
 		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		giftTable.getTable().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				tltmEdit.setEnabled(true);
+				TableItem[] selection = giftTable.getTable().getSelection();
+				if (selection.length == 1) tltmEdit.setEnabled(true);
+				if (selection.length > 0) tltmDelete.setEnabled(true);
 			}
 		});
 		

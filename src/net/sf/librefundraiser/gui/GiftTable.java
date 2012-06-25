@@ -26,7 +26,7 @@ public class GiftTable extends Composite {
 		this.donor = donor;
 		setLayout(new FillLayout(SWT.HORIZONTAL));
 		
-		tableGifts = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+		tableGifts = new Table(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
 		tableGifts.setHeaderVisible(true);
 		
 		TableColumn tblclmnAmount = new TableColumn(tableGifts, SWT.NONE);

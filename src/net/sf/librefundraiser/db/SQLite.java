@@ -457,4 +457,54 @@ public class SQLite implements DonorDB {
 			e.printStackTrace();
 		}
 	}
+	
+	public void deleteGift(int id) {
+		String recnum = String.format("%06d", id);
+		Connection conn = this.getConnection();
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate("delete from gifts where recnum=\""+recnum+"\";");
+		} catch (SQLException e) {
+			System.err.println("Unable to delete gift. ");
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void refreshGifts(Donor donor) {
+		Connection conn = this.getConnection();
+		try {
+			Statement stmt = conn.createStatement();
+			ArrayDeque<String> giftColumns = new ArrayDeque<String>();
+			ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
+			while (rsGifts.next()) {
+				giftColumns.add(rsGifts.getString("name"));
+			}
+			rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
+			donor.clearGifts();
+			while (rsGifts.next()) {
+				Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
+				for (String column : giftColumns) {
+					String value = "";
+					try {
+						value = rsGifts.getString(column);
+					} catch (SQLException e1) {}
+					gift.putIc(column, value!=null?value:"");
+				}
+				donor.addGift(gift);
+			}
+			rsGifts.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

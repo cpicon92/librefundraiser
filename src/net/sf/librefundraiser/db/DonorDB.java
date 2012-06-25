@@ -16,8 +16,12 @@ public interface DonorDB {
 	void saveDonor(Donor donor);
 	
 	void deleteDonor(int account);
+	
+	void deleteGift(int refnum);
 
 	Donor[] getDonors();
+	
+	void refreshGifts(Donor donor);
 
 	int getMaxAccount();
 

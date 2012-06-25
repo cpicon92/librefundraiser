@@ -47,4 +47,7 @@ public class Donor {
 	public int getId() {
 		return id;
 	}
+	public void clearGifts() {
+		gifts.clear();
+	}
 }
