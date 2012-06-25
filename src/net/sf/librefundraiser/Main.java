@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolItem;
 
 /* Left to do: 
- * add delete for gifts
  * reserve new donors/gifts
  * consider changing .ldb file extension to something not used by access
  * make "new" dialog actually replace old DBs
