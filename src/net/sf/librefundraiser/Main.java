@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * add functionality for edit menu items
  * add proper searching
  * make window remember size/position
+ * fix y/q note bug
  */
 
 public class Main {

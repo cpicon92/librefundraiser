@@ -107,6 +107,12 @@ public class DonorEditForm extends Composite {
 	private Composite compositeAddress;
 	private Composite compositeBigAddress;
 	private Label sep1;
+	private TabItem tbtmCustom;
+	private Composite compositeCustom;
+	private Label lblCategory_1;
+	private Label lblCategory_2;
+	private Text txtCategory;
+	private Text txtCategory_1;
 
 	/**
 	 * Create the composite.
@@ -675,6 +681,29 @@ public class DonorEditForm extends Composite {
 		txtAccountID = new Text(grpOther, SWT.BORDER);
 		txtAccountID.setEditable(false);
 		txtAccountID.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		tbtmCustom = new TabItem(tabFolder, SWT.NONE);
+		tbtmCustom.setText("Custom");
+		
+		compositeCustom = new Composite(tabFolder, SWT.NONE);
+		tbtmCustom.setControl(compositeCustom);
+		compositeCustom.setLayout(new GridLayout(2, false));
+		
+		lblCategory_1 = new Label(compositeCustom, SWT.NONE);
+		lblCategory_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCategory_1.setText("Category1");
+		
+		txtCategory = new Text(compositeCustom, SWT.BORDER);
+		txtCategory.setText("Category 1");
+		txtCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		lblCategory_2 = new Label(compositeCustom, SWT.NONE);
+		lblCategory_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblCategory_2.setText("Category2");
+		
+		txtCategory_1 = new Text(compositeCustom, SWT.BORDER);
+		txtCategory_1.setText("Category 2");
+		txtCategory_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Object[][] fields = { { txtFirstName, "firstname" },
 				{ txtLastName, "lastname" }, { txtBusinessName, "lastname" },

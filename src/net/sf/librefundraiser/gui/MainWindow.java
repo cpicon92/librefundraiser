@@ -257,9 +257,19 @@ public class MainWindow {
 				saveCurrent.run();
 			}
 		});
-		ToolItem tltmSep = new ToolItem(toolBar, SWT.SEPARATOR);
-		tltmSep.setText("sep");
+		new ToolItem(toolBar, SWT.SEPARATOR);
 		
+		ToolItem tltmDbProperties = new ToolItem(toolBar, SWT.NONE);
+		tltmDbProperties.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				new DatabasePropertiesDialog(shell, SWT.DIALOG_TRIM).open();
+			}
+		});
+		tltmDbProperties.setText("Database Properties");
+		tltmDbProperties.setImage(ResourceManager.getIcon("db-properties.png"));
+		
+		new ToolItem(toolBar, SWT.SEPARATOR);
+
 		shellSearch = new Shell(shell, SWT.NONE);
 		listSearch = new List(shellSearch, SWT.SINGLE);
 		shellSearch.setLayout(new FillLayout());
