@@ -160,12 +160,12 @@ public class LinkEditForm extends Group {
 			deleteButton.addMouseTrackListener(new MouseTrackListener() {
 				@Override
 				public void mouseEnter(MouseEvent e) {
-					deleteButton.setImage(new Image(getDisplay(), "/net/sf/librefundraiser/icons/delete-link_hover.png"));				
+					deleteButton.setImage(ResourceManager.getIcon("delete-link_hover.png"));		
 				}
 
 				@Override
 				public void mouseExit(MouseEvent e) {
-					deleteButton.setImage(new Image(getDisplay(), "/net/sf/librefundraiser/icons/delete-link.png"));				
+					deleteButton.setImage(ResourceManager.getIcon("delete-link.png"));
 				}
 
 				@Override
