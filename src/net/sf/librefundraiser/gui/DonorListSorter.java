@@ -1,4 +1,5 @@
 package net.sf.librefundraiser.gui;
+
 import net.sf.librefundraiser.Main;
 
 import org.eclipse.core.runtime.Assert;
@@ -24,6 +25,7 @@ public class DonorListSorter extends ViewerComparator {
 	final private TableViewer viewer;
 
 	final private SelectionListener selectionHandler = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			DonorListSorter sorter = (DonorListSorter) DonorListSorter.this.viewer.getComparator();
 			Assert.isTrue(DonorListSorter.this == sorter);
@@ -45,7 +47,45 @@ public class DonorListSorter extends ViewerComparator {
 			TableColumn selectedColumn = viewer.getTable().getColumns()[0];
 			Assert.isTrue(DonorListSorter.this.viewer.getTable() == selectedColumn.getParent());
 			DonorListSorter.this.setColumn(selectedColumn);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
+	}
+
+	@Override
+	public int compare(Viewer v, Object c1, Object c2) {
+		Assert.isTrue(v == this.viewer);
+		ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();
+		String column = DonorList.columns[columnIndex][0];
+		String t1 = labelProvider.getColumnText(c1, columnIndex);
+		String t2 = labelProvider.getColumnText(c2, columnIndex);
+		int output = 0;
+		// compare address with street name first
+		if (column.toLowerCase().equals("address2")) {
+			String addr1 = t1.replaceAll("^([0-9]*)(.*)", "$2");
+			String addr2 = t2.replaceAll("^([0-9]*)(.*)", "$2");
+			int num1 = 0;
+			int num2 = 0;
+			try {
+				num1 = Integer.parseInt(t1.replaceAll("^([0-9]*)(.*)", "$1"));
+				num2 = Integer.parseInt(t2.replaceAll("^([0-9]*)(.*)", "$1"));
+			} catch (Exception e) {
+			}
+			t1 = addr1 + String.format(" %05d", num1);
+			t2 = addr2 + String.format(" %05d", num2);
+		}
+		// compare money fields as money
+		if (DonorList.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
+			Double d1 = Main.fromMoney(t1);
+			Double d2 = Main.fromMoney(t2);
+			output = d1.compareTo(d2);
+		}
+		// if either field is null, change it to empty string
+		if (t1 == null)
+			t1 = "";
+		if (t2 == null)
+			t2 = "";
+		output = t1.compareTo(t2);
+		return direction * output;
 	}
 
 	public void setColumn(TableColumn selectedColumn) {
@@ -85,44 +125,11 @@ public class DonorListSorter extends ViewerComparator {
 		TableColumn[] columns = table.getColumns();
 		for (int i = 0; i < columns.length; i++) {
 			TableColumn theColumn = columns[i];
-			if (theColumn == this.column){
+			if (theColumn == this.column) {
 				columnIndex = i;
 				break;
 			}
 		}
 		viewer.refresh();
-	}
-
-	public int compare(Viewer v, Object c1, Object c2) {
-		Assert.isTrue(v == this.viewer);
-		ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();
-		String column = DonorList.columns[columnIndex][0];
-		String t1 = labelProvider.getColumnText(c1,columnIndex);
-		String t2 = labelProvider.getColumnText(c2,columnIndex);
-		int output = 0;
-		//compare address with street name first
-		if (column.toLowerCase().equals("address2")) {
-			String addr1 = t1.replaceAll("^([0-9]*)(.*)","$2");
-			String addr2 = t2.replaceAll("^([0-9]*)(.*)","$2");
-			int num1 = 0;
-			int num2 = 0;
-			try {
-				num1 = Integer.parseInt(t1.replaceAll("^([0-9]*)(.*)","$1"));
-				num2 = Integer.parseInt(t2.replaceAll("^([0-9]*)(.*)","$1"));
-			} catch (Exception e) {}
-			t1 = addr1 + String.format(" %05d", num1);
-			t2 = addr2 + String.format(" %05d", num2);
-		}
-		//compare money fields as money
-		if (DonorList.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
-			Double d1 = Main.fromMoney(t1);
-			Double d2 = Main.fromMoney(t2);
-			output = d1.compareTo(d2);
-		}
-		//if either field is null, change it to empty string
-		if (t1 == null) t1 = "";
-		if (t2 == null) t2 = "";
-		output = t1.compareTo(t2);
-		return direction * output;
 	}
 }

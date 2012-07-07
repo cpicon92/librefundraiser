@@ -1,4 +1,5 @@
 package net.sf.librefundraiser;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -40,11 +41,69 @@ public class Main {
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public static final String version = "(Development Snapshot)";
 
+	public static void addSetting(String key, String value) {
+		settings.setProperty(key, value);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				saveSettings();
+			}
+		}).start();
+	}
+
+	public static double fromMoney(String amount) {
+		if (currency == null)
+			currency = NumberFormat.getCurrencyInstance();
+		try {
+			return currency.parse(amount).doubleValue();
+		} catch (ParseException e) {
+		}
+		return 0;
+	}
+
+	public static DateFormat getDateFormat() {
+		return dateFormat;
+	}
+
+	public static DonorDB getDonorDB() {
+		if (localDB == null)
+			localDB = new SQLite();
+		return localDB;
+	}
+
+	public static ToolItem getSaveButton() {
+		return window.getSaveButton();
+	}
+
+	public static String getSetting(String key) {
+		return settings.getProperty(key);
+	}
+
+	public static MainWindow getWindow() {
+		return window;
+	}
+
+	public static void loadSettings() {
+		String path = System.getenv("AppData");
+		if (path == null) {
+			path = System.getProperty("user.home")
+					+ "/.librefundraiser/settings.xml";
+		} else {
+			path = path + "\\LibreFundraiser\\settings.xml";
+		}
+		try {
+			settings.loadFromXML(new BufferedInputStream(new FileInputStream(path)));
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+	}
+
 	public static void main(String args[]) {
 		loadSettings();
-		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
+		if (getSetting("lastDB") == null
+				|| !(new File(getSetting("lastDB")).exists())) {
 			NewDatabaseDialog dialog = new NewDatabaseDialog();
-			addSetting("lastDB",dialog.open());
+			addSetting("lastDB", dialog.open());
 		}
 		resetLocalDB();
 		try {
@@ -55,88 +114,55 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	public static DonorDB getDonorDB() {
-		if (localDB == null) localDB = new SQLite();
-		return localDB;
-	}
-	public static void resetLocalDB() {
-		localDB = new SQLite(getSetting("lastDB"));
-	}
-	public static String toMoney(double amount) {
-		if (currency == null) currency = NumberFormat.getCurrencyInstance();
-		return currency.format(amount);
-	}
-	public static String toMoney(String amount) {
-		if (amount.trim().equals("")) amount = "0.00";
-		try {
-			return toMoney(Double.parseDouble(amount));
-		} catch (Exception e) {
-			System.err.println("Value \""+amount+"\" could not be parsed as money.");
-			return amount;
-		}
-	}
-	public static double fromMoney(String amount) {
-		if (currency == null) currency = NumberFormat.getCurrencyInstance();
-		try {
-			return currency.parse(amount).doubleValue();
-		} catch (ParseException e) {}
-		return 0;
-	}
-	public static ToolItem getSaveButton() {
-		return window.getSaveButton();
-	}
-	public static void setSaveAction(Runnable r) {
-		window.setSaveAction(r);
-	}
+
 	public static void refresh() {
 		window.refresh();
 	}
+
 	public static void reloadDonors() {
 		window.reload();
 	}
-	public static void loadSettings() {
-		String path = System.getenv("AppData");
-		if (path == null) {
-			path = System.getProperty("user.home")+"/.librefundraiser/settings.xml";
-		} else {
-			path = path + "\\LibreFundraiser\\settings.xml";
-		}
-		try {
-			settings.loadFromXML(new BufferedInputStream(new FileInputStream(path)));
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		}
+
+	public static void resetLocalDB() {
+		localDB = new SQLite(getSetting("lastDB"));
 	}
+
 	public static void saveSettings() {
 		String path = System.getenv("AppData");
 		if (path == null) {
-			new File(System.getProperty("user.home")+"/.librefundraiser").mkdirs();
-			path = System.getProperty("user.home")+"/.librefundraiser/settings.xml";
+			new File(System.getProperty("user.home") + "/.librefundraiser").mkdirs();
+			path = System.getProperty("user.home")
+					+ "/.librefundraiser/settings.xml";
 		} else {
 			new File(path + "\\LibreFundraiser").mkdirs();
 			path = path + "\\LibreFundraiser\\settings.xml";
 		}
 		try {
-			settings.storeToXML(new BufferedOutputStream(new FileOutputStream(path)),"LibreFundraiser");
+			settings.storeToXML(new BufferedOutputStream(new FileOutputStream(path)), "LibreFundraiser");
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		}
 	}
-	public static void addSetting(String key, String value) {
-		settings.setProperty(key, value);
-		new Thread(new Runnable() {
-			public void run() {
-				saveSettings();
-			}
-		}).start();
+
+	public static void setSaveAction(Runnable r) {
+		window.setSaveAction(r);
 	}
-	public static String getSetting(String key) {
-		return settings.getProperty(key);
+
+	public static String toMoney(double amount) {
+		if (currency == null)
+			currency = NumberFormat.getCurrencyInstance();
+		return currency.format(amount);
 	}
-	public static MainWindow getWindow() {
-		return window;
-	}
-	public static DateFormat getDateFormat() {
-		return dateFormat;
+
+	public static String toMoney(String amount) {
+		if (amount.trim().equals(""))
+			amount = "0.00";
+		try {
+			return toMoney(Double.parseDouble(amount));
+		} catch (Exception e) {
+			System.err.println("Value \"" + amount
+					+ "\" could not be parsed as money.");
+			return amount;
+		}
 	}
 }

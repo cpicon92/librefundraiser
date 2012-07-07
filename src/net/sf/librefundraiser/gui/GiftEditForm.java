@@ -33,6 +33,7 @@ public class GiftEditForm extends Composite {
 
 	/**
 	 * Create the composite.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
@@ -97,9 +98,10 @@ public class GiftEditForm extends Composite {
 		gd_chkLetter.verticalIndent = 1;
 		chkLetter.setLayoutData(gd_chkLetter);
 		chkLetter.setBackground(this.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		
+
 		Label lblLetter = new Label(compositeBottom, SWT.NONE);
 		lblLetter.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseDown(MouseEvent e) {
 				chkLetter.setSelection(!chkLetter.getSelection());
 			}
@@ -108,6 +110,7 @@ public class GiftEditForm extends Composite {
 
 		Button btnCancel = new Button(compositeBottom, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				dispose();
 			}
@@ -116,6 +119,7 @@ public class GiftEditForm extends Composite {
 
 		Button btnSave = new Button(compositeBottom, SWT.NONE);
 		btnSave.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				canceled = false;
 				saveForm();
@@ -129,89 +133,93 @@ public class GiftEditForm extends Composite {
 				{ dtDateGiven, "dategiven" }, { chkLetter, "letter" },
 				{ comboSource, "source" }, { txtNote, "note" } };
 		this.fields = fields;
-		
+
 		setForeground(this.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		inheritForeground(this);
 		fillForm();
 	}
 
-	private void inheritForeground(Control control) {
-		try {
-			for (Control c : ((Composite)control).getChildren()) {
-				c.setForeground(control.getForeground());
-				inheritForeground(c);
-			}
-		} catch (Exception e) {}
-	}
-	
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
-	private void fillForm() {
-		for (Object field[] : fields) {
-			fillField((Control)field[0],(String)field[1]);
-		}
-	}
-	
-	private void saveForm() {
-		for (Object field[] : fields) {
-			saveField((Control)field[0],(String)field[1]);
-		}
-		gift.putIc("dt_entry",Main.getDateFormat().format(new Date()));
-		gift.putIc("recnum", String.format("%06d",gift.recnum));
-	}
-	
 	private void fillField(Control field, String key) {
-		String value = gift.getIc(key)!=null?gift.getIc(key):"";
+		String value = gift.getIc(key) != null ? gift.getIc(key) : "";
 		if (field.getClass().equals(Text.class)) {
-			((Text)field).setText(value);
+			((Text) field).setText(value);
 		} else if (field.getClass().equals(Combo.class)) {
-			((Combo)field).setText(value);
+			((Combo) field).setText(value);
 		} else if (field.getClass().equals(DateTime.class)) {
 			try {
 				Calendar date = Calendar.getInstance();
 				date.setTime(Main.getDateFormat().parse(value));
-				((DateTime)field).setYear(date.get(Calendar.YEAR));
-				((DateTime)field).setMonth(date.get(Calendar.MONTH));
-				((DateTime)field).setDay(date.get(Calendar.DAY_OF_MONTH));
-			} catch (ParseException e) {}
+				((DateTime) field).setYear(date.get(Calendar.YEAR));
+				((DateTime) field).setMonth(date.get(Calendar.MONTH));
+				((DateTime) field).setDay(date.get(Calendar.DAY_OF_MONTH));
+			} catch (ParseException e) {
+			}
 		} else if (field.getClass().equals(Button.class)) {
-			Button b = ((Button)field);
+			Button b = ((Button) field);
 			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
 				b.setSelection(value.toLowerCase().equals("true"));
 				System.out.println(value);
 			}
 		} else {
-			System.err.println("The field for \""+key+"\" cannot contain text.");
+			System.err.println("The field for \"" + key
+					+ "\" cannot contain text.");
 		}
 	}
-	
-	private void saveField(Control field, String key) {
-		if (field.getClass().equals(Text.class)) {
-			String value = ((Text)field).getText();
-			if (field.equals(txtAmount)) {
-				value = value.replace(",", "");
-			}
-			gift.putIc(key, value);
-		} else if (field.getClass().equals(Combo.class)) {
-			gift.putIc(key,((Combo)field).getText());
-		} else if (field.getClass().equals(DateTime.class)) {
-			Calendar cal = new GregorianCalendar(((DateTime)field).getYear(),((DateTime)field).getMonth(),((DateTime)field).getDay());
-			Date date = new Date(cal.getTimeInMillis());
-			gift.putIc(key, Main.getDateFormat().format(date));
-		} else if (field.getClass().equals(Button.class)) {
-			Button b = ((Button)field);
-			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
-				gift.putIc(key, ""+b.getSelection());
-			}
-		} else {
-			System.err.println("The field for \""+key+"\" cannot contain text.");
+
+	private void fillForm() {
+		for (Object field[] : fields) {
+			fillField((Control) field[0], (String) field[1]);
 		}
 	}
 
 	public Gift getGift() {
 		return gift;
+	}
+
+	private void inheritForeground(Control control) {
+		try {
+			for (Control c : ((Composite) control).getChildren()) {
+				c.setForeground(control.getForeground());
+				inheritForeground(c);
+			}
+		} catch (Exception e) {
+		}
+	}
+
+	private void saveField(Control field, String key) {
+		if (field.getClass().equals(Text.class)) {
+			String value = ((Text) field).getText();
+			if (field.equals(txtAmount)) {
+				value = value.replace(",", "");
+			}
+			gift.putIc(key, value);
+		} else if (field.getClass().equals(Combo.class)) {
+			gift.putIc(key, ((Combo) field).getText());
+		} else if (field.getClass().equals(DateTime.class)) {
+			Calendar cal = new GregorianCalendar(((DateTime) field).getYear(), ((DateTime) field).getMonth(), ((DateTime) field).getDay());
+			Date date = new Date(cal.getTimeInMillis());
+			gift.putIc(key, Main.getDateFormat().format(date));
+		} else if (field.getClass().equals(Button.class)) {
+			Button b = ((Button) field);
+			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
+				gift.putIc(key, "" + b.getSelection());
+			}
+		} else {
+			System.err.println("The field for \"" + key
+					+ "\" cannot contain text.");
+		}
+	}
+
+	private void saveForm() {
+		for (Object field[] : fields) {
+			saveField((Control) field[0], (String) field[1]);
+		}
+		gift.putIc("dt_entry", Main.getDateFormat().format(new Date()));
+		gift.putIc("recnum", String.format("%06d", gift.recnum));
 	}
 }

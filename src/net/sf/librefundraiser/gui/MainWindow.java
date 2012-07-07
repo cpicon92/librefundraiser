@@ -1,4 +1,5 @@
 package net.sf.librefundraiser.gui;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-
 public class MainWindow {
 
 	protected Shell shell;
@@ -57,22 +57,8 @@ public class MainWindow {
 	private Runnable saveCurrent;
 
 	/**
-	 * Open the window.
-	 */
-	public void open() {
-		display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	}
-	
-	/**
 	 * Create contents of the window.
+	 * 
 	 * @wbp.parser.entryPoint
 	 */
 	protected void createContents() {
@@ -83,9 +69,11 @@ public class MainWindow {
 		String filename = null;
 		try {
 			filename = new File(Main.getSetting("lastDB")).getName();
-		} catch (Exception e) {}
-		if (filename != null) filename = " - " + filename;
-		shell.setText("LibreFundraiser"+filename);
+		} catch (Exception e) {
+		}
+		if (filename != null)
+			filename = " - " + filename;
+		shell.setText("LibreFundraiser" + filename);
 		GridLayout gl_shell = new GridLayout(1, false);
 		gl_shell.marginWidth = 0;
 		gl_shell.marginHeight = 0;
@@ -102,13 +90,15 @@ public class MainWindow {
 
 		MenuItem mntmNewDatabase = new MenuItem(menuFile, SWT.NONE);
 		mntmNewDatabase.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-				fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
-				fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setFilterExtensions(new String[] { "*.ldb", "*.*" });
+				fileDialog.setFilterNames(new String[] {
+						"LibreFundraiser Database (*.ldb)", "All Files" });
 				String path = fileDialog.open();
 				if (path != null) {
-					Main.addSetting("lastDB",path);
+					Main.addSetting("lastDB", path);
 					Main.resetLocalDB();
 					Main.refresh();
 				}
@@ -118,20 +108,22 @@ public class MainWindow {
 
 		MenuItem mntmOpenDatabase = new MenuItem(menuFile, SWT.NONE);
 		mntmOpenDatabase.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
-				fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
-				fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setFilterExtensions(new String[] { "*.ldb", "*.*" });
+				fileDialog.setFilterNames(new String[] {
+						"LibreFundraiser Database (*.ldb)", "All Files" });
 				String path = fileDialog.open();
 				if (path != null) {
-					Main.addSetting("lastDB",path);
+					Main.addSetting("lastDB", path);
 					Main.resetLocalDB();
 					Main.refresh();
 				}
 			}
 		});
 		mntmOpenDatabase.setText("Open Local Database...");
-		
+
 		MenuItem mntmConnectToRemote = new MenuItem(menuFile, SWT.NONE);
 		mntmConnectToRemote.setEnabled(false);
 		mntmConnectToRemote.setText("Connect to Remote Database...");
@@ -146,6 +138,7 @@ public class MainWindow {
 
 		MenuItem mntmFromFundraiserBasic = new MenuItem(menuImport, SWT.NONE);
 		mntmFromFundraiserBasic.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importFRBW();
 			}
@@ -160,24 +153,25 @@ public class MainWindow {
 
 		MenuItem mntmExit = new MenuItem(menuFile, SWT.NONE);
 		mntmExit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shell.close();
 			}
 		});
 		mntmExit.setText("Exit");
-		
+
 		MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
 		mntmEdit.setText("Edit");
-		
+
 		Menu menuEdit = new Menu(mntmEdit);
 		mntmEdit.setMenu(menuEdit);
-		
+
 		MenuItem mntmCut = new MenuItem(menuEdit, SWT.NONE);
 		mntmCut.setText("Cut\tCtrl+X");
-		
+
 		MenuItem mntmCopy = new MenuItem(menuEdit, SWT.NONE);
 		mntmCopy.setText("Copy\tCtrl+C");
-		
+
 		MenuItem mntmPaste = new MenuItem(menuEdit, SWT.NONE);
 		mntmPaste.setText("Paste\tCtrl+V");
 
@@ -189,6 +183,7 @@ public class MainWindow {
 
 		MenuItem mntmNewDonor = new MenuItem(menuDonor, SWT.NONE);
 		mntmNewDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				newDonor();
 			}
@@ -197,12 +192,15 @@ public class MainWindow {
 
 		final MenuItem mntmSaveCurrentDonor = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveCurrentDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (saveCurrent == null) return;
+				if (saveCurrent == null)
+					return;
 				saveCurrent.run();
 			}
 		});
 		menuDonor.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				mntmSaveCurrentDonor.setEnabled(tltmSave.getEnabled());
 			}
@@ -211,8 +209,9 @@ public class MainWindow {
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				((DonorList)compositeDonorList).saveAll();
+				((DonorList) compositeDonorList).saveAll();
 			}
 		});
 		mntmSaveAllDonors.setText("Save All Donors");
@@ -225,6 +224,7 @@ public class MainWindow {
 
 		MenuItem mntmAbout = new MenuItem(menuHelp, SWT.NONE);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				new AboutDialog(shell, SWT.DIALOG_TRIM).open();
 			}
@@ -240,6 +240,7 @@ public class MainWindow {
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
 		tltmNewDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				newDonor();
 			}
@@ -252,51 +253,67 @@ public class MainWindow {
 		tltmSave.setEnabled(false);
 		tltmSave.setImage(ResourceManager.getIcon("save.png"));
 		tltmSave.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (saveCurrent == null) return;
+				if (saveCurrent == null)
+					return;
 				saveCurrent.run();
 			}
 		});
 		new ToolItem(toolBar, SWT.SEPARATOR);
-		
+
 		ToolItem tltmDbProperties = new ToolItem(toolBar, SWT.NONE);
 		tltmDbProperties.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				new DatabasePropertiesDialog(shell, SWT.DIALOG_TRIM).open();
 			}
 		});
 		tltmDbProperties.setText("Database Properties");
 		tltmDbProperties.setImage(ResourceManager.getIcon("db-properties.png"));
-		
+
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		shellSearch = new Shell(shell, SWT.NONE);
 		listSearch = new List(shellSearch, SWT.SINGLE);
 		shellSearch.setLayout(new FillLayout());
 		shellSearch.addShellListener(new ShellListener() {
+			@Override
 			public void shellActivated(ShellEvent e) {
 				txtSearch.setFocus();
 				Rectangle bounds = txtSearch.getBounds();
-				Point location = txtSearch.toDisplay(-2, bounds.height-2);
+				Point location = txtSearch.toDisplay(-2, bounds.height - 2);
 				shellSearch.setLocation(location);
 				shellSearch.pack();
 			}
+
+			@Override
 			public void shellClosed(ShellEvent e) {
 			}
+
+			@Override
 			public void shellDeactivated(ShellEvent e) {
 			}
+
+			@Override
 			public void shellDeiconified(ShellEvent e) {
 			}
+
+			@Override
 			public void shellIconified(ShellEvent e) {
 			}
 		});
 
-		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
+		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.H_SCROLL
+				| SWT.SEARCH | SWT.CANCEL);
 		txtSearch.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				display.timerExec(100, new Runnable() {
+					@Override
 					public void run() {
-						if (!display.getFocusControl().equals(txtSearch) && !display.getFocusControl().equals(listSearch)) {
+						if (!display.getFocusControl().equals(txtSearch)
+								&& !display.getFocusControl().equals(listSearch)) {
 							shellSearch.setVisible(false);
 						}
 					}
@@ -310,19 +327,21 @@ public class MainWindow {
 		txtSearch.setMessage("Quick Find");
 
 		listSearch.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				quickSearchOpen();
 			}
 		});
 
 		txtSearch.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				switch (e.keyCode) {
-				case SWT.ARROW_DOWN: 
-					listSearch.select(listSearch.getSelectionIndex()+1);
+				case SWT.ARROW_DOWN:
+					listSearch.select(listSearch.getSelectionIndex() + 1);
 					break;
 				case SWT.ARROW_UP:
-					listSearch.select(listSearch.getSelectionIndex()-1);
+					listSearch.select(listSearch.getSelectionIndex() - 1);
 					break;
 				case SWT.ESC:
 					shellSearch.setVisible(false);
@@ -332,11 +351,13 @@ public class MainWindow {
 		});
 
 		txtSearch.addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
 					display.timerExec(1, new Runnable() {
+						@Override
 						public void run() {
-							txtSearch.setSelection(txtSearch.getCharCount()+1);
+							txtSearch.setSelection(txtSearch.getCharCount() + 1);
 						}
 					});
 				}
@@ -346,22 +367,27 @@ public class MainWindow {
 			}
 		});
 		txtSearch.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				popupTimer = System.currentTimeMillis();
 				display.timerExec(500, new Runnable() {
 					long time = System.currentTimeMillis();
+
+					@Override
 					public void run() {
-						if (time != popupTimer) return;
+						if (time != popupTimer)
+							return;
 						shellSearch.setVisible(false);
-						listSearch.setItems(new String[]{});
+						listSearch.setItems(new String[] {});
 						if (txtSearch.getCharCount() > 1) {
-							HashMap<String,String> results = Main.getDonorDB().quickSearch(txtSearch.getText());
+							HashMap<String, String> results = Main.getDonorDB().quickSearch(txtSearch.getText());
 							ArrayList<String> keys = new ArrayList<String>();
 							int maxItems = 10;
 							int items = 0;
 							for (Entry<String, String> entry : results.entrySet()) {
 								items++;
-								if (items >= maxItems) break;
+								if (items >= maxItems)
+									break;
 								String key = entry.getKey();
 								String value = entry.getValue();
 								keys.add(key);
@@ -370,7 +396,7 @@ public class MainWindow {
 							if (items > 0) {
 								listSearch.setData(keys);
 								Rectangle bounds = txtSearch.getBounds();
-								Point location = txtSearch.toDisplay(-2, bounds.height-2);
+								Point location = txtSearch.toDisplay(-2, bounds.height - 2);
 								shellSearch.setLocation(location);
 								shellSearch.setMinimumSize(bounds.width, 0);
 								shellSearch.pack();
@@ -384,16 +410,20 @@ public class MainWindow {
 		});
 
 		shell.addControlListener(new ControlAdapter() {
+			private void carryResults() {
+				Rectangle bounds = txtSearch.getBounds();
+				Point location = txtSearch.toDisplay(-2, bounds.height - 2);
+				shellSearch.setLocation(location);
+			}
+
+			@Override
 			public void controlMoved(ControlEvent e) {
 				carryResults();
 			}
+
+			@Override
 			public void controlResized(ControlEvent e) {
 				carryResults();
-			}
-			private void carryResults() {
-				Rectangle bounds = txtSearch.getBounds();
-				Point location = txtSearch.toDisplay(-2, bounds.height-2);
-				shellSearch.setLocation(location);
 			}
 		});
 
@@ -401,43 +431,42 @@ public class MainWindow {
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 	}
+
 	public ToolItem getSaveButton() {
 		return tltmSave;
 	}
-	public void setSaveAction(Runnable r) {
-		saveCurrent = r;
-	}
-	public String newDBfile() {
-		FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-		fileDialog.setFilterExtensions(new String[]{"*.ldb","*.*"});
-		fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.ldb)","All Files"});
-		return fileDialog.open();
-	}
+
 	public void importFRBW() {
-		MessageBox warning = new MessageBox(shell,SWT.ICON_WARNING|SWT.YES|SWT.NO);
+		MessageBox warning = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES
+				| SWT.NO);
 		warning.setText("LibreFundraiser Warning");
 		warning.setMessage("The imported data will overwrite anything you currently have in your database. Do you want to continue?");
-		if (warning.open() == SWT.NO) return;
-		final FundRaiserImportDialog dialog = new FundRaiserImportDialog(shell,SWT.NONE);
+		if (warning.open() == SWT.NO)
+			return;
+		final FundRaiserImportDialog dialog = new FundRaiserImportDialog(shell, SWT.NONE);
 		DirectoryDialog fileDialog = new DirectoryDialog(shell);
 		fileDialog.setMessage("Please indicate the FundRaiser Basic installation folder");
 		String systemDrive = System.getenv("SystemDrive");
-		fileDialog.setFilterPath(systemDrive+"\\FRBW");
+		fileDialog.setFilterPath(systemDrive + "\\FRBW");
 		final String result = fileDialog.open();
-		if (result == null) return;
+		if (result == null)
+			return;
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				FileDBASE db = new FileDBASE(result);
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						dialog.setCancelable(false);
 						dialog.setStatusText("Importing donor list...");
 					}
 				});
-				if (!db.loadTable("Master.dbf","donors")) {
+				if (!db.loadTable("Master.dbf", "donors")) {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
-							MessageBox error = new MessageBox(shell,SWT.ICON_ERROR);
+							MessageBox error = new MessageBox(shell, SWT.ICON_ERROR);
 							error.setText("LibreFundraiser Error");
 							error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
 							dialog.dispose();
@@ -446,26 +475,30 @@ public class MainWindow {
 					return;
 				}
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						dialog.setProgress(25);
 						dialog.setStatusText("Importing gifts...");
 					}
 				});
-				db.loadTable("Gifts.dbf","gifts");
+				db.loadTable("Gifts.dbf", "gifts");
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						dialog.setProgress(50);
 						dialog.setStatusText("Consolidating donors and gifts...");
 					}
 				});
-				((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
+				((DonorList) compositeDonorList).donors = Main.getDonorDB().getDonors();
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						dialog.setProgress(75);
 						dialog.setStatusText("Refreshing donor list...");
 					}
 				});
 				display.asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						refresh(false);
 						dialog.dispose();
@@ -475,40 +508,68 @@ public class MainWindow {
 		}).start();
 		dialog.open();
 	}
-	
-	public void refresh() {
-		refresh(true);
+
+	public String newDBfile() {
+		FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+		fileDialog.setFilterExtensions(new String[] { "*.ldb", "*.*" });
+		fileDialog.setFilterNames(new String[] {
+				"LibreFundraiser Database (*.ldb)", "All Files" });
+		return fileDialog.open();
 	}
-	
-	public void refresh(boolean reload) {
-		if (reload) reload();
-		compositeDonorList.setVisible(false);
-		((DonorList)compositeDonorList).refresh();
-		compositeDonorList.setVisible(true);
+
+	public void newDonor() {
+		((DonorList) compositeDonorList).newDonor();
 	}
-	
-	public void reload() {
-		((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
+
+	/**
+	 * Open the window.
+	 */
+	public void open() {
+		display = Display.getDefault();
+		createContents();
+		shell.open();
+		shell.layout();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
 	}
-	
+
 	private void quickSearchOpen() {
-		@SuppressWarnings("unchecked")
-		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
+		ArrayList<String> keys = (ArrayList<String>) listSearch.getData();
 		try {
 			if (keys != null && !keys.isEmpty()) {
 				String key = keys.get(listSearch.getSelectionIndex());
 				int id = Integer.parseInt(key);
-				DonorTab newTab = new DonorTab(id,((DonorList)compositeDonorList).tabFolder);
+				DonorTab newTab = new DonorTab(id, ((DonorList) compositeDonorList).tabFolder);
 				shellSearch.setVisible(false);
-				listSearch.setItems(new String[]{});
+				listSearch.setItems(new String[] {});
 				txtSearch.setText("");
-				((DonorList)compositeDonorList).tabFolder.setSelection(newTab);
-				((DonorList)compositeDonorList).tabFolder.setFocus();
+				((DonorList) compositeDonorList).tabFolder.setSelection(newTab);
+				((DonorList) compositeDonorList).tabFolder.setFocus();
 			}
-		} catch (Exception e1) {}
+		} catch (Exception e1) {
+		}
 	}
-	
-	public void newDonor() {
-		((DonorList)compositeDonorList).newDonor();
+
+	public void refresh() {
+		refresh(true);
+	}
+
+	public void refresh(boolean reload) {
+		if (reload)
+			reload();
+		compositeDonorList.setVisible(false);
+		((DonorList) compositeDonorList).refresh();
+		compositeDonorList.setVisible(true);
+	}
+
+	public void reload() {
+		((DonorList) compositeDonorList).donors = Main.getDonorDB().getDonors();
+	}
+
+	public void setSaveAction(Runnable r) {
+		saveCurrent = r;
 	}
 }

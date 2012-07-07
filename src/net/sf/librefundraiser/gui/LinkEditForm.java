@@ -15,7 +15,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -38,6 +37,7 @@ public class LinkEditForm extends Group {
 	private Composite compositeLinkForm;
 	private final Donor donor;
 	private static SelectionAdapter linkAdapter = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			try {
 				Program.launch(new URL(e.text).toString());
@@ -45,9 +45,10 @@ public class LinkEditForm extends Group {
 			}
 		}
 	};
-	
+
 	/**
 	 * Create the composite.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
@@ -55,33 +56,34 @@ public class LinkEditForm extends Group {
 		super(parent, style);
 		this.donor = donor;
 		links = new ArrayDeque<String>();
-		StringTokenizer token = new StringTokenizer(donor.getData("web"),"\n");
+		StringTokenizer token = new StringTokenizer(donor.getData("web"), "\n");
 		while (token.hasMoreElements()) {
-			links.add((String)token.nextElement());
+			links.add((String) token.nextElement());
 		}
-		
+
 		this.setLayout(new GridLayout(1, false));
 		this.setText("Web");
 		this.setBounds(0, 0, 70, 82);
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		
+
 		compositeLinks = new Composite(this, SWT.NONE);
 		compositeLinks.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		compositeLinks.setLayout(new GridLayout(1, false));
-		
+
 		displayLinks();
-		
+
 		final Composite compositeNewLink = new Composite(this, SWT.NONE);
 		compositeNewLink.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		compositeNewLink.setLayout(new StackLayout());
-		
+
 		btnNewLink = new ToolBar(compositeNewLink, SWT.FLAT | SWT.RIGHT);
-		
+
 		ToolItem tltmAddALink = new ToolItem(btnNewLink, SWT.NONE);
 		tltmAddALink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtNewAddress.setText("http://");
-				StackLayout sl = (StackLayout)compositeNewLink.getLayout();
+				StackLayout sl = (StackLayout) compositeNewLink.getLayout();
 				btnNewLink.setVisible(false);
 				compositeLinkForm.setVisible(true);
 				sl.topControl = compositeLinkForm;
@@ -91,20 +93,21 @@ public class LinkEditForm extends Group {
 		});
 		tltmAddALink.setImage(ResourceManager.getIcon("add-link.png"));
 		tltmAddALink.setText("Add a link...");
-		
+
 		compositeLinkForm = new Composite(compositeNewLink, SWT.NONE);
 		compositeLinkForm.setLayout(new GridLayout(2, false));
-		
+
 		txtNewAddress = new Text(compositeLinkForm, SWT.BORDER);
 		txtNewAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtNewAddress.setBounds(0, 0, 75, 27);
-		
+
 		Button btnAdd = new Button(compositeLinkForm, SWT.NONE);
 		btnAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				links.add(txtNewAddress.getText());
-				((DonorEditForm)getParent().getParent().getParent().getParent()).setEdited(true);
-				StackLayout sl = (StackLayout)compositeNewLink.getLayout();
+				((DonorEditForm) getParent().getParent().getParent().getParent()).setEdited(true);
+				StackLayout sl = (StackLayout) compositeNewLink.getLayout();
 				btnNewLink.setVisible(true);
 				compositeLinkForm.setVisible(false);
 				sl.topControl = btnNewLink;
@@ -113,8 +116,8 @@ public class LinkEditForm extends Group {
 			}
 		});
 		btnAdd.setText("Add");
-		
-		StackLayout sl = (StackLayout)compositeNewLink.getLayout();
+
+		StackLayout sl = (StackLayout) compositeNewLink.getLayout();
 		btnNewLink.setVisible(true);
 		compositeLinkForm.setVisible(false);
 		sl.topControl = btnNewLink;
@@ -125,9 +128,9 @@ public class LinkEditForm extends Group {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
+
 	private void displayLinks() {
-		for(Control c : compositeLinks.getChildren()) {
+		for (Control c : compositeLinks.getChildren()) {
 			c.dispose();
 		}
 		int i = 0;
@@ -136,7 +139,7 @@ public class LinkEditForm extends Group {
 			Composite cLink = new Composite(compositeLinks, SWT.NONE);
 			cLink.setLayout(new RowLayout());
 			Link link = new Link(cLink, SWT.NONE);
-			link.setText(i + ".  <a href=\""+l+"\">"+l+"</a>");
+			link.setText(i + ".  <a href=\"" + l + "\">" + l + "</a>");
 			link.addSelectionListener(linkAdapter);
 			final Label deleteButton = new Label(cLink, SWT.NONE);
 			deleteButton.setVisible(false);
@@ -146,13 +149,15 @@ public class LinkEditForm extends Group {
 				@Override
 				public void mouseDoubleClick(MouseEvent e) {
 				}
+
 				@Override
 				public void mouseDown(MouseEvent e) {
 				}
+
 				@Override
 				public void mouseUp(MouseEvent e) {
 					links.remove(l);
-					((DonorEditForm)getParent().getParent().getParent().getParent()).setEdited(true);
+					((DonorEditForm) getParent().getParent().getParent().getParent()).setEdited(true);
 					displayLinks();
 					layout();
 				}
@@ -160,7 +165,7 @@ public class LinkEditForm extends Group {
 			deleteButton.addMouseTrackListener(new MouseTrackListener() {
 				@Override
 				public void mouseEnter(MouseEvent e) {
-					deleteButton.setImage(ResourceManager.getIcon("delete-link_hover.png"));		
+					deleteButton.setImage(ResourceManager.getIcon("delete-link_hover.png"));
 				}
 
 				@Override
@@ -192,7 +197,7 @@ public class LinkEditForm extends Group {
 			link.addMouseTrackListener(displayDelete);
 		}
 	}
-	
+
 	public void saveLinks() {
 		String output = "";
 		for (String l : links) {
@@ -200,5 +205,5 @@ public class LinkEditForm extends Group {
 		}
 		donor.putData("web", output);
 	}
-	
+
 }

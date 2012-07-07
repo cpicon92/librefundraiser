@@ -1,4 +1,5 @@
 package net.sf.librefundraiser.db;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -41,8 +42,8 @@ public class FileDBASE {
 				fieldNames += f.getName() + ", ";
 				fieldValues += "?, ";
 			}
-			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
-			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
+			fieldNames = fieldNames.substring(0, fieldNames.length() - 2);
+			fieldValues = fieldValues.substring(0, fieldValues.length() - 2);
 			if (sourceTableName.equals("Gifts.dbf")) {
 				fieldNames += ", RECNUM, PRIMARY KEY (RECNUM)";
 				fieldValues += ", ?";
@@ -51,9 +52,11 @@ public class FileDBASE {
 				fieldNames += ", EMAIL2, WEB, PRIMARY KEY (ACCOUNT)";
 				fieldValues += ", ?, ?";
 			}
-			stat.executeUpdate("drop table if exists "+destTableName+";");
-			stat.executeUpdate("create table "+destTableName+" ("+fieldNames+");");
-			PreparedStatement prep = conn.prepareStatement("insert into "+destTableName+" values ("+fieldValues+");");
+			stat.executeUpdate("drop table if exists " + destTableName + ";");
+			stat.executeUpdate("create table " + destTableName + " ("
+					+ fieldNames + ");");
+			PreparedStatement prep = conn.prepareStatement("insert into "
+					+ destTableName + " values (" + fieldValues + ");");
 			final Iterator<Record> recordIterator = table.recordIterator();
 			for (int recNum = 1; recordIterator.hasNext(); recNum++) {
 				final Record record = recordIterator.next();
@@ -61,12 +64,13 @@ public class FileDBASE {
 				int currentField = 1;
 				for (final Field field : fields) {
 					Object value = record.getTypedValue(field.getName());
-					if (field.getType().equals(Type.DATE) && value != null) value = dateFormat.format(value);
+					if (field.getType().equals(Type.DATE) && value != null)
+						value = dateFormat.format(value);
 					String rawValue = value != null ? value.toString() : "";
 					String fieldData = rawValue.trim();
 					if (field.getName().equals("EMAIL")) {
 						try {
-							String[] emails = fieldData.split("(;|,) *",2);
+							String[] emails = fieldData.split("(;|,) *", 2);
 							fieldData = emails[0];
 							email2 = emails[1];
 						} catch (Exception e) {
@@ -76,10 +80,10 @@ public class FileDBASE {
 					currentField++;
 				}
 				if (sourceTableName.equals("Master.dbf")) {
-					prep.setString(fields.size()+1, email2);
+					prep.setString(fields.size() + 1, email2);
 				}
 				if (sourceTableName.equals("Gifts.dbf")) {
-					prep.setString(fields.size()+1, String.format("%06d", recNum));
+					prep.setString(fields.size() + 1, String.format("%06d", recNum));
 				}
 				prep.addBatch();
 			}

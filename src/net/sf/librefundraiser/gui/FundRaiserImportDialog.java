@@ -1,4 +1,5 @@
 package net.sf.librefundraiser.gui;
+
 import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -15,7 +16,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
-
 public class FundRaiserImportDialog extends Dialog {
 
 	protected Object result;
@@ -27,8 +27,10 @@ public class FundRaiserImportDialog extends Dialog {
 	private boolean canceled = true;
 	private Button btnCancel;
 	private Display display;
+
 	/**
 	 * Create the dialog.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
@@ -37,30 +39,11 @@ public class FundRaiserImportDialog extends Dialog {
 	}
 
 	/**
-	 * Open the dialog.
-	 * @return the result
-	 * @throws OperationCanceledException 
-	 */
-	public boolean open() {
-		createContents();
-		shell.open();
-		shell.layout();
-		display = getParent().getDisplay();
-		Rectangle bounds = getParent().getBounds();
-		shell.setLocation(bounds.x+(bounds.width/2)-160, bounds.y+(bounds.height/2)-65);
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return canceled;
-	}
-
-	/**
 	 * Create contents of the dialog.
 	 */
 	private void createContents() {
-		shell = new Shell(getParent(), SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
+		shell = new Shell(getParent(), SWT.BORDER | SWT.TITLE
+				| SWT.APPLICATION_MODAL);
 		shell.setSize(320, 130);
 		shell.setImages(ResourceManager.getLogo());
 		shell.setText("Importing from FundRaiser Basic...");
@@ -79,12 +62,11 @@ public class FundRaiserImportDialog extends Dialog {
 		progressBarIndeterminate = new ProgressBar(compositeProgress, SWT.INDETERMINATE);
 
 		progressBarIndeterminate.setVisible(true);
-		((StackLayout)compositeProgress.getLayout()).topControl = progressBarIndeterminate;
+		((StackLayout) compositeProgress.getLayout()).topControl = progressBarIndeterminate;
 
 		progressBar = new ProgressBar(compositeProgress, SWT.SMOOTH);
 		progressBar.setMaximum(100);
 		progressBar.setVisible(false);
-
 
 		btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, true, 1, 1));
@@ -92,25 +74,51 @@ public class FundRaiserImportDialog extends Dialog {
 
 	}
 
-	public void setProgress(int i) {
-		if (!progressBar.getVisible()) {
-			progressBarIndeterminate.setVisible(false);
-			progressBar.setVisible(true);
-			((StackLayout)compositeProgress.getLayout()).topControl = progressBar;
-		}
-		progressBar.setSelection(i);
-	}
-	public void setProgressMaximum(int i) {
-		progressBar.setMaximum(i);
-	}
-	public void setStatusText(String status) {
-		lblImporting.setText(status);
-	}
 	public void dispose() {
 		this.canceled = false;
 		shell.dispose();
 	}
+
+	/**
+	 * Open the dialog.
+	 * 
+	 * @return the result
+	 * @throws OperationCanceledException
+	 */
+	public boolean open() {
+		createContents();
+		shell.open();
+		shell.layout();
+		display = getParent().getDisplay();
+		Rectangle bounds = getParent().getBounds();
+		shell.setLocation(bounds.x + (bounds.width / 2) - 160, bounds.y
+				+ (bounds.height / 2) - 65);
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		return canceled;
+	}
+
 	public void setCancelable(boolean cancelable) {
 		btnCancel.setEnabled(cancelable);
+	}
+
+	public void setProgress(int i) {
+		if (!progressBar.getVisible()) {
+			progressBarIndeterminate.setVisible(false);
+			progressBar.setVisible(true);
+			((StackLayout) compositeProgress.getLayout()).topControl = progressBar;
+		}
+		progressBar.setSelection(i);
+	}
+
+	public void setProgressMaximum(int i) {
+		progressBar.setMaximum(i);
+	}
+
+	public void setStatusText(String status) {
+		lblImporting.setText(status);
 	}
 }
