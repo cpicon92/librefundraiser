@@ -72,6 +72,7 @@ public class DatabasePropertiesDialog extends Dialog {
 		lblFileName.setText("File Name");
 		
 		txtFileName = new Text(grpGeneral, SWT.BORDER | SWT.READ_ONLY);
+		txtFileName.setEnabled(false);
 		txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtFileName.setBounds(0, 0, 76, 19);
 		
