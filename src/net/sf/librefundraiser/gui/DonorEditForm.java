@@ -549,6 +549,7 @@ public class DonorEditForm extends Composite {
 		tbrGifts.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		tbrGifts.setBounds(0, 0, 89, 23);
 		
+		//TODO:reserve new gifts to prevent overwriting
 		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
 		tltmAdd.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
