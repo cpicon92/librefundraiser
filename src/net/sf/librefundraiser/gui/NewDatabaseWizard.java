@@ -1,4 +1,7 @@
 package net.sf.librefundraiser.gui;
+import java.io.File;
+import java.io.IOException;
+
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 
@@ -16,9 +19,11 @@ import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -28,6 +33,7 @@ public class NewDatabaseWizard {
 	protected String result;
 	protected Shell shell;
 	private boolean canceled = true;
+	private String frbwImportFile = null;
 	private Display display;
 	/**
 	 * Open the dialog.
@@ -167,11 +173,6 @@ public class NewDatabaseWizard {
 						compositeFirstPage.setVisible(false);
 						compositeLocalDbPage.setVisible(true);
 						sl_shlLibreFundraiser.topControl = compositeLocalDbPage;
-						//TODO move to "new" page, replace old db file when selected
-//						FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-//						fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
-//						fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
-//						result = fileDialog.open();
 					} else if (currentSelection[0].equals(btnExistingLocalDatabase)) {
 						if (Main.fileExists(txtFilename.getText())) {
 							result = txtFilename.getText();
@@ -227,7 +228,6 @@ public class NewDatabaseWizard {
 			btnRemoteDatabase.addSelectionListener(dbType);
 		}
 		{
-			//TODO implement functionality on second wizard page
 			GridLayout gl_localDbPage = new GridLayout(1, false);
 			gl_localDbPage.marginWidth = 0;
 			gl_localDbPage.horizontalSpacing = 0;
@@ -287,28 +287,19 @@ public class NewDatabaseWizard {
 			txtFilename.setBounds(0, 0, 76, 19);
 
 			final Button btnBrowse = new Button(compositeBrowse, SWT.NONE);
-			btnBrowse.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
-					fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
-					fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
-					String path = fileDialog.open();
-					if (path != null) txtFilename.setText(path);
-				}
-			});
 			btnBrowse.setText("Browse...");
 			
 			Label lblWouldYouLike = new Label(compositeMain, SWT.WRAP);
 			lblWouldYouLike.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			lblWouldYouLike.setText("Would you like this database to be blank, or would you like to import data from Fundraiser Basic?");
 
-			Button btnBlankDb = new Button(compositeMain, SWT.RADIO);
+			final Button btnBlankDb = new Button(compositeMain, SWT.RADIO);
 			btnBlankDb.setSelection(true);
 			btnBlankDb.setBounds(0, 0, 83, 16);
 			btnBlankDb.setText("Create a blank database");
 			final Object[] currentSelection = {btnBlankDb};
 			
-			Button btnImportedDb = new Button(compositeMain, SWT.RADIO);
+			final Button btnImportedDb = new Button(compositeMain, SWT.RADIO);
 			btnImportedDb.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			btnImportedDb.setText("Create a database with imported data");
 			
@@ -322,7 +313,7 @@ public class NewDatabaseWizard {
 			gl_compositeBrowseImport.marginLeft = 15;
 			gl_compositeBrowseImport.marginHeight = 0;
 			compositeBrowseImport.setLayout(gl_compositeBrowseImport);
-			Label frbwNote = new Label(compositeBrowseImport, SWT.NONE);
+			final Label frbwNote = new Label(compositeBrowseImport, SWT.NONE);
 			frbwNote.setEnabled(false);
 			frbwNote.setText("(please indicate the location of the Fundraiser Basic installation)");
 			frbwNote.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
@@ -337,21 +328,6 @@ public class NewDatabaseWizard {
 			btnBrowseImport.setEnabled(false);
 			btnBrowseImport.setText("Browse...");
 			
-			SelectionAdapter dbType = new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					currentSelection[0] = e.getSource();
-//					boolean browse = currentSelection[0].equals(btnExistingLocalDatabase);
-//					txtFilename.setEnabled(browse);
-//					btnBrowse.setEnabled(browse);
-//					if (currentSelection[0].equals(btnExistingLocalDatabase)) {
-//						btnNext.setText("Finish");
-//					} else {
-//						btnNext.setText("Next >");
-//					}
-				}
-			};
-			btnBlankDb.addSelectionListener(dbType);
-			btnImportedDb.addSelectionListener(dbType);
 
 			new Label(compositeLocalDbPage, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -366,8 +342,8 @@ public class NewDatabaseWizard {
 			rl_compositeButtons.spacing = 5;
 			compositeButtons.setLayout(rl_compositeButtons);
 			
-			Button button = new Button(compositeButtons, SWT.NONE);
-			button.addSelectionListener(new SelectionAdapter() {
+			Button btnBack = new Button(compositeButtons, SWT.NONE);
+			btnBack.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					compositeFirstPage.setVisible(true);
@@ -375,27 +351,99 @@ public class NewDatabaseWizard {
 					sl_shlLibreFundraiser.topControl = compositeFirstPage;
 				}
 			});
-			button.setLayoutData(new RowData(80, SWT.DEFAULT));
-			button.setText("< Back");
+			btnBack.setLayoutData(new RowData(80, SWT.DEFAULT));
+			btnBack.setText("< Back");
 
-			final Button btnNext = new Button(compositeButtons, SWT.NONE);
-			btnNext.addSelectionListener(new SelectionAdapter() {
+			final String[] pickedPath = {""};
+			
+			final Button btnFinish = new Button(compositeButtons, SWT.NONE);
+			btnFinish.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-//					if (currentSelection[0] == null) return;
-//					if (currentSelection[0].equals(btnLocalDatabase)) {
-//						FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-//						fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
-//						fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
-//						result = fileDialog.open();
-//					} else if (currentSelection[0].equals(btnExistingLocalDatabase)) {
-//						result = txtFilename.getText();
-//					}
-//					canceled = false;
-//					shell.dispose();
+					if (currentSelection[0] == null) return;
+					result = txtFilename.getText();
+					if (!txtFilename.getText().equals(pickedPath[0])) {
+						FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
+						fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
+						fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
+						boolean goodPath = false;
+						while (!goodPath) {
+							try {
+								while (!Main.fileCreationPossible(result)) {
+									result = fileDialog.open();
+								}
+								goodPath = true;
+							} catch (IOException e1) {
+								File file = new File(result);
+								MessageBox verify = new MessageBox(shell,SWT.YES | SWT.NO | SWT.ICON_WARNING);
+								verify.setMessage(file.getName() + " already exists. Do you want to overwrite it?");
+								verify.setText("LibreFundraiser Warning");
+								goodPath = verify.open() == SWT.YES;
+								if (!goodPath) {
+									result = fileDialog.open();
+								}
+							}
+						}
+					}
+					if (currentSelection[0].equals(btnImportedDb)) {
+						frbwImportFile = txtFilenameImport.getText();
+					}
+					canceled = false;
+					shell.dispose();
 				}
 			});
-			btnNext.setBounds(0, 0, 68, 23);
-			btnNext.setText("Finish");
+			
+			btnBrowse.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					String path = Main.newDbFilePrompt(shell);
+					if (path != null) {
+						txtFilename.setText(path);
+						pickedPath[0] = path;
+					}
+					if (path != null && currentSelection[0] == btnBlankDb) btnFinish.setEnabled(true);
+				}
+			});			
+			btnBrowseImport.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					DirectoryDialog fileDialog = new DirectoryDialog(shell);
+					fileDialog.setMessage("Please indicate the FundRaiser Basic installation folder");
+					String systemDrive = System.getenv("SystemDrive");
+					fileDialog.setFilterPath(systemDrive+"\\FRBW");
+					final String path = fileDialog.open();
+					if (path != null) {
+						txtFilenameImport.setText(path);
+						btnFinish.setEnabled(true);
+					}
+				}
+			});
+			btnFinish.setBounds(0, 0, 68, 23);
+			btnFinish.setText("Finish");
+			btnFinish.setEnabled(false);
+			
+			SelectionAdapter dbContents = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					currentSelection[0] = e.getSource();
+					boolean importEnabled = false;
+					if (currentSelection[0].equals(btnImportedDb)) {
+						importEnabled = true;
+						if (txtFilename.getText().equals("") || txtFilenameImport.getText().equals("")) {
+							btnFinish.setEnabled(false);
+						} else {
+							btnFinish.setEnabled(true);
+						}
+					} else {
+						if (txtFilename.getText().equals("")) {
+							btnFinish.setEnabled(false);
+						} else {
+							btnFinish.setEnabled(true);
+						}
+					}
+					frbwNote.setEnabled(importEnabled);
+					btnBrowseImport.setEnabled(importEnabled);
+					txtFilenameImport.setEnabled(importEnabled);
+				}
+			};
+			btnBlankDb.addSelectionListener(dbContents);
+			btnImportedDb.addSelectionListener(dbContents);
 
 			Button btnCancel = new Button(compositeButtons, SWT.NONE);
 			btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -405,5 +453,9 @@ public class NewDatabaseWizard {
 			});
 			btnCancel.setText("Cancel");
 		}
+	}
+
+	public String getFrbwImportFile() {
+		return frbwImportFile;
 	}
 }

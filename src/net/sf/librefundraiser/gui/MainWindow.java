@@ -5,7 +5,6 @@ import java.util.Map.Entry;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
-import net.sf.librefundraiser.db.FileDBASE;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -58,11 +57,14 @@ public class MainWindow {
 	/**
 	 * Open the window.
 	 */
-	public void open() {
+	public void open(String importDb) {
 		display = Display.getDefault();
 		createContents();
 		shell.open();
 		shell.layout();
+		if (importDb != null) {
+			Main.importFromFRBW(Display.getDefault(), shell, this, importDb);
+		}
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -411,6 +413,7 @@ public class MainWindow {
 	public void setSaveAction(Runnable r) {
 		saveCurrent = r;
 	}
+	//TODO reconcile this with the method in Main
 	public String newDBfile() {
 		FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
 		fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
@@ -422,62 +425,15 @@ public class MainWindow {
 		warning.setText("LibreFundraiser Warning");
 		warning.setMessage("The imported data will overwrite anything you currently have in your database. Do you want to continue?");
 		if (warning.open() == SWT.NO) return;
-		final FundRaiserImportDialog dialog = new FundRaiserImportDialog(shell,SWT.NONE);
 		DirectoryDialog fileDialog = new DirectoryDialog(shell);
 		fileDialog.setMessage("Please indicate the FundRaiser Basic installation folder");
 		String systemDrive = System.getenv("SystemDrive");
 		fileDialog.setFilterPath(systemDrive+"\\FRBW");
-		final String result = fileDialog.open();
-		if (result == null) return;
-		new Thread(new Runnable() {
-			public void run() {
-				FileDBASE db = new FileDBASE(result);
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.setCancelable(false);
-						dialog.setStatusText("Importing donor list...");
-					}
-				});
-				if (!db.loadTable("Master.dbf","donors")) {
-					display.asyncExec(new Runnable() {
-						public void run() {
-							MessageBox error = new MessageBox(shell,SWT.ICON_ERROR);
-							error.setText("LibreFundraiser Error");
-							error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
-							dialog.dispose();
-						}
-					});
-					return;
-				}
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.setProgress(25);
-						dialog.setStatusText("Importing gifts...");
-					}
-				});
-				db.loadTable("Gifts.dbf","gifts");
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.setProgress(50);
-						dialog.setStatusText("Consolidating donors and gifts...");
-					}
-				});
-				((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.setProgress(75);
-						dialog.setStatusText("Refreshing donor list...");
-					}
-				});
-				display.asyncExec(new Runnable() {
-					public void run() {
-						refresh(false);
-						dialog.dispose();
-					}
-				});
-			}
-		}).start();
-		dialog.open();
+		final String path = fileDialog.open();
+		Main.importFromFRBW(display, shell, this, path);
+	}
+	public DonorList getCompositeDonorList() {
+		return (DonorList) compositeDonorList;
 	}
 	
 	public void refresh() {

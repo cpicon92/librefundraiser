@@ -61,20 +61,24 @@ public class FileDBASE {
 				final Record record = recordIterator.next();
 				String email2 = "";
 				int currentField = 1;
-				for (final Field field : fields) {
-					Object value = record.getTypedValue(field.getName());
-					if (field.getType().equals(Type.DATE) && value != null) value = dateFormat.format(value);
-					String rawValue = value != null ? value.toString() : "";
-					String fieldData = rawValue.trim();
-					if (field.getName().equals("EMAIL")) {
-						try {
-							String[] emails = fieldData.split("(;|,) *",2);
-							fieldData = emails[0];
-							email2 = emails[1];
-						} catch (Exception e) {
+				for (final Field field : fields) { 
+					try {
+						Object value = record.getTypedValue(field.getName());
+						if (field.getType().equals(Type.DATE) && value != null) value = dateFormat.format(value);
+						String rawValue = value != null ? value.toString() : "";
+						String fieldData = rawValue.trim();
+						if (field.getName().equals("EMAIL")) {
+							try {
+								String[] emails = fieldData.split("(;|,) *",2);
+								fieldData = emails[0];
+								email2 = emails[1];
+							} catch (Exception e) {
+							}
 						}
+						prep.setString(currentField, fieldData);
+					} catch (Exception e) {
+//						e.printStackTrace();
 					}
-					prep.setString(currentField, fieldData);
 					currentField++;
 				}
 				if (sourceTableName.equals("Master.dbf")) {

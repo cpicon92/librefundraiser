@@ -115,7 +115,7 @@ public class GiftEditForm extends Composite {
 			}
 		});
 		btnSave.setSize(36, 23);
-		btnSave.setText("Save");
+		btnSave.setText("Add");
 
 		Object[][] fields = { { txtAmount, "amount" },
 				{ dtDateGiven, "dategiven" }, { chkLetter, "letter" },

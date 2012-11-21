@@ -324,6 +324,7 @@ public class DonorEditForm extends Composite {
 		lblSalutation.setBounds(0, 0, 55, 15);
 		lblSalutation.setText("Salutation");
 		
+		//TODO:implement proper autosuggest and field filling
 		comboSalutation = new Combo(compositeMisc, SWT.NONE);
 		comboSalutation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboSalutation.setBounds(0, 0, 91, 23);
@@ -422,6 +423,7 @@ public class DonorEditForm extends Composite {
 		lblContact.setAlignment(SWT.RIGHT);
 		lblContact.setText("Contact");
 		
+		//TODO:tab order here should be vertical
 		txtOptional = new Text(compositeAddress, SWT.BORDER);
 		txtOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		txtOptional.setBounds(0, 0, 76, 21);

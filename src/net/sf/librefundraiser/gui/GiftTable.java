@@ -21,6 +21,7 @@ public class GiftTable extends Composite {
 	 * @param parent
 	 * @param style
 	 */
+	//TODO:Add sorting functionality
 	public GiftTable(Composite parent, int style, Donor donor) {
 		super(parent, style);
 		this.donor = donor;

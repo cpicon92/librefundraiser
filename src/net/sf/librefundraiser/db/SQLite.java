@@ -118,7 +118,7 @@ public class SQLite implements IDonorDB {
 					while (rsGifts.next()) {
 						giftColumns.add(rsGifts.getString("name"));
 					}
-					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
+					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\" order by DATEGIVEN desc");
 					while (rsGifts.next()) {
 						Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
 						for (String column : giftColumns) {
