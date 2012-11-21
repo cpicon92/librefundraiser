@@ -4,7 +4,7 @@ import java.util.Set;
 
 
 public class Donor {
-	public static class Gift extends HashMap<String,String> {
+	public static class Gift extends HashMap<String,String> implements Comparable<Gift> {
 		private static final long serialVersionUID = -9169351258332556336L;
 		public final int recnum;
 		public Gift(int recnum) {
@@ -15,6 +15,15 @@ public class Donor {
 		}
 		public String getIc(String key) {
 			return this.get(key.toLowerCase());
+		}
+		@Override
+		public int compareTo(Gift o) {
+			String myDate = this.getIc("DATEGIVEN");
+			String otherDate = o.getIc("DATEGIVEN");
+			if (myDate == null && otherDate == null) return 0;
+			if (myDate == null) return -1;
+			if (otherDate == null ) return 1;
+			return myDate.compareTo(otherDate);
 		}
 	}
 	private final HashMap<String,String> data;

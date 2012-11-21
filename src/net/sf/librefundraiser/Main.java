@@ -37,6 +37,7 @@ public class Main {
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public static final String version = "(Development Snapshot)";
 
+	//TODO: quicksearch should search spouse names too
 	public static void main(String args[]) {
 		loadSettings();
 		String importDb = null;

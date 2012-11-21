@@ -273,8 +273,15 @@ public class DonorList extends Composite {
 	}
 	
 	public void newDonor() {
-		//TODO reserve this so we don't end up with duplicate IDs
 		int id = Main.getDonorDB().getMaxAccount()+1;
+		for (CTabItem t : tabFolder.getItems()) {
+			try {
+				DonorTab dt = (DonorTab) t;
+				int dtId = dt.getDonor().getId();
+				if (dtId >= id) id = dtId+1;
+			} catch (Exception e) {
+			}
+		}
 		tabFolder.setSelection(new DonorTab(id,tabFolder));
 	}
 	

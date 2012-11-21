@@ -1,7 +1,8 @@
 package net.sf.librefundraiser.gui;
-import java.util.HashMap;
+import java.util.Arrays;
 
 import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
@@ -62,9 +63,9 @@ public class GiftTable extends Composite {
 	}
 	
 	protected void fillTable() {
-		HashMap<Integer, Donor.Gift> gifts = donor.getGifts();
-		for (Integer g : gifts.keySet().toArray(new Integer[0])) {
-			Donor.Gift gift = gifts.get(g);
+		Gift[] gifts = donor.getGifts().values().toArray(new Gift[0]);
+		Arrays.sort(gifts);
+		for (Gift gift : gifts) {
 			TableItem tableItem = new TableItem(tableGifts, SWT.NONE);
 			String[] itemData = new String[] { Main.toMoney(gift.getIc("amount")),
 					gift.getIc("dategiven"), gift.getIc("letter"),
