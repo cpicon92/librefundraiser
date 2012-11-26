@@ -6,12 +6,15 @@ import net.sf.librefundraiser.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
 
 public class DonorTab extends CTabItem {
 	private final Donor donor;
 	Rectangle closeRect = new Rectangle(0, 0, 0, 0);
+	public static final Image unedited = ResourceManager.getIcon("donor-tab.png");
+	public static final Image edited = ResourceManager.getIcon("donor-tab_edited.png");
 	
 	public DonorTab(int id, CTabFolder tabFolder) {
 		super(tabFolder, SWT.NONE);
@@ -25,7 +28,7 @@ public class DonorTab extends CTabItem {
 		this.donor = donor;
 		DonorEditForm editForm = new DonorEditForm(this.getParent(),SWT.NONE,this);
 		this.setControl(editForm);
-		this.setImage(ResourceManager.getIcon("donor-tab.png"));
+		this.setImage(unedited);
 	}
 	
 	public Donor getDonor() {

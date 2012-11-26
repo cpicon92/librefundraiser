@@ -844,6 +844,7 @@ public class DonorEditForm extends Composite {
 		String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
 		if (tabTitle.equals("")) tabTitle = donor.getData("account");
 		donorTab.setText((edited?"*":"")+tabTitle);
+		donorTab.setImage(edited?DonorTab.edited:DonorTab.unedited);
 		ToolItem saveButton = Main.getSaveButton();
 		saveButton.setEnabled(edited);
 		if (edited) {
