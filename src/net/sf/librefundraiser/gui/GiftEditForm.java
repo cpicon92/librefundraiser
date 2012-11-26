@@ -194,4 +194,7 @@ public class GiftEditForm extends Composite {
 	public Gift getGift() {
 		return gift;
 	}
+	public void initializePointer() {
+		txtAmount.setFocus();
+	}
 }

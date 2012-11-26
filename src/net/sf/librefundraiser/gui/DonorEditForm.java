@@ -881,6 +881,7 @@ public class DonorEditForm extends Composite {
 			gd_compositeEditForm.exclude = false;
 			compositeEditForm.layout();
 			compositeGifts.layout();
+			giftEditForm.initializePointer();
 			tltmAdd.setEnabled(false);
 			tltmEdit.setEnabled(false);
 			tltmDelete.setEnabled(false);
