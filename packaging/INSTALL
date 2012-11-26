@@ -1,0 +1,4 @@
+Build a runnable jar and call it librefundraiser.jar, copy it here. 
+
+To install, run make install from this directory. To build a deb 
+package, run checkinstall from this directory. 

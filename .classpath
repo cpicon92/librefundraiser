@@ -14,7 +14,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
 	<classpathentry kind="lib" path="lib/jface/org.eclipse.jface_3.7.0.v20110928-1505.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/usr/lib/eclipse/dropins/sdk/plugins/org.eclipse.platform.doc.isv_3.7.2.dist.jar!/reference/api"/>
@@ -24,5 +23,6 @@
 	<classpathentry kind="lib" path="lib/jface/org.eclipse.core.runtime_3.7.0.v20110110.jar"/>
 	<classpathentry kind="lib" path="lib/jface/org.eclipse.osgi_3.7.2.v20120110-1415.jar"/>
 	<classpathentry kind="lib" path="lib/jface/org.eclipse.equinox.common_3.6.0.v20110523.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
