@@ -376,6 +376,7 @@ public class DonorEditForm extends Composite {
 		txtFax = new Text(compositeMisc, SWT.BORDER);
 		txtFax.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtFax.setBounds(0, 0, 76, 21);
+		compositeMisc.setTabList(new Control[]{comboSalutation, comboCategory, comboDonorSource, txtHomePhone, txtWorkPhone, txtFax});
 		
 		sep1 = new Label(compositeMain, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -392,10 +393,10 @@ public class DonorEditForm extends Composite {
 		compositeBigAddress.setLayout(gl_compositeBigAddress);
 		compositeBigAddress.setVisible(false);
 		
-		tabFolder = new TabFolder(compositeMain, SWT.NONE);
+		tabFolder = new TabFolder(compositeMain, SWT.NONE); 
 		tabFolder.setSelection(0);
-		GridData gd_tabFolder = new GridData(SWT.CENTER, SWT.FILL, true, true, 1, 1);
-		gd_tabFolder.widthHint = 800;
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_tabFolder.heightHint = 500;
 		tabFolder.setLayoutData(gd_tabFolder);
 		
 		tbtmAddress = new TabItem(tabFolder, SWT.NONE);
@@ -423,7 +424,6 @@ public class DonorEditForm extends Composite {
 		lblContact.setAlignment(SWT.RIGHT);
 		lblContact.setText("Contact");
 		
-		//TODO:tab order here should be vertical
 		txtOptional = new Text(compositeAddress, SWT.BORDER);
 		txtOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		txtOptional.setBounds(0, 0, 76, 21);
@@ -495,6 +495,7 @@ public class DonorEditForm extends Composite {
 		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboCountry.setBounds(0, 0, 76, 21);
 		comboCountry.setItems(Main.getDonorDB().getPreviousValues("country", "donors"));
+		compositeAddress.setTabList(new Control[]{txtOptional, comboMailingName, txtAddress1, txtAddress2, comboCity, comboState, comboZip, comboCountry});
 		
 		TabItem tbtmOther = new TabItem(tabFolder, SWT.NONE);
 		tbtmOther.setText("Email/Web");
