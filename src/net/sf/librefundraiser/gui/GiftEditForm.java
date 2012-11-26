@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 public class GiftEditForm extends Composite {
-	private Text txtAmount;
+	private Combo txtAmount;
 	private DateTime dtDateGiven;
 	private Text txtNote;
 	private final Gift gift;
@@ -54,7 +54,8 @@ public class GiftEditForm extends Composite {
 		gl_compositeTop.marginHeight = 0;
 		compositeTop.setLayout(gl_compositeTop);
 
-		txtAmount = new Text(compositeTop, SWT.BORDER);
+		txtAmount = new Combo(compositeTop, SWT.BORDER);
+		txtAmount.setItems(new String[] {"15", "25", "50", "100", "150", "200", "250", "500"});
 		txtAmount.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtAmount.setSize(58, 19);
 
