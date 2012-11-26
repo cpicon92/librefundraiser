@@ -1,7 +1,5 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -43,8 +41,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 
 public class MainWindow {
@@ -173,7 +169,12 @@ public class MainWindow {
 		mntmCsv.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				File f = new File("/home/kristian/test.csv");
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setFilterExtensions(new String[]{"*.csv","*.*"});
+				fileDialog.setFilterNames(new String[]{"Comma Separated Values (*.csv)","All Files"});
+				final String path = fileDialog.open();
+				if (path == null) return;
+				File f = new File(path);
 				Main.getDonorDB().writeCSV(f);
 			}
 		});

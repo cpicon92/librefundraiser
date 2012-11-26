@@ -582,7 +582,8 @@ public class SQLite implements IDonorDB {
 
 			try {
 				CSVWriter writer = new CSVWriter(new FileWriter(f));
-				writer.writeAll(rs, true);					
+				writer.writeAll(rs, true);
+				writer.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
