@@ -1,5 +1,7 @@
 package net.sf.librefundraiser.db;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class SQLite implements IDonorDB {
 	private final File dbFile;
@@ -561,6 +564,38 @@ public class SQLite implements IDonorDB {
 			e.printStackTrace();
 		}
 		return results.isEmpty()?null:results.getFirst();
+	}
+	@Override
+	public void writeCSV(File f) {
+		Connection conn = this.getConnection();
+		ArrayDeque<String> columns = new ArrayDeque<String>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
+			while(rs.next()){
+				String str = rs.getString("name");
+				columns.add(str);
+			}
+			rs.close();
+			rs = stmt.executeQuery("select * from donors ");
+			//TODO: do this for real instead of a hack
+
+			try {
+				CSVWriter writer = new CSVWriter(new FileWriter(f));
+				writer.writeAll(rs, true);					
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

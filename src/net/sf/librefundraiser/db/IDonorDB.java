@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.db;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.HashMap;
 
@@ -46,5 +47,7 @@ public interface IDonorDB {
 	void setDbName(String name);
 	
 	int getDbVersion();
+	
+	void writeCSV(File f);
 
 }
