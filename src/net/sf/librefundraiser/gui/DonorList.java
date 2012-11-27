@@ -340,9 +340,8 @@ public class DonorList extends Composite {
 			verify.setText("LibreFundraiser Warning");
 			if (verify.open() != SWT.YES) {
 				return false;
-			} else {
-				closing.dispose();
 			}
+			closing.dispose();
 		}
 		return true;
 	}

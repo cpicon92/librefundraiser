@@ -519,7 +519,6 @@ public class MainWindow {
 	}
 
 	private void quickSearchOpen() {
-		@SuppressWarnings("unchecked")
 		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
 		try {
 			if (keys != null && !keys.isEmpty()) {
