@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 
+
 public class DonorList extends Composite {
 	private Table table;
 	
@@ -310,5 +311,20 @@ public class DonorList extends Composite {
 		}
 		donors = Main.getDonorDB().getDonors();
 		refresh(false);
+	}
+	
+	public boolean closeAllTabs() {
+		for (CTabItem closing : tabFolder.getItems()) {
+			if (!closing.getText().substring(0, 1).equals("*")) continue;
+			MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
+			verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
+			verify.setText("LibreFundraiser Warning");
+			if (verify.open() != SWT.YES) {
+				return false;
+			} else {
+				closing.dispose();
+			}
+		}
+		return true;
 	}
 }

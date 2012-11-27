@@ -32,8 +32,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -72,7 +74,7 @@ public class MainWindow {
 			}
 		}
 	}
-	
+
 	/**
 	 * Create contents of the window.
 	 * @wbp.parser.entryPoint
@@ -83,6 +85,12 @@ public class MainWindow {
 		shell.setSize(880, 670);
 		shell.setImages(ResourceManager.getLogo());
 		shell.setMaximized(true);
+		shell.addListener(SWT.Close, new Listener() {	
+			@Override
+			public void handleEvent(Event event) {
+				if (!((DonorList)compositeDonorList).closeAllTabs()) event.doit = false;
+			}
+		});
 		String filename = null;
 		try {
 			filename = Main.getDonorDB().getDbName();
@@ -134,7 +142,7 @@ public class MainWindow {
 			}
 		});
 		mntmOpenDatabase.setText("Open Local Database...");
-		
+
 		MenuItem mntmConnectToRemote = new MenuItem(menuFile, SWT.NONE);
 		mntmConnectToRemote.setEnabled(false);
 		mntmConnectToRemote.setText("Connect to Remote Database...");
@@ -158,13 +166,13 @@ public class MainWindow {
 		MenuItem mntmFromCsvFile = new MenuItem(menuImport, SWT.NONE);
 		mntmFromCsvFile.setEnabled(false);
 		mntmFromCsvFile.setText("From CSV File...");
-		
+
 		MenuItem mntmExport = new MenuItem(menuFile, SWT.CASCADE);
 		mntmExport.setText("Export");
-		
+
 		Menu menu_1 = new Menu(mntmExport);
 		mntmExport.setMenu(menu_1);
-		
+
 		MenuItem mntmCsv = new MenuItem(menu_1, SWT.NONE);
 		mntmCsv.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -189,21 +197,21 @@ public class MainWindow {
 			}
 		});
 		mntmExit.setText("Exit");
-		
+
 		MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
 		mntmEdit.setText("Edit");
-		
+
 		Menu menuEdit = new Menu(mntmEdit);
 		mntmEdit.setMenu(menuEdit);
-		
+
 		//TODO implement cut/copy/paste edit menu functionality
-		
+
 		MenuItem mntmCut = new MenuItem(menuEdit, SWT.NONE);
 		mntmCut.setText("Cut\tCtrl+X");
-		
+
 		MenuItem mntmCopy = new MenuItem(menuEdit, SWT.NONE);
 		mntmCopy.setText("Copy\tCtrl+C");
-		
+
 		MenuItem mntmPaste = new MenuItem(menuEdit, SWT.NONE);
 		mntmPaste.setText("Paste\tCtrl+V");
 
@@ -284,7 +292,7 @@ public class MainWindow {
 			}
 		});
 		new ToolItem(toolBar, SWT.SEPARATOR);
-		
+
 		ToolItem tltmDbProperties = new ToolItem(toolBar, SWT.NONE);
 		tltmDbProperties.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -293,9 +301,9 @@ public class MainWindow {
 		});
 		tltmDbProperties.setText("Database Properties");
 		tltmDbProperties.setImage(ResourceManager.getIcon("db-properties.png"));
-		
+
 		//TODO add advanced search with SQL queries
-		
+
 		new ToolItem(toolBar, SWT.SEPARATOR);
 
 		shellSearch = new Shell(shell, SWT.NONE);
@@ -458,22 +466,22 @@ public class MainWindow {
 	public DonorList getCompositeDonorList() {
 		return (DonorList) compositeDonorList;
 	}
-	
+
 	public void refresh() {
 		refresh(true);
 	}
-	
+
 	public void refresh(boolean reload) {
 		if (reload) reload();
 		compositeDonorList.setVisible(false);
 		((DonorList)compositeDonorList).refresh();
 		compositeDonorList.setVisible(true);
 	}
-	
+
 	public void reload() {
 		((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
 	}
-	
+
 	private void quickSearchOpen() {
 		@SuppressWarnings("unchecked")
 		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
@@ -490,7 +498,7 @@ public class MainWindow {
 			}
 		} catch (Exception e1) {}
 	}
-	
+
 	public void newDonor() {
 		((DonorList)compositeDonorList).newDonor();
 	}
