@@ -183,7 +183,7 @@ public class MainWindow {
 				final String path = fileDialog.open();
 				if (path == null) return;
 				File f = new File(path);
-				Main.getDonorDB().writeCSV(f);
+				((DonorList)compositeDonorList).writeCSV(f);
 			}
 		});
 		mntmCsv.setText("To CSV File...");

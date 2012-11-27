@@ -27,7 +27,6 @@ public class FileDBASE {
 	}
 
 	public boolean loadTable(String sourceTableName, String destTableName) {
-		//TODO fix y/q note-loading bug
 		final Table table = database.getTable(sourceTableName);
 		try {
 			table.open(IfNonExistent.ERROR);
@@ -65,8 +64,10 @@ public class FileDBASE {
 					try {
 						Object value = record.getTypedValue(field.getName());
 						if (field.getType().equals(Type.DATE) && value != null) value = dateFormat.format(value);
-						String rawValue = value != null ? value.toString() : "";
-						String fieldData = rawValue.trim();
+						String rawValue = (value != null ? value.toString() : "").trim();
+						//if the value contains a null byte, it's probably not valid...
+						boolean valid = !rawValue.contains(new String(new char[]{(char)0}));
+						String fieldData = valid?rawValue:"";
 						if (field.getName().equals("EMAIL")) {
 							try {
 								String[] emails = fieldData.split("(;|,) *",2);

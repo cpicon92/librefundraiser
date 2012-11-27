@@ -1,4 +1,9 @@
 package net.sf.librefundraiser.gui;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
@@ -32,32 +37,34 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 
 
 public class DonorList extends Composite {
 	private Table table;
-	
+
 	final static public String[][] columns = { { "Account", "account" },
-			{ "Type", "type" }, { "Last Name/Business", "lastname" },
-			{ "First Name", "firstname" },
-			{ "Spouse/Contact Last", "spouselast" },
-			{ "Spouse/Contact First", "spousefrst" },
-			{ "Salutation", "salutation" }, { "Home Phone", "homephone" },
-			{ "Work Phone", "workphone" }, { "Fax", "fax" },
-			{ "Category", "category1" }, { "Donor Source", "category2" },
-			{ "Mail Name", "mailname" }, { "Address 1", "address1" },
-			{ "Address 2", "address2" }, { "City", "city" },
-			{ "State", "state" }, { "Zip", "zip" }, { "Country", "country" },
-			{ "Email", "email" }, { "Other Email", "email2" }, { "Web", "web" }, { "Last Change", "changedate" },
-			{ "Last Gift Date", "lastgivedt" }, { "Last Gift", "lastamt" },
-			{ "Total Gifts", "alltime" }, { "Year-to-date", "yeartodt" },
-			{ "First Gift", "firstgift" }, { "Largest Gift", "largest" } };
+		{ "Type", "type" }, { "Last Name/Business", "lastname" },
+		{ "First Name", "firstname" },
+		{ "Spouse/Contact Last", "spouselast" },
+		{ "Spouse/Contact First", "spousefrst" },
+		{ "Salutation", "salutation" }, { "Home Phone", "homephone" },
+		{ "Work Phone", "workphone" }, { "Fax", "fax" },
+		{ "Category", "category1" }, { "Donor Source", "category2" },
+		{ "Mail Name", "mailname" }, { "Address 1", "address1" },
+		{ "Address 2", "address2" }, { "City", "city" },
+		{ "State", "state" }, { "Zip", "zip" }, { "Country", "country" },
+		{ "Email", "email" }, { "Other Email", "email2" }, { "Web", "web" }, { "Last Change", "changedate" },
+		{ "Last Gift Date", "lastgivedt" }, { "Last Gift", "lastamt" },
+		{ "Total Gifts", "alltime" }, { "Year-to-date", "yeartodt" },
+		{ "First Gift", "firstgift" }, { "Largest Gift", "largest" } };
 	public Donor[] donors = null;
 
 	private TableViewer tableViewer;
 
 	public CTabFolder tabFolder;
-	
+
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
@@ -85,7 +92,7 @@ public class DonorList extends Composite {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-	
+
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -160,7 +167,7 @@ public class DonorList extends Composite {
 		final CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
 		tbtmDonors.setImage(ResourceManager.getIcon("home-tab.png"));
 		tbtmDonors.setText("Donors");
-		
+
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				CTabItem t = tabFolder.getSelection();
@@ -190,23 +197,23 @@ public class DonorList extends Composite {
 		});
 		table.setHeaderVisible(true);
 		tbtmDonors.setControl(compositeTable);
-		
+
 		for (String[] c : columns) {
 			TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
 			TableColumn tableColumn = tableViewerColumn.getColumn();
 			tableColumn.setWidth(100);
 			tableColumn.setText(c[0]);
 		}
-		
+
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.setContentProvider(new ContentProvider());
 		tableViewer.setInput(donors);
 		tabFolder.setSelection(0);
 		new DonorListSorter(tableViewer);
-		
+
 		Menu menuDonorList = new Menu(table);
 		table.setMenu(menuDonorList);
-		
+
 		MenuItem mntmOpenDonor = new MenuItem(menuDonorList, SWT.NONE);
 		mntmOpenDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -220,7 +227,7 @@ public class DonorList extends Composite {
 			}
 		});
 		mntmOpenDonor.setText("Open Donor(s)");
-		
+
 		MenuItem mntmOpenBackground = new MenuItem(menuDonorList, SWT.NONE);
 		mntmOpenBackground.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -232,9 +239,9 @@ public class DonorList extends Composite {
 			}
 		});
 		mntmOpenBackground.setText("Open Donor(s) in the Background");
-		
+
 		new MenuItem(menuDonorList, SWT.SEPARATOR);
-		
+
 		MenuItem mntmDeleteDonor = new MenuItem(menuDonorList, SWT.NONE);
 		mntmDeleteDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -251,28 +258,28 @@ public class DonorList extends Composite {
 		tableViewer.refresh();
 		if (pack) packColumns();
 	}
-	
+
 	public void refresh() {
 		refresh(true);
 	}
-	
+
 	public void packColumns() {
 		for (TableColumn tc : table.getColumns()) {
-	        tc.pack();
+			tc.pack();
 		}
 	}
-	
+
 	private static int columnSearch(String columnName) {
 		for (int i = 0; i < columns.length; i++) {
 			if (columns[i][1].equals(columnName)) return i;
 		}
 		return -1;
 	}
-	
+
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
+
 	public void newDonor() {
 		int id = Main.getDonorDB().getMaxAccount()+1;
 		for (CTabItem t : tabFolder.getItems()) {
@@ -285,7 +292,7 @@ public class DonorList extends Composite {
 		}
 		tabFolder.setSelection(new DonorTab(id,tabFolder));
 	}
-	
+
 	public void saveAll() {
 		for (CTabItem i : tabFolder.getItems()) {
 			if (i.getClass().equals(DonorTab.class)) {
@@ -299,7 +306,7 @@ public class DonorList extends Composite {
 			((DonorTab)t).alterSaveButton();
 		}
 	}
-	
+
 	public void deleteDonors() {
 		MessageBox warning = new MessageBox(this.getShell(),SWT.ICON_WARNING|SWT.YES|SWT.NO);
 		warning.setText("LibreFundraiser Warning");
@@ -312,7 +319,7 @@ public class DonorList extends Composite {
 		donors = Main.getDonorDB().getDonors();
 		refresh(false);
 	}
-	
+
 	public boolean closeAllTabs() {
 		for (CTabItem closing : tabFolder.getItems()) {
 			if (!closing.getText().substring(0, 1).equals("*")) continue;
@@ -326,5 +333,36 @@ public class DonorList extends Composite {
 			}
 		}
 		return true;
+	}
+
+	public void writeCSV(File f) {
+		ArrayList<String[]> l = new ArrayList<String[]>();
+		String[] columnTitles = new String[columns.length+1];
+		columnTitles[columns.length] = "Notes";
+		for (int i = 0; i < columnTitles.length-1; i++) {
+			columnTitles[i] = columns[i][0];
+		}
+		l.add(columnTitles);
+		for (Donor d : donors) {
+			String[] row = new String[columns.length+1];
+			for (int i = 0; i < row.length-1; i++) {
+				row[i] = d.getData(columns[i][1]);
+			}
+			String notes = d.getData("notes");
+			boolean valid = false;
+			try {
+				valid = !notes.contains(new String(new char[]{(char)0}));
+			} catch (Exception e) {
+			}
+			row[columns.length] = valid?d.getData("notes"):"";
+			l.add(row);
+		}
+		try {
+			CSVWriter writer = new CSVWriter(new FileWriter(f));
+			writer.writeAll(l);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
