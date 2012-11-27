@@ -37,8 +37,10 @@ public class GiftEditForm extends Composite {
 	 */
 	public GiftEditForm(Composite parent, int style, Gift gift) {
 		super(parent, SWT.BORDER);
-		setBackground(SWTResourceManager.getColor(211, 211, 211));
-		setBackgroundMode(SWT.INHERIT_FORCE);
+		if (System.getProperty("os.name").indexOf("nux") >= 0) {
+			setBackground(SWTResourceManager.getColor(211, 211, 211));
+			setBackgroundMode(SWT.INHERIT_FORCE);
+		}
 		this.gift = gift;
 		setLayout(new GridLayout(2, false));
 
