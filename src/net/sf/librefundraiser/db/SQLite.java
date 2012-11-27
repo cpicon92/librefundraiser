@@ -425,9 +425,12 @@ public class SQLite implements IDonorDB {
 		ArrayDeque<String> results = new ArrayDeque<String>();
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select distinct "+column+" from "+table);
+			String query = "select distinct "+column+" from "+table+" order by "+column+" asc";
+			if (column.equals("zip")) query = "select distinct substr("+column+",1,5) as "+column+" from "+table+" order by "+column+" asc";
+			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){
-				results.add(rs.getString(column));
+				String value = rs.getString(column);
+				if (!value.trim().equals("")) results.add(value);
 			}
 			rs.close();
 		} catch (SQLException e) {
