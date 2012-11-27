@@ -333,8 +333,12 @@ public class MainWindow {
 			public void focusLost(FocusEvent e) {
 				display.timerExec(100, new Runnable() {
 					public void run() {
-						if (!display.getFocusControl().equals(txtSearch) && !display.getFocusControl().equals(listSearch)) {
-							shellSearch.setVisible(false);
+						try {
+							if (!display.getFocusControl().equals(txtSearch) && !display.getFocusControl().equals(listSearch)) {
+								shellSearch.setVisible(false);
+							}
+						} catch (NullPointerException e) {
+							e.printStackTrace();
 						}
 					}
 				});
