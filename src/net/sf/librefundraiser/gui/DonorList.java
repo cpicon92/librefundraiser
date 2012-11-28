@@ -1,8 +1,13 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
@@ -23,6 +28,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -30,12 +37,17 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.jopendocument.dom.OOUtils;
+import org.jopendocument.dom.spreadsheet.Column;
+import org.jopendocument.dom.spreadsheet.Sheet;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -364,5 +376,82 @@ public class DonorList extends Composite {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void writeODS(final File f) {
+		new Thread(new Runnable(){
+			@Override
+			public void run() {
+				ArrayDeque<String[]> l = new ArrayDeque<String[]>();
+				String[] columnTitles = new String[columns.length+1];
+				columnTitles[columns.length] = "Notes";
+				for (int i = 0; i < columnTitles.length-1; i++) {
+					columnTitles[i] = columns[i][0];
+				}
+				for (Donor d : donors) {
+					String[] row = new String[columns.length+1];
+					for (int i = 0; i < row.length-1; i++) {
+						row[i] = d.getData(columns[i][1]);
+					}
+					String notes = d.getData("notes");
+					boolean valid = false;
+					try {
+						valid = !notes.contains(new String(new char[]{(char)0}));
+					} catch (Exception e) {
+					}
+					row[columns.length] = valid?d.getData("notes"):"";
+					l.add(row);
+				}
+				String[][] sheetData = l.toArray(new String[][]{});
+				l.addFirst(columnTitles);
+				String[][] sheetDataWithTitles = l.toArray(new String[][]{});
+				TableModel model = new DefaultTableModel(sheetData, columnTitles); 
+				try {
+					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(model);
+					Sheet donorSheet = outputSpreadSheet.getSheet(0);
+					donorSheet.setName("Donors");
+					final Display display = Display.getDefault();
+					final double[] pixelsPerMm = new double[1];
+					final GC[] gcA = new GC[1];
+					display.syncExec(new Runnable(){
+						@Override
+						public void run() {
+							final GC gc = new GC(new Image(display, new Rectangle(0,0,10,10)));
+							final Font arial = new Font(display, new FontData("Arial", 10, SWT.NORMAL));
+							gc.setFont(arial);
+							pixelsPerMm[0] = (display.getDPI().x)/25.4;
+							gcA[0] = gc;
+						}
+					});
+					final GC gc = gcA[0];
+					//stupid hack to optimise column width since jopendocument makes it impossibly hard to do this otherwise
+					for (int i = 0; i < donorSheet.getColumnCount(); i++) {
+						Column<SpreadSheet> c = donorSheet.getColumn(i);
+						double maxWidth = 0;
+						for (int j = 0; j < sheetDataWithTitles.length; j++) {
+							String[] cellLines = sheetDataWithTitles[j][i].split("\n");
+							for (String line : cellLines) {
+								//padding and mmWidth (and maxWidth) are in mm
+								double padding = 4;
+								double mmWidth = ((gc.stringExtent(line).x)/pixelsPerMm[0])*1.1+padding;
+								if (mmWidth > maxWidth) {
+									maxWidth = mmWidth;
+								}
+							}
+						}
+						c.setWidth(maxWidth);
+					}
+					outputSpreadSheet.saveAs(f);
+					OOUtils.open(f);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		
 	}
 }

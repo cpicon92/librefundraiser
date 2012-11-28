@@ -186,7 +186,22 @@ public class MainWindow {
 				((DonorList)compositeDonorList).writeCSV(f);
 			}
 		});
-		mntmCsv.setText("To CSV File...");
+		mntmCsv.setText("To CSV file...");
+		
+		MenuItem mntmOds = new MenuItem(menu_1, SWT.NONE);
+		mntmOds.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setFilterExtensions(new String[]{"*.ods","*.*"});
+				fileDialog.setFilterNames(new String[]{"Open Document Spreadsheet (*.ods)","All Files"});
+				final String path = fileDialog.open();
+				if (path == null) return;
+				File f = new File(path);
+				((DonorList)compositeDonorList).writeODS(f);
+			}
+		});
+		mntmOds.setText("To ODS (LibreOffice Spreadsheet) file...");
 
 		new MenuItem(menuFile, SWT.SEPARATOR);
 
