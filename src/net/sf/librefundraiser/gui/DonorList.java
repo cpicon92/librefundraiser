@@ -378,7 +378,7 @@ public class DonorList extends Composite {
 		}
 	}
 
-	public void writeODS(final File f) {
+	public void writeODS(final File f, final boolean openFile) {
 		new Thread(new Runnable(){
 			@Override
 			public void run() {
@@ -442,7 +442,7 @@ public class DonorList extends Composite {
 						c.setWidth(maxWidth);
 					}
 					outputSpreadSheet.saveAs(f);
-					OOUtils.open(f);
+					if (openFile) OOUtils.open(f);
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

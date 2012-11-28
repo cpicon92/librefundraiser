@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.db.ODB;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -198,10 +199,31 @@ public class MainWindow {
 				final String path = fileDialog.open();
 				if (path == null) return;
 				File f = new File(path);
-				((DonorList)compositeDonorList).writeODS(f);
+				((DonorList)compositeDonorList).writeODS(f, true);
 			}
 		});
 		mntmOds.setText("To ODS (LibreOffice Spreadsheet) file...");
+		
+		MenuItem mntmOdb = new MenuItem(menu_1, SWT.NONE);
+		mntmOdb.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+				fileDialog.setFilterExtensions(new String[]{"*.odb","*.*"});
+				fileDialog.setFilterNames(new String[]{"Open Document Database (*.odb)","All Files"});
+				final String path = fileDialog.open();
+				if (path == null) return;
+				File f = new File(path);
+				MessageBox registrationWarning = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				registrationWarning.setText("LibreFundraiser");
+				registrationWarning.setMessage("Would you like LibreFundraiser to register the database with LibreOffice Base?" +
+						"This way you may create labels and other mail-merge documents with it. \n\n" +
+						"WARNING: Please save and close all open LibreOffice documents, LibreOffice will quit if you choose 'yes'.");
+				boolean saidYes = registrationWarning.open() == SWT.YES;
+				ODB.exportToODB(f, saidYes);
+			}
+		});
+		mntmOdb.setText("To ODB (LibreOffice Database) file...");
 
 		new MenuItem(menuFile, SWT.SEPARATOR);
 
