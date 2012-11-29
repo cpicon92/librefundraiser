@@ -6,3 +6,4 @@ Type=Application
 Categories=Office;
 Exec=librefundraiser
 Name=LibreFundraiser
+MimeType=application/x-librefundraiser
