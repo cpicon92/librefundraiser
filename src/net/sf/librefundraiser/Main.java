@@ -39,7 +39,13 @@ public class Main {
 
 	//TODO: quicksearch should search spouse names too
 	public static void main(String args[]) {
+		if (args.length > 1) {
+			System.err.println("Syntax: librefundraiser [filename]");
+		}
 		loadSettings();
+		if (args.length == 1) {
+			addSetting("lastDB",args[0]);
+		}
 		String importDb = null;
 		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
 			NewDatabaseWizard dialog = new NewDatabaseWizard();

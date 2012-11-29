@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar /usr/share/librefundraiser/librefundraiser.jar
+java -jar /usr/share/librefundraiser/librefundraiser.jar "$@"
