@@ -46,5 +46,7 @@ public interface IDonorDB {
 	void setDbName(String name);
 	
 	int getDbVersion();
+	
+	String getDbPath();
 
 }

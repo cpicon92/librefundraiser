@@ -92,12 +92,7 @@ public class MainWindow {
 				if (!((DonorList)compositeDonorList).closeAllTabs()) event.doit = false;
 			}
 		});
-		String filename = null;
-		try {
-			filename = Main.getDonorDB().getDbName();
-		} catch (Exception e) {}
-		if (!filename.equals("")) filename = " - " + filename;
-		shell.setText("LibreFundraiser"+filename);
+		refreshTitle();
 		GridLayout gl_shell = new GridLayout(1, false);
 		gl_shell.marginWidth = 0;
 		gl_shell.marginHeight = 0;
@@ -542,5 +537,17 @@ public class MainWindow {
 
 	public void newDonor() {
 		((DonorList)compositeDonorList).newDonor();
+	}
+	
+	public void refreshTitle() {
+		String filename = null;
+		try {
+			filename = Main.getDonorDB().getDbName();
+		} catch (Exception e) {}
+		if (filename.equals("")) {
+			filename = Main.getDonorDB().getDbPath();
+		}
+		if (!filename.equals("")) filename = " - " + filename;
+		shell.setText("LibreFundraiser"+filename);
 	}
 }

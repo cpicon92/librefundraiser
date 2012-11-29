@@ -41,7 +41,7 @@ public class DatabasePropertiesDialog extends Dialog {
 		super(parent, style);
 		String filename = null;
 		try {
-			filename = new File(Main.getSetting("lastDB")).getName();
+			filename = new File(Main.getDonorDB().getDbPath()).getName();
 		} catch (Exception e) {}
 		if (filename != null) filename = filename + " ";
 		setText(filename+"Properties");
@@ -85,7 +85,7 @@ public class DatabasePropertiesDialog extends Dialog {
 		txtFileName = new Text(grpGeneral, SWT.BORDER | SWT.READ_ONLY);
 		txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtFileName.setBounds(0, 0, 76, 19);
-		txtFileName.setText(Main.getSetting("lastDB"));
+		txtFileName.setText(Main.getDonorDB().getDbPath());
 		
 		Label lblDatabaseName = new Label(grpGeneral, SWT.NONE);
 		lblDatabaseName.setBounds(0, 0, 49, 13);
@@ -181,6 +181,7 @@ public class DatabasePropertiesDialog extends Dialog {
 	
 	public void saveChanges() {
 		Main.getDonorDB().setDbName(txtDatabaseName.getText());
+		Main.getWindow().refreshTitle();
 		btnApply.setEnabled(false);
 		changeEffected = false;
 	}

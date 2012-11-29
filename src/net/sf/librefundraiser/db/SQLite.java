@@ -17,6 +17,9 @@ import net.sf.librefundraiser.Main;
 
 public class SQLite implements IDonorDB {
 	private final File dbFile;
+	public String getDbPath() {
+		return dbFile.getPath();
+	}
 	public SQLite() {
 		long unixTime = System.currentTimeMillis() / 1000L;
 		String filename = System.getProperty("java.io.tmpdir")+"/temp"+unixTime+".db";
