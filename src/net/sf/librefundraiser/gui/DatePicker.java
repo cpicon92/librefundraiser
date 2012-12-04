@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -87,53 +89,61 @@ public class DatePicker extends Composite {
 
 	}
 
+	private static Integer[] getDateIndexes(Date date, DateFormat dateFormat) {
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		AttributedCharacterIterator charIterator = dateFormat.formatToCharacterIterator(date);
+		Field previous = null;
+		for (int i = charIterator.getBeginIndex(); i < charIterator.getEndIndex(); i++) {
+			Field f = null;
+			for (Entry<Attribute, Object> e : charIterator.getAttributes().entrySet()) {
+				try {
+					f = (Field) e.getValue();
+					break;
+				} catch (Exception e1) {
+				}
+			}
+			try {
+			if (previous == null || !f.equals(previous)) {
+				indexes.add(i);
+				previous = f;
+			}
+			} catch (Exception e1) {
+			}
+			charIterator.next();
+		}
+		indexes.add(charIterator.getEndIndex());
+		return indexes.toArray(new Integer[]{});
+	}
+	
+	private static void selectNumbers(Text text, int indexStart, int indexEnd) {
+		String selection = text.getText().substring(indexStart, indexEnd);
+		Pattern p = Pattern.compile("\\d+");
+		Matcher m = p.matcher(selection); 
+		if (m.find()) {
+		   indexStart += m.start();
+		   indexEnd -= selection.length() - m.end();
+		}
+		text.setSelection(indexStart, indexEnd);
+	}
+	
 	protected void selectText(final Text text) {
 		text.getDisplay().asyncExec(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					ArrayList<Integer> indexes = new ArrayList<Integer>();
-					AttributedCharacterIterator charIterator = dateFormat.formatToCharacterIterator(datePicker.getDate());
-					Field previous = null;
-					char c = charIterator.first();
-					for (int i = charIterator.getBeginIndex(); i < charIterator.getEndIndex(); i++) {
-						Field f = null;
-						for (Entry<Attribute, Object> e : charIterator.getAttributes().entrySet()) {
-							try {
-								f = (Field) e.getValue();
-								break;
-							} catch (Exception e1) {
-							}
-						}
-						try {
-						if (previous == null || !f.equals(previous)) {
-							indexes.add(i);
-							previous = f;
-						}
-						} catch (Exception e1) {
-						}
-						c = charIterator.next();
-					}
-					indexes.add(charIterator.getEndIndex());
+					Integer[] indexes = getDateIndexes(datePicker.getDate(), dateFormat);
 					int currentSelection = text.getSelection().x;
 					boolean selectedSomething = false;
-					for (int i = 1; i < indexes.size(); i++) {
-						if (currentSelection < indexes.get(i)) {
-							text.setSelection(indexes.get(i-1), indexes.get(i));
+					for (int i = 1; i < indexes.length; i++) {
+						if (currentSelection < indexes[i]) {
+							selectNumbers(text, indexes[i-1], indexes[i]);
 							selectedSomething = true;
 							break;
 						}
 					}
 					if (!selectedSomething) {
-						text.setSelection(indexes.get(indexes.size() - 2), indexes.get(indexes.size() - 1));
+						selectNumbers(text, indexes[indexes.length - 2], indexes[indexes.length - 1]);
 					}
-//					if (currentSelection < 5) {
-//						text.setSelection(0, 4);
-//					} else if (currentSelection < 9) {
-//						text.setSelection(5, 7);
-//					} else if (currentSelection < 12) {
-//						text.setSelection(8, 10);
-//					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
