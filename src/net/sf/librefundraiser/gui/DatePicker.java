@@ -32,10 +32,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.TraverseEvent;
 
 public class DatePicker extends Composite {
 	private Text text;
-	private CalendarPopup calendarPopup;
+	private CalendarPopup calendarPopup = null;
 	private final DatePicker datePicker = this;
 	private final DateFormat dateFormat;
 
@@ -53,6 +57,33 @@ public class DatePicker extends Composite {
 		gridLayout.marginWidth = 0;
 		setLayout(gridLayout);
 		text = new Text(this, SWT.BORDER);
+		text.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+					if (tabRight()) {
+						e.doit = false;
+					}
+				}
+			}
+		});
+		text.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				switch (e.keyCode) {
+				case SWT.ARROW_DOWN: 
+					incrementSelection(text, -1);
+					break;
+				case SWT.ARROW_UP:
+					incrementSelection(text, +1);
+					break;
+				case SWT.ESC:
+					if (calendarPopup != null && !calendarPopup.isDisposed()) {
+						calendarPopup.dispose();
+					}
+					break;
+				}
+			}
+		});
 		text.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -87,6 +118,38 @@ public class DatePicker extends Composite {
 		setTabList(new Control[]{text});
 
 
+	}
+	
+	private boolean tabRight() {
+		selectText(text);
+		Integer[] indexes = getDateIndexes(this.getDate(), this.dateFormat);
+		boolean changed = false;
+		for (Integer i : indexes) {
+			if (i > text.getSelection().y) {
+				text.setSelection(i);
+				selectText(text);
+				changed = true;
+				break;
+			}
+		}
+		return changed;
+	}
+	
+	private void incrementSelection(Text text, int i) {
+		try {
+			selectText(text);
+			String selection = text.getSelectionText();
+			String newInt = String
+					.format("%d", Integer.parseInt(selection) + i);
+			Point selectionIndexes = text.getSelection();
+			String contents = text.getText();
+			String prefix = contents.substring(0, selectionIndexes.x);
+			String suffix = contents.substring(selectionIndexes.y);
+			this.setDate(dateFormat.parse(prefix + newInt + suffix));
+			text.setSelection(selectionIndexes.x,
+					selectionIndexes.x + newInt.length());
+		} catch (Exception e) {
+		}
 	}
 
 	private static Integer[] getDateIndexes(Date date, DateFormat dateFormat) {
@@ -145,7 +208,7 @@ public class DatePicker extends Composite {
 						selectNumbers(text, indexes[indexes.length - 2], indexes[indexes.length - 1]);
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 			}
 		});
