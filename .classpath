@@ -29,10 +29,5 @@
 			<attribute name="javadoc_location" value="http://jopendocument.org/docs/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/swt-datepicker-1.01.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="jar:platform:/resource/librefundraiser/lib/swt-datepicker-docs.jar!/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
