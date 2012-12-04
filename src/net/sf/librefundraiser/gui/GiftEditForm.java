@@ -26,7 +26,7 @@ import org.eclipse.swt.events.KeyEvent;
 
 public class GiftEditForm extends Composite {
 	private Combo txtAmount;
-	private DateTime dtDateGiven;
+	private DatePicker dtDateGiven;
 	private Text txtNote;
 	private final Gift gift;
 	private final Object[][] fields;
@@ -68,12 +68,7 @@ public class GiftEditForm extends Composite {
 		lblDateGiven.setSize(53, 13);
 		lblDateGiven.setText("Date Given");
 
-		dtDateGiven = new DateTime(compositeTop, SWT.BORDER | SWT.DROP_DOWN);
-		dtDateGiven.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-			}
-		});
+		dtDateGiven = new DatePicker(Main.getDateFormat(), compositeTop, SWT.NONE);
 		dtDateGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		dtDateGiven.setSize(58, 19);
 
@@ -159,13 +154,9 @@ public class GiftEditForm extends Composite {
 			((Text)field).setText(value);
 		} else if (field.getClass().equals(Combo.class)) {
 			((Combo)field).setText(value);
-		} else if (field.getClass().equals(DateTime.class)) {
+		} else if (field.getClass().equals(DatePicker.class)) {
 			try {
-				Calendar date = Calendar.getInstance();
-				date.setTime(Main.getDateFormat().parse(value));
-				((DateTime)field).setYear(date.get(Calendar.YEAR));
-				((DateTime)field).setMonth(date.get(Calendar.MONTH));
-				((DateTime)field).setDay(date.get(Calendar.DAY_OF_MONTH));
+				((DatePicker)field).setDate(Main.getDateFormat().parse(value));
 			} catch (ParseException e) {}
 		} else if (field.getClass().equals(Button.class)) {
 			Button b = ((Button)field);
@@ -187,9 +178,8 @@ public class GiftEditForm extends Composite {
 			gift.putIc(key, value);
 		} else if (field.getClass().equals(Combo.class)) {
 			gift.putIc(key,((Combo)field).getText());
-		} else if (field.getClass().equals(DateTime.class)) {
-			Calendar cal = new GregorianCalendar(((DateTime)field).getYear(),((DateTime)field).getMonth(),((DateTime)field).getDay());
-			Date date = new Date(cal.getTimeInMillis());
+		} else if (field.getClass().equals(DatePicker.class)) {
+			Date date = ((DatePicker)field).getDate();
 			gift.putIc(key, Main.getDateFormat().format(date));
 		} else if (field.getClass().equals(Button.class)) {
 			Button b = ((Button)field);
