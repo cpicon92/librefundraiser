@@ -35,6 +35,7 @@ public class Main {
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
 	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//	private static final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
 	public static final String version = "(Development Snapshot)";
 
 	//TODO: quicksearch should search spouse names too

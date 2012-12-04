@@ -30,7 +30,7 @@ public class FileDBASE {
 		final Table table = database.getTable(sourceTableName);
 		try {
 			table.open(IfNonExistent.ERROR);
-			final Format dateFormat = Main.getDateFormat();
+			final Format dateFormat = SQLite.dbDateFormat;
 			IDonorDB iDonorDB = Main.getDonorDB();
 			Connection conn = iDonorDB.getConnection();
 			final List<Field> fields = table.getFields();

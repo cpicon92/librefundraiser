@@ -1,6 +1,5 @@
 package net.sf.librefundraiser.gui;
 import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sf.librefundraiser.Donor;
@@ -775,7 +774,7 @@ public class DonorEditForm extends Composite {
 			txtSpouseLast.setText(txtContactLast.getText());
 		}
 		donor.putData("type",business?"B":"I");
-		Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Format dateFormat = Main.getDateFormat();
 		txtLastEdited.setText(dateFormat.format(new Date()));
 		for (Object field[] : fields) {
 			saveField((Control)field[0],(String)field[1]);

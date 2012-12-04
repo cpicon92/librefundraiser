@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -17,6 +19,7 @@ import net.sf.librefundraiser.Main;
 
 public class SQLite implements IDonorDB {
 	private final File dbFile;
+	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	public String getDbPath() {
 		return dbFile.getPath();
 	}
@@ -107,7 +110,7 @@ public class SQLite implements IDonorDB {
 				for (String column : columns) {
 					String value = "";
 					try {
-						value = rs.getString(column);
+						value = formatDate(rs.getString(column));
 					} catch (SQLException e1) {}
 					donor.putData(column, value!=null?value:"");
 				}
@@ -126,7 +129,7 @@ public class SQLite implements IDonorDB {
 						for (String column : giftColumns) {
 							String value = "";
 							try {
-								value = rsGifts.getString(column);
+								value = formatDate(rsGifts.getString(column));
 							} catch (SQLException e1) {}
 							gift.putIc(column, value!=null?value:"");
 						}
@@ -172,7 +175,7 @@ public class SQLite implements IDonorDB {
 			PreparedStatement prep = conn.prepareStatement("replace into donors values ("+fieldValues+");");
 			int currentField = 1;
 			for (final String field : columns) {
-				prep.setString(currentField, donor.getData(field));
+				prep.setString(currentField, unFormatDate(donor.getData(field)));
 				currentField++;
 			}
 			prep.addBatch();
@@ -203,7 +206,7 @@ public class SQLite implements IDonorDB {
 			for (Gift g : donor.getGifts().values()) {
 				int currentField = 1;
 				for (final String field : columns) {
-					prep.setString(currentField, g.getIc(field));
+					prep.setString(currentField, unFormatDate(g.getIc(field)));
 					currentField++;
 				}
 				prep.addBatch();
@@ -304,7 +307,7 @@ public class SQLite implements IDonorDB {
 					.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\""
 							+ donor.getData("account")
 							+ "\" and DATEGIVEN>=Datetime('"
-							+ Main.getDateFormat().format(cal.getTime()) + "')");
+							+ dbDateFormat.format(cal.getTime()) + "')");
 			while(rs.next()){
 				output = rs.getDouble("total_amount");
 			}
@@ -500,7 +503,7 @@ public class SQLite implements IDonorDB {
 				for (String column : giftColumns) {
 					String value = "";
 					try {
-						value = rsGifts.getString(column);
+						value = formatDate(rsGifts.getString(column));
 					} catch (SQLException e1) {}
 					gift.putIc(column, value!=null?value:"");
 				}
@@ -566,6 +569,22 @@ public class SQLite implements IDonorDB {
 			e.printStackTrace();
 		}
 		return results.isEmpty()?null:results.getFirst();
+	}
+	
+	public static String formatDate(String date) {
+		try {
+			return Main.getDateFormat().format(dbDateFormat.parse(date));
+		} catch (Exception e) {
+		}
+		return date;
+	}
+	
+	public static String unFormatDate(String date) {
+		try {
+			return dbDateFormat.format(Main.getDateFormat().parse(date));
+		} catch (Exception e) {
+		}
+		return date;
 	}
 
 }
