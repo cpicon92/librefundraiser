@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 
 public class GiftEditForm extends Composite {
 	private Combo txtAmount;
@@ -67,6 +69,11 @@ public class GiftEditForm extends Composite {
 		lblDateGiven.setText("Date Given");
 
 		dtDateGiven = new DateTime(compositeTop, SWT.BORDER | SWT.DROP_DOWN);
+		dtDateGiven.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+			}
+		});
 		dtDateGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		dtDateGiven.setSize(58, 19);
 
