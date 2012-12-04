@@ -1,9 +1,7 @@
 package net.sf.librefundraiser.gui;
 
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
@@ -17,12 +15,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 
 public class GiftEditForm extends Composite {
 	private Combo txtAmount;
@@ -71,6 +66,7 @@ public class GiftEditForm extends Composite {
 		dtDateGiven = new DatePicker(Main.getDateFormat(), compositeTop, SWT.NONE);
 		dtDateGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		dtDateGiven.setSize(58, 19);
+		dtDateGiven.setDate(new Date());
 
 		Label lblSource = new Label(compositeTop, SWT.NONE);
 		lblSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
