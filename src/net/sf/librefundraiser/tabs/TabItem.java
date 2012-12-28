@@ -48,7 +48,8 @@ public class TabItem extends Composite {
 		final Color gradBottom = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		final Color colorTabLines = new Color(thisTabItem.getDisplay(), 127, 127, 127);
 		final Color colorBlack = new Color(thisTabItem.getDisplay(), 0, 0, 0);
-		final Color colorShadow = new Color(thisTabItem.getDisplay(), 206, 206, 206);
+		int c = 20;
+		final Color colorShadow = new Color(thisTabItem.getDisplay(), gradBottom.getRed() - c, gradBottom.getGreen() - c, gradBottom.getBlue() - c);
 		final Color grayTab = new Color(thisTabItem.getDisplay(), 225, 225, 225);
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {

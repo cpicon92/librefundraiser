@@ -43,7 +43,8 @@ public class TabFolder extends Composite {
 
 		compositeTabs = new Composite(this, SWT.NONE);
 		final Color gradBottom = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		final Color colorShadow = new Color(compositeTabs.getDisplay(), 206, 206, 206);
+		int c = 20;
+		final Color colorShadow = new Color(compositeTabs.getDisplay(), gradBottom.getRed() - c, gradBottom.getGreen() - c, gradBottom.getBlue() - c);
 		compositeTabs.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Rectangle gcSize = compositeTabs.getClientArea();
