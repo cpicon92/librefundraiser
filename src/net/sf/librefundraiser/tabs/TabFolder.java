@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -17,6 +20,7 @@ public class TabFolder extends Composite {
 	private final ArrayList<TabFolderListener> listeners = new ArrayList<TabFolderListener>();
 	private final ArrayList<SelectionAdapter> selectionAdapters = new ArrayList<SelectionAdapter>();
 	private TabItem currentSelection = null;
+	private int maxTabWidth = 200;
 
 	/**
 	 * Create the composite.
@@ -32,6 +36,12 @@ public class TabFolder extends Composite {
 		setLayout(gridLayout);
 
 		compositeTabs = new Composite(this, SWT.NONE);
+		compositeTabs.addControlListener(new ControlAdapter() {
+			@Override
+			public void controlResized(ControlEvent e) {
+				distributeTabs();
+			}
+		});
 		compositeTabs.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_compositeTabs = new GridLayout(1, true);
 		gl_compositeTabs.marginWidth = 0;
@@ -52,6 +62,7 @@ public class TabFolder extends Composite {
 		i.setParent(compositeTabs);
 		i.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		((GridLayout)compositeTabs.getLayout()).numColumns = compositeTabs.getChildren().length;
+		distributeTabs();
 	}
 
 	void suckUpChildren() {
@@ -133,5 +144,24 @@ public class TabFolder extends Composite {
 			}
 		}
 		return items.toArray(new TabItem[]{});
+	}
+
+	public int getMaxTabWidth() {
+		return maxTabWidth;
+	}
+
+	public void setMaxTabWidth(int maxTabWidth) {
+		this.maxTabWidth = maxTabWidth;
+	}
+	
+	private void distributeTabs() {
+		Point size = compositeTabs.getSize();
+		int maxWidth = maxTabWidth * compositeTabs.getChildren().length;
+		GridLayout gridLayout = (GridLayout) compositeTabs.getLayout();
+		if (size.x > maxWidth) {
+			gridLayout.marginRight = size.x - maxWidth;
+		} else {
+			gridLayout.marginRight = 0;
+		}
 	}
 }
