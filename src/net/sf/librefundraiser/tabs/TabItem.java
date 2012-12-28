@@ -5,14 +5,17 @@ import net.sf.librefundraiser.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.graphics.Pattern;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class TabItem extends Composite {
 
@@ -23,52 +26,73 @@ public class TabItem extends Composite {
 	 */
 	private Image image;
 	private String text;
-	private Label lblTabText;
 	private Control control;
 	private TabFolder parent;
 	private final TabItem thisTabItem = this;
-	private Label lblImage;
+	private boolean selected = false;
+	private Rectangle closeButtonArea = null;
+	private boolean closeHover = false;
 	
 	public TabItem(final TabFolder parent, int style) {
-		super(parent, SWT.BORDER);
+		super(parent, SWT.NONE);
+		addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				boolean newCloseHover = closeButtonArea.contains(e.x, e.y);
+				if (closeHover != newCloseHover) {
+					closeHover = newCloseHover;
+					redraw();
+				}
+			}
+		});
+		final Color gradTop = new Color(thisTabItem.getDisplay(), 255, 255, 255);
+		final Color gradBottom = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		final Color colorTabLines = new Color(thisTabItem.getDisplay(), 127, 127, 127);
+		final Color colorBlack = new Color(thisTabItem.getDisplay(), 0, 0, 0);
+		final Color colorShadow = new Color(thisTabItem.getDisplay(), 206, 206, 206);
+		final Color grayTab = new Color(thisTabItem.getDisplay(), 225, 225, 225);
+		addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				Rectangle gcSize = thisTabItem.getClientArea();
+				e.gc.setForeground(gradBottom);
+				e.gc.setBackground(colorShadow);
+				e.gc.fillGradientRectangle(0, 0, gcSize.width, gcSize.height-1, true);
+				e.gc.setForeground(colorTabLines);
+				e.gc.setAntialias(SWT.ON);
+				if (selected) {
+					e.gc.setBackgroundPattern(new Pattern(thisTabItem.getDisplay(), 0, 0, 0, gcSize.height, gradTop, gradBottom));
+				} else {
+					e.gc.setBackground(grayTab);
+					e.gc.drawLine(0, gcSize.height-1, gcSize.width, gcSize.height-1);
+				}
+				e.gc.fillPolygon(generateTabShape(gcSize.width, gcSize.height));
+				e.gc.drawPolyline(generateTabShape(gcSize.width, gcSize.height));
+				e.gc.setForeground(colorBlack);
+				int textPosition = 14;
+				if (image != null) {
+					e.gc.drawImage(image, textPosition, gcSize.height/2 - image.getBounds().height/2);
+					textPosition += image.getBounds().width + 6;
+				}
+				e.gc.drawText(text, textPosition, 5, true);
+				closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 12, 12);
+				String icon = closeHover?"tabclose_hover.png":"tabclose.png";
+				e.gc.drawImage(ResourceManager.getIcon(icon), closeButtonArea.x, closeButtonArea.y);
+			}
+		});
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				parent.setSelection(thisTabItem);
+				if (closeHover) {
+					thisTabItem.parent.closeTab(thisTabItem);
+				} else {
+					parent.setSelection(thisTabItem);
+				}
 			}
 		};
 		addMouseListener(mouseAdapter);
-		this.setBackgroundMode(SWT.INHERIT_FORCE);
 		this.parent = parent;
 		parent.createItem(this);
-		setLayout(new GridLayout(3, false));
-		
-		lblImage = new Label(this, SWT.NONE);
-		lblImage.addMouseListener(mouseAdapter);
-		
-		lblTabText = new Label(this, SWT.NONE);
-		lblTabText.addMouseListener(mouseAdapter);
-		lblTabText.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1));
-		
-		final Label lblCloseButton = new Label(this, SWT.NONE);
-		lblCloseButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				close();
-			}
-		});
-		lblCloseButton.addMouseTrackListener(new MouseTrackAdapter() {
-			@Override
-			public void mouseEnter(MouseEvent e) {
-				lblCloseButton.setImage(ResourceManager.getIcon("tabclose_hover.png"));
-			}
-			@Override
-			public void mouseExit(MouseEvent e) {
-				lblCloseButton.setImage(ResourceManager.getIcon("tabclose.png"));
-			}
-		});
-		lblCloseButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1));
-		lblCloseButton.setImage(ResourceManager.getIcon("tabclose.png"));
+		setLayout(new GridLayout(1, false));
+		new Label(this, SWT.NONE);
 	}
 
 	@Override
@@ -79,11 +103,10 @@ public class TabItem extends Composite {
 	public Image getImage() {
 		return image;
 	}
-
+	
 	public void setImage(Image image) {
 		this.image = image;
-		lblImage.setImage(image);
-		
+		redraw();
 	}
 
 	public String getText() {
@@ -91,10 +114,8 @@ public class TabItem extends Composite {
 	}
 
 	public void setText(String text) {
-		lblTabText.setText(text);
 		this.text = text;
-		this.changed(new Control[] {lblTabText});
-		this.layout(true, true);
+		redraw();
 	}
 
 	public Control getControl() {
@@ -108,14 +129,13 @@ public class TabItem extends Composite {
 	}
 	
 	protected void setSelected(boolean selected) {
-		if (selected) {
-			this.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		} else {
-			this.setBackground(null);
-		}
+		this.selected = selected;
+		this.redraw();
 	}
 	
-	public void close() {
-		parent.closeTab(this); 
+	private static int[] generateTabShape(int w, int h) {
+		int[] tabShape = new int[] {0,h-1, 1,h-2, 2,h-3, 3,h-4, 4,h-8, 4,5, 5,3, 6,2, 7,1, 10,0,
+				w-10,0, w-7,1, w-6,2, w-5,3, w-4,5, w-4,h-8, w-3,h-4, w-2,h-3, w-1,h-2, w,h-1};
+		return tabShape;
 	}
 }

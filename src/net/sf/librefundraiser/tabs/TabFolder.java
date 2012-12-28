@@ -6,8 +6,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -30,12 +34,26 @@ public class TabFolder extends Composite {
 
 	public TabFolder(Composite parent, int style) {
 		super(parent, style);
+		
 		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.horizontalSpacing = 0;
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 		setLayout(gridLayout);
 
 		compositeTabs = new Composite(this, SWT.NONE);
+		final Color gradBottom = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		final Color colorShadow = new Color(compositeTabs.getDisplay(), 206, 206, 206);
+		compositeTabs.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				Rectangle gcSize = compositeTabs.getClientArea();
+				e.gc.setForeground(gradBottom);
+				e.gc.setBackground(colorShadow);
+				e.gc.fillGradientRectangle(0, 0, gcSize.width, gcSize.height-1, true);
+				e.gc.setForeground(new Color(compositeTabs.getDisplay(), 127, 127, 127));
+				e.gc.drawLine(0, gcSize.height-1, gcSize.width, gcSize.height-1);
+			}
+		});
 		compositeTabs.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {
@@ -44,6 +62,7 @@ public class TabFolder extends Composite {
 		});
 		compositeTabs.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_compositeTabs = new GridLayout(1, true);
+		gl_compositeTabs.horizontalSpacing = 2;
 		gl_compositeTabs.marginWidth = 0;
 		gl_compositeTabs.marginHeight = 0;
 		compositeTabs.setLayout(gl_compositeTabs);
@@ -118,6 +137,7 @@ public class TabFolder extends Composite {
 			}
 		}
 		((GridLayout)compositeTabs.getLayout()).numColumns = compositeTabs.getChildren().length;
+		distributeTabs();
 		this.changed(new Control[]{compositeControlArea});
 		this.layout(true, true);
 	}

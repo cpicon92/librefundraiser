@@ -94,6 +94,7 @@ public class MainWindow {
 		});
 		refreshTitle();
 		GridLayout gl_shell = new GridLayout(1, false);
+		gl_shell.verticalSpacing = 0;
 		gl_shell.marginWidth = 0;
 		gl_shell.marginHeight = 0;
 		shell.setLayout(gl_shell);
