@@ -12,6 +12,10 @@ import javax.swing.table.TableModel;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.tabs.TabFolder;
+import net.sf.librefundraiser.tabs.TabFolderEvent;
+import net.sf.librefundraiser.tabs.TabFolderListener;
+import net.sf.librefundraiser.tabs.TabItem;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -20,14 +24,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabFolderRenderer;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -75,7 +73,7 @@ public class DonorList extends Composite {
 
 	private TableViewer tableViewer;
 
-	public CTabFolder tabFolder;
+	public TabFolder tabFolder;
 
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -114,11 +112,10 @@ public class DonorList extends Composite {
 		super(parent, style);
 		donors = Main.getDonorDB().getDonors();
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
-		tabFolder = new CTabFolder(this, SWT.FLAT);
-		tabFolder.setTabHeight(20);
-		tabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-			public void close(CTabFolderEvent event) {
-				CTabItem closing = ((CTabItem)event.item);
+		tabFolder = new TabFolder(this, SWT.NONE);
+		tabFolder.addTabFolderListener(new TabFolderListener() {
+			public void close(TabFolderEvent event) {
+				TabItem closing = event.item;
 				if (!closing.getText().substring(0, 1).equals("*")) return;
 				MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
 				verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
@@ -126,63 +123,13 @@ public class DonorList extends Composite {
 				event.doit = verify.open() == SWT.YES;
 			}
 		});
-		tabFolder.setSelectionBackground(new Color[]{this.getDisplay().getSystemColor(SWT.COLOR_WHITE), this.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND)}, new int[]{40}, true);
-		tabFolder.setRenderer(new CTabFolderRenderer(tabFolder) {
-			protected void draw(int part, int state, Rectangle bounds, GC gc)  {
-				switch (part) {
-				case PART_BACKGROUND:
-					break;
-				case PART_BODY:
-					break;
-				case PART_HEADER:
-					break;
-				case PART_MAX_BUTTON:
-					super.draw(part, state, bounds, gc);
-					break;
-				case PART_MIN_BUTTON:
-					super.draw(part, state, bounds, gc);
-					break;
-				case PART_CHEVRON_BUTTON:
-					super.draw(part, state, bounds, gc);
-					break;
-				case PART_BORDER:
-					break;
-				case PART_CLOSE_BUTTON:
-					super.draw(part, state, bounds, gc);
-					break;
-				default:
-					if (0 <= part && part < parent.getItemCount()) {
-						if (bounds.width == 0 || bounds.height == 0) return;
-						super.draw(part, state, bounds, gc);
-						gc.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-						int x = bounds.x;
-						int y = bounds.y;
-						int width = bounds.width;
-						if (part > 0 && part < parent.getSelectionIndex()) {
-							width += 3;
-						}
-						if (part > parent.getSelectionIndex()) {
-							x -= 2;
-						}
-						if (part == parent.getSelectionIndex() && part == parent.getItemCount() - 1) {
-							width -= 10;
-						}
-						int[] shape = new int[]{x,y,x+width,y};
-						gc.drawPolyline(shape);
-					}
 
-					break;
-				}
-			}
-		});
-
-		final CTabItem tbtmDonors = new CTabItem(tabFolder, SWT.NONE);
+		final TabItem tbtmDonors = new TabItem(tabFolder, SWT.NONE);
 		tbtmDonors.setImage(ResourceManager.getIcon("home-tab.png"));
 		tbtmDonors.setText("Donors");
-
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				CTabItem t = tabFolder.getSelection();
+				TabItem t = tabFolder.getSelection();
 				if (!t.getClass().equals(DonorTab.class)) {
 					Main.getSaveButton().setEnabled(false);
 				} else {
@@ -220,7 +167,7 @@ public class DonorList extends Composite {
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.setContentProvider(new ContentProvider());
 		tableViewer.setInput(donors);
-		tabFolder.setSelection(0);
+		tabFolder.setSelection(tbtmDonors);
 		new DonorListSorter(tableViewer);
 
 		Menu menuDonorList = new Menu(table);
@@ -294,7 +241,7 @@ public class DonorList extends Composite {
 
 	public void newDonor() {
 		int id = Main.getDonorDB().getMaxAccount()+1;
-		for (CTabItem t : tabFolder.getItems()) {
+		for (TabItem t : tabFolder.getItems()) {
 			try {
 				DonorTab dt = (DonorTab) t;
 				int dtId = dt.getDonor().getId();
@@ -306,12 +253,12 @@ public class DonorList extends Composite {
 	}
 
 	public void saveAll() {
-		for (CTabItem i : tabFolder.getItems()) {
+		for (TabItem i : tabFolder.getItems()) {
 			if (i.getClass().equals(DonorTab.class)) {
 				((DonorTab)i).save();
 			}
 		}
-		CTabItem t = tabFolder.getSelection();
+		TabItem t = tabFolder.getSelection();
 		if (!t.getClass().equals(DonorTab.class)) {
 			Main.getSaveButton().setEnabled(false);
 		} else {
@@ -333,7 +280,7 @@ public class DonorList extends Composite {
 	}
 
 	public boolean closeAllTabs() {
-		for (CTabItem closing : tabFolder.getItems()) {
+		for (TabItem closing : tabFolder.getItems()) {
 			if (!closing.getText().substring(0, 1).equals("*")) continue;
 			MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
 			verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");

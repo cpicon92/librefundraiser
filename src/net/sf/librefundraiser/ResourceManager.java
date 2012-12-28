@@ -13,6 +13,7 @@ public class ResourceManager {
 		Image icon = icons.get(filename);
 		if (icon == null) {
 			icon = new Image(display, ResourceManager.class.getResourceAsStream("/net/sf/librefundraiser/icons/"+filename));
+			icons.put(filename, icon);
 		}
 		return icon;
 	}

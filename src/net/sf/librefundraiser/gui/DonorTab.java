@@ -2,23 +2,22 @@ package net.sf.librefundraiser.gui;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.tabs.TabFolder;
+import net.sf.librefundraiser.tabs.TabItem;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
 
-public class DonorTab extends CTabItem {
+public class DonorTab extends TabItem {
 	private final Donor donor;
 	Rectangle closeRect = new Rectangle(0, 0, 0, 0);
 	public static final Image unedited = ResourceManager.getIcon("donor-tab.png");
 	public static final Image edited = ResourceManager.getIcon("donor-tab_edited.png");
 	
-	public DonorTab(int id, CTabFolder tabFolder) {
+	public DonorTab(int id, TabFolder tabFolder) {
 		super(tabFolder, SWT.NONE);
-		this.setShowClose(true);
 		Donor donor;
 		try {
 			donor = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
@@ -26,7 +25,7 @@ public class DonorTab extends CTabItem {
 			donor = new Donor(id);
 		}
 		this.donor = donor;
-		DonorEditForm editForm = new DonorEditForm(this.getParent(),SWT.NONE,this);
+		DonorEditForm editForm = new DonorEditForm(tabFolder,SWT.NONE,this);
 		this.setControl(editForm);
 		this.setImage(unedited);
 	}
