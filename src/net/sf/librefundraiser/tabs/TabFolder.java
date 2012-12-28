@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 public class TabFolder extends Composite {
 
@@ -43,15 +44,15 @@ public class TabFolder extends Composite {
 
 		compositeTabs = new Composite(this, SWT.NONE);
 		final Color gradBottom = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		int c = 20;
-		final Color colorShadow = new Color(compositeTabs.getDisplay(), gradBottom.getRed() - c, gradBottom.getGreen() - c, gradBottom.getBlue() - c);
+		final Color colorShadow = TabFolder.changeColorBrightness(compositeTabs.getDisplay(), gradBottom, -20);
+		final Color colorTabLines = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 		compositeTabs.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Rectangle gcSize = compositeTabs.getClientArea();
 				e.gc.setForeground(gradBottom);
 				e.gc.setBackground(colorShadow);
 				e.gc.fillGradientRectangle(0, 0, gcSize.width, gcSize.height-1, true);
-				e.gc.setForeground(new Color(compositeTabs.getDisplay(), 127, 127, 127));
+				e.gc.setForeground(colorTabLines);
 				e.gc.drawLine(0, gcSize.height-1, gcSize.width, gcSize.height-1);
 			}
 		});
@@ -184,5 +185,28 @@ public class TabFolder extends Composite {
 		} else {
 			gridLayout.marginRight = 0;
 		}
+	}
+	
+	public static Color changeColorBrightness(Display display, Color color, int increment) {
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+		return new Color(display, incrementValue(r, increment), incrementValue(g, increment), incrementValue(b, increment));
+	}
+	private static int incrementValue(int value, int increment) {
+		if (increment >= 0) {
+			if (increment + value > 255) {
+				value = 255;
+			} else {
+				value = increment + value;
+			}
+		} else {
+			if (increment + value < 0) {
+				value = 0;
+			} else {
+				value = increment + value;
+			}
+		}
+		return value;
 	}
 }

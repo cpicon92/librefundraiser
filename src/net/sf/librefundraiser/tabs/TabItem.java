@@ -44,16 +44,12 @@ public class TabItem extends Composite {
 				}
 			}
 		});
-		//TODO prevent overflows in colour mixing
 		final Color gradBottom = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		int b = 25;
-		final Color gradTop = new Color(thisTabItem.getDisplay(), gradBottom.getRed() + b, gradBottom.getGreen() + b, gradBottom.getBlue() + b);
-		final Color colorTabLines = new Color(thisTabItem.getDisplay(), 127, 127, 127);
+		final Color gradTop = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, 25);
+		final Color colorTabLines = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 		final Color colorBlack = new Color(thisTabItem.getDisplay(), 0, 0, 0);
-		int c = 20;
-		final Color colorShadow = new Color(thisTabItem.getDisplay(), gradBottom.getRed() - c, gradBottom.getGreen() - c, gradBottom.getBlue() - c);
-		int d = 10;
-		final Color grayTab = new Color(thisTabItem.getDisplay(), colorShadow.getRed() + d, colorShadow.getGreen() + d, colorShadow.getBlue() + d);
+		final Color colorShadow = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, -20);
+		final Color grayTab = TabFolder.changeColorBrightness(this.getDisplay(), colorShadow, 10);
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				Rectangle gcSize = thisTabItem.getClientArea();
