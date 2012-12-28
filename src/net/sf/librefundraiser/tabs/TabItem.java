@@ -9,6 +9,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Pattern;
 import org.eclipse.swt.graphics.Rectangle;
@@ -32,7 +33,8 @@ public class TabItem extends Composite {
 	private boolean selected = false;
 	private Rectangle closeButtonArea = null;
 	private boolean closeHover = false;
-	
+	private boolean closable = true;
+
 	public TabItem(final TabFolder parent, int style) {
 		super(parent, SWT.NONE);
 		addMouseMoveListener(new MouseMoveListener() {
@@ -67,15 +69,23 @@ public class TabItem extends Composite {
 				e.gc.fillPolygon(generateTabShape(gcSize.width, gcSize.height));
 				e.gc.drawPolyline(generateTabShape(gcSize.width, gcSize.height));
 				e.gc.setForeground(colorBlack);
+				if (closable) {
+					closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 12, 12);
+				} else {
+					closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 0, 0);
+				}
 				int textPosition = 14;
 				if (image != null) {
 					e.gc.drawImage(image, textPosition, gcSize.height/2 - image.getBounds().height/2);
 					textPosition += image.getBounds().width + 6;
 				}
-				e.gc.drawText(text, textPosition, 5, true);
-				closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 12, 12);
-				String icon = closeHover?"tabclose_hover.png":"tabclose.png";
-				e.gc.drawImage(ResourceManager.getIcon(icon), closeButtonArea.x, closeButtonArea.y);
+				int maxTextWidth = gcSize.width - textPosition - (gcSize.width - closeButtonArea.x);
+
+				e.gc.drawText(shortenText(e.gc, text, maxTextWidth), textPosition, 5, true);
+				if (closable) {
+					String icon = closeHover?"tabclose_hover.png":"tabclose.png";
+					e.gc.drawImage(ResourceManager.getIcon(icon), closeButtonArea.x, closeButtonArea.y);
+				}
 			}
 		});
 		MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -103,7 +113,7 @@ public class TabItem extends Composite {
 	public Image getImage() {
 		return image;
 	}
-	
+
 	public void setImage(Image image) {
 		this.image = image;
 		redraw();
@@ -127,15 +137,35 @@ public class TabItem extends Composite {
 		parent.suckUpChildren();
 		parent.setSelection(thisTabItem);
 	}
-	
+
 	protected void setSelected(boolean selected) {
 		this.selected = selected;
 		this.redraw();
 	}
-	
+
 	private static int[] generateTabShape(int w, int h) {
-		int[] tabShape = new int[] {0,h-1, 1,h-2, 2,h-3, 3,h-4, 4,h-8, 4,5, 5,3, 6,2, 7,1, 10,0,
-				w-10,0, w-7,1, w-6,2, w-5,3, w-4,5, w-4,h-8, w-3,h-4, w-2,h-3, w-1,h-2, w,h-1};
+		int[] tabShape = new int[] {0,h-1, 1,h-2, 2,h-3, 3,h-4, 4,h-8, 4,6, 5,3, 6,2, 7,1, 10,0,
+				w-10,0, w-7,1, w-6,2, w-5,3, w-4,6, w-4,h-8, w-3,h-4, w-2,h-3, w-1,h-2, w,h-1};
 		return tabShape;
+	}
+	private static String shortenText(GC gc, String text, int maxWidth) {
+		try {
+			int width = gc.stringExtent(text).x;
+			while (width > maxWidth) {
+//				System.out.println(width + " > " + maxWidth);
+				text = text.substring(0, text.length() - 4) + "...";
+				if (text.equals("...")) text = "";
+				width = gc.stringExtent(text).x;
+			}
+		} catch (Exception e){}
+		return text;
+	}
+
+	public boolean isClosable() {
+		return closable;
+	}
+
+	public void setClosable(boolean closable) {
+		this.closable = closable;
 	}
 }

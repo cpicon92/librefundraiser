@@ -156,6 +156,7 @@ public class DonorList extends Composite {
 		});
 		table.setHeaderVisible(true);
 		tbtmDonors.setControl(compositeTable);
+		tbtmDonors.setClosable(false);
 
 		for (String[] c : columns) {
 			TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
