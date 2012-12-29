@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.tabs;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -26,6 +27,7 @@ public class TabFolder extends Composite {
 	private final ArrayList<SelectionAdapter> selectionAdapters = new ArrayList<SelectionAdapter>();
 	private TabItem currentSelection = null;
 	private int maxTabWidth = 200;
+	private ArrayDeque<TabItem> selectionOrder = new ArrayDeque<TabItem>();
 
 	/**
 	 * Create the composite.
@@ -98,6 +100,8 @@ public class TabFolder extends Composite {
 	}
 
 	public void setSelection(TabItem item) {
+		selectionOrder.remove(item);
+		selectionOrder.push(item);
 		currentSelection = item;
 		for (SelectionAdapter a : selectionAdapters) {
 			a.widgetSelected(null);
@@ -129,14 +133,13 @@ public class TabFolder extends Composite {
 		}
 		item.getControl().dispose();
 		item.dispose();
-		Control[] children = compositeTabs.getChildren();
-		if (children.length > 0) { 
-			Control lastChild = children[children.length - 1];
-			try {
-				setSelection((TabItem) lastChild);
-			} catch (Exception e) {
-				
-			}
+		TabItem lastSelection = null;
+		while (!selectionOrder.isEmpty()) {
+			lastSelection = selectionOrder.pop();
+			if (lastSelection != item) break;
+		}
+		if (lastSelection != null) {
+			this.setSelection(lastSelection);
 		}
 		((GridLayout)compositeTabs.getLayout()).numColumns = compositeTabs.getChildren().length;
 		distributeTabs();

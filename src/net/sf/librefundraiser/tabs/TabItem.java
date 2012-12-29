@@ -137,7 +137,7 @@ public class TabItem extends Composite {
 	public void setControl(Control control) {
 		this.control = control;
 		parent.suckUpChildren();
-		parent.setSelection(thisTabItem);
+//		parent.setSelection(thisTabItem);
 	}
 
 	protected void setSelected(boolean selected) {
