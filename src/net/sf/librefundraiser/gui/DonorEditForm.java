@@ -83,7 +83,31 @@ public class DonorEditForm extends Composite {
 	private Object[][] fields;
 	private ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			setEdited(true);
+			boolean edited = true;
+			//for some reason dropping a combobox causes this listener to get called even if no change is made
+			//this routine is required to prevent the donor from being incorrectly flagged as edited
+			try {
+				Object source = e.getSource();
+				Class<? extends Object> sourceClass = source.getClass();
+				String newValue = null;
+				if (sourceClass.equals(Text.class)) {
+					newValue = ((Text) source).getText();
+				} else if (sourceClass.equals(Combo.class)) {
+					newValue = ((Combo) source).getText();
+				}
+				if (newValue != null) {
+					for (Object field[] : fields) {
+						if (field[0] == source) {
+							String originalValue = donor.getData((String)field[1]);
+							edited = !originalValue.equals(newValue);
+							break;
+						}
+					}
+				}
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			if (edited) setEdited(true);
 		}
 	};
 	private Text txtAccountID;
@@ -209,9 +233,11 @@ public class DonorEditForm extends Composite {
 				}
 			}
 		});
+		
+		
 		this.donorTab = donorTab;
 		this.donor = donorTab.getDonor();
-
+		
 		mainGrid = new GridLayout(1, true);
 		mainGrid.marginHeight = 0;
 		mainGrid.marginWidth = 0;
@@ -356,7 +382,6 @@ public class DonorEditForm extends Composite {
 		comboCategory = new Combo(compositeMisc, SWT.NONE);
 		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboCategory.setBounds(0, 0, 91, 23);
-		comboCategory.setItems(Main.getDonorDB().getPreviousValues("category1", "donors"));
 
 		Label lblWorkPhone = new Label(compositeMisc, SWT.NONE);
 		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -375,7 +400,6 @@ public class DonorEditForm extends Composite {
 		comboDonorSource = new Combo(compositeMisc, SWT.NONE);
 		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboDonorSource.setBounds(0, 0, 91, 23);
-		comboDonorSource.setItems(Main.getDonorDB().getPreviousValues("category2", "donors"));
 
 
 		Label lblFax = new Label(compositeMisc, SWT.NONE);
@@ -446,7 +470,6 @@ public class DonorEditForm extends Composite {
 		comboCity = new Combo(compositeAddress, SWT.BORDER);
 		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboCity.setBounds(0, 0, 76, 21);
-		comboCity.setItems(Main.getDonorDB().getPreviousValues("city", "donors"));
 
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
 		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -484,7 +507,6 @@ public class DonorEditForm extends Composite {
 		comboZip = new Combo(compositeAddress, SWT.BORDER);
 		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboZip.setBounds(0, 0, 76, 21);
-		comboZip.setItems(Main.getDonorDB().getPreviousValues("zip", "donors"));
 
 		Label lblAddress2 = new Label(compositeAddress, SWT.NONE);
 		lblAddress2.setToolTipText("This is the primary address the post office will deliver to. ");
@@ -504,7 +526,6 @@ public class DonorEditForm extends Composite {
 		comboCountry = new Combo(compositeAddress, SWT.BORDER);
 		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboCountry.setBounds(0, 0, 76, 21);
-		comboCountry.setItems(Main.getDonorDB().getPreviousValues("country", "donors"));
 		compositeAddress.setTabList(new Control[]{txtOptional, comboMailingName, txtAddress1, txtAddress2, comboCity, comboState, comboZip, comboCountry});
 
 		TabItem tbtmOther = new TabItem(tabFolder, SWT.NONE);
@@ -747,6 +768,28 @@ public class DonorEditForm extends Composite {
 				{ comboDonorSource, "category2" },
 				{ comboMailingName, "mailname" }, { comboState, "state" }, { txtAccountID, "account" } };
 		this.fields = fields;
+
+		//load previous values in another thread
+		new Thread(new Runnable() {
+			public void run() {
+				Object[][] toFill = new Object[][] {{comboCategory, "category1"}, {comboDonorSource, "category2"}, {comboCity, "city"}, {comboZip, "zip"}, {comboCountry, "country"}};
+				for (Object[] data : toFill) {
+					final Combo combo = (Combo) data[0];
+					String dbField = (String) data[1];
+					final String[] previousValues = Main.getDonorDB().getPreviousValues(dbField, "donors");
+					getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							//temporarily remove modifylistener to prevent tab from incorrectly being marked as unsaved
+							combo.removeModifyListener(modifyListener);
+							String prevText = combo.getText();
+							combo.setItems(previousValues);
+							combo.setText(prevText);
+							combo.addModifyListener(modifyListener);
+						}
+					});
+				}
+			}
+		}).start();
 		this.fillForm();
 		this.setBusiness(!donor.getData("type").equals("I"));
 		this.setEdited(false);
