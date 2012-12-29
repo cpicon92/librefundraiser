@@ -136,7 +136,7 @@ public class TabFolder extends Composite {
 		TabItem lastSelection = null;
 		while (!selectionOrder.isEmpty()) {
 			lastSelection = selectionOrder.pop();
-			if (lastSelection != item) break;
+			if (lastSelection != item && !lastSelection.isDisposed()) break;
 		}
 		if (lastSelection != null) {
 			this.setSelection(lastSelection);
