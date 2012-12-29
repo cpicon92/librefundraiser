@@ -2,6 +2,7 @@ package net.sf.librefundraiser.tabs;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -126,6 +127,7 @@ public class TabFolder extends Composite {
 	}
 	
 	public void closeTab(TabItem item) {
+		if (!item.isClosable()) return;
 		for (TabFolderListener l : listeners) {
 			TabFolderEvent e = new TabFolderEvent(item);
 			l.close(e);
@@ -145,6 +147,32 @@ public class TabFolder extends Composite {
 		distributeTabs();
 		this.changed(new Control[]{compositeControlArea});
 		this.layout(true, true);
+	}
+	
+	public void closeAllTabs(TabItem[] exceptions) {
+		ArrayList<TabItem> ex = new ArrayList<TabItem>(exceptions.length);
+		Collections.addAll(ex, exceptions);
+		for (Control c : compositeTabs.getChildren()) {
+			try {
+				TabItem i = (TabItem) c;
+				if (!ex.contains(i)) closeTab(i);
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public void closeToRight(TabItem index) {
+		boolean passed = false;
+		for (Control c : compositeTabs.getChildren()) {
+			try {
+				TabItem i = (TabItem) c;
+				if (passed) {
+					closeTab(i);
+				}
+				if (i.equals(index)) passed = true;
+			} catch (Exception e) {
+			}
+		}
 	}
 	
 	public void addTabFolderListener(TabFolderListener l) {

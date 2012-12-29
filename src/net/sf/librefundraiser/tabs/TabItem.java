@@ -17,6 +17,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 
 public class TabItem extends Composite {
 
@@ -93,6 +99,11 @@ public class TabItem extends Composite {
 		MouseAdapter mouseAdapter = new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				if (e.button == 3) return;
+				if (e.button == 2) {
+					thisTabItem.parent.closeTab(thisTabItem);
+					return;
+				}
 				if (closeHover) {
 					thisTabItem.parent.closeTab(thisTabItem);
 				} else {
@@ -105,6 +116,42 @@ public class TabItem extends Composite {
 		parent.createItem(this);
 		setLayout(new GridLayout(1, false));
 		new Label(this, SWT.NONE);
+		
+		Menu menu = new Menu(this);
+		setMenu(menu);
+		
+		final MenuItem mntmCloseTab = new MenuItem(menu, SWT.NONE);
+		menu.addMenuListener(new MenuAdapter() {
+			@Override
+			public void menuShown(MenuEvent e) {
+				if (!thisTabItem.isClosable()) mntmCloseTab.setEnabled(false);
+			}
+		});
+		mntmCloseTab.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				thisTabItem.parent.closeTab(thisTabItem);
+			}
+		});
+		mntmCloseTab.setText("Close tab");
+		
+		MenuItem mntmCloseOtherTabs = new MenuItem(menu, SWT.NONE);
+		mntmCloseOtherTabs.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				thisTabItem.parent.closeAllTabs(new TabItem[] {thisTabItem});
+			}
+		});
+		mntmCloseOtherTabs.setText("Close other tabs");
+		
+		MenuItem mntmCloseTabsTo = new MenuItem(menu, SWT.NONE);
+		mntmCloseTabsTo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				thisTabItem.parent.closeToRight(thisTabItem);
+			}
+		});
+		mntmCloseTabsTo.setText("Close tabs to the right");
 	}
 
 	@Override
