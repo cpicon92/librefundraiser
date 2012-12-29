@@ -49,6 +49,7 @@ public class TabItem extends Composite {
 		final Color gradBottom = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		final Color gradTop = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, 25);
 		final Color colorTabLines = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		final Color colorTabLinesInactive = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 		final Color colorBlack = new Color(thisTabItem.getDisplay(), 0, 0, 0);
 		final Color colorShadow = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, -20);
 		final Color grayTab = TabFolder.changeColorBrightness(this.getDisplay(), colorShadow, 10);
@@ -66,6 +67,7 @@ public class TabItem extends Composite {
 					e.gc.setBackground(grayTab);
 					e.gc.drawLine(0, gcSize.height-1, gcSize.width, gcSize.height-1);
 				}
+				e.gc.setForeground(selected?colorTabLines:colorTabLinesInactive);
 				e.gc.fillPolygon(generateTabShape(gcSize.width, gcSize.height));
 				e.gc.drawPolyline(generateTabShape(gcSize.width, gcSize.height));
 				e.gc.setForeground(colorBlack);
