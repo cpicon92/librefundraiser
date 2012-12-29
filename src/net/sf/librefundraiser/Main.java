@@ -38,7 +38,6 @@ public class Main {
 //	private static final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
 	public static final String version = "(Development Snapshot)";
 
-	//TODO: quicksearch should search spouse names too
 	public static void main(String args[]) {
 		if (args.length > 1) {
 			System.err.println("Syntax: librefundraiser [filename]");

@@ -17,6 +17,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.gui.DonorList;
 import net.sf.librefundraiser.Main;
 
 public class SQLite implements IDonorDB {
@@ -75,17 +76,35 @@ public class SQLite implements IDonorDB {
 	public HashMap<String,String> quickSearch(String query) {
 		lock.lock();
 		Connection conn = this.getConnection();
+		final String[] fields = new String[]{"account", "firstname", "lastname", "spousefrst", "spouselast"};
 		HashMap<String,String> output = new HashMap<String,String>();
 		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from donors where account like \"%"+query+"%\" or firstname like \"%"+query+"%\" or lastname like \"%"+query+"%\"");
+			StringBuilder statement = new StringBuilder("select * from donors where ");
+			for (int i = 0; i < fields.length; i++) {
+				statement.append(fields[i] + " like ?");
+				statement.append(i == fields.length - 1 ? ";" : " or ");
+			}
+			PreparedStatement prep = conn.prepareStatement(statement.toString());
+			for (int i = 1; i <= fields.length; i++) {
+				prep.setString(i, query);
+			}
+			ResultSet rs = prep.executeQuery();
 			while(rs.next()) {
 				String firstname = rs.getString("firstname");
 				String lastname = rs.getString("lastname");
 				String account = rs.getString("account");
-				String tabTitle = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
-				if (tabTitle.equals("")) tabTitle = account;
-				output.put(account,tabTitle);
+				String listEntry = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
+				if (listEntry.equals("")) listEntry = account;
+				String matchingField = "";
+				for (String field : fields) {
+					String result = rs.getString(field);
+					if (result.toLowerCase().contains(query.toLowerCase())) {
+						for (String[] c : DonorList.columns) {
+							if (field.equals(c[1])) matchingField = c[0];
+						}
+					}
+				}
+				output.put(account,listEntry + " (" + matchingField + ")");
 			}
 			rs.close();
 		} catch (SQLException e) {
