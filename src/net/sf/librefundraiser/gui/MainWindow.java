@@ -30,7 +30,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -237,16 +239,47 @@ public class MainWindow {
 		Menu menuEdit = new Menu(mntmEdit);
 		mntmEdit.setMenu(menuEdit);
 
-		//TODO implement cut/copy/paste edit menu functionality
-
 		MenuItem mntmCut = new MenuItem(menuEdit, SWT.NONE);
+		mntmCut.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Control focused = getFocusControl();
+				if (focused.getClass().equals(Text.class)) {
+					((Text) focused).cut();
+				} else if (focused.getClass().equals(Combo.class)) {
+					((Combo) focused).cut();
+				}
+			}
+		});
 		mntmCut.setText("Cut\tCtrl+X");
 
 		MenuItem mntmCopy = new MenuItem(menuEdit, SWT.NONE);
 		mntmCopy.setText("Copy\tCtrl+C");
+		mntmCopy.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Control focused = getFocusControl();
+				if (focused.getClass().equals(Text.class)) {
+					((Text) focused).copy();
+				} else if (focused.getClass().equals(Combo.class)) {
+					((Combo) focused).copy();
+				}
+			}
+		});
 
 		MenuItem mntmPaste = new MenuItem(menuEdit, SWT.NONE);
 		mntmPaste.setText("Paste\tCtrl+V");
+		mntmPaste.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Control focused = getFocusControl();
+				if (focused.getClass().equals(Text.class)) {
+					((Text) focused).paste();
+				} else if (focused.getClass().equals(Combo.class)) {
+					((Combo) focused).paste();
+				}
+			}
+		});
 
 		MenuItem mntmDonor = new MenuItem(menu, SWT.CASCADE);
 		mntmDonor.setText("Donor");
@@ -548,5 +581,9 @@ public class MainWindow {
 		}
 		if (!filename.equals("")) filename = " - " + filename;
 		shell.setText("LibreFundraiser"+filename);
+	}
+	
+	public Control getFocusControl() {
+		return this.shell.getDisplay().getFocusControl();
 	}
 }
