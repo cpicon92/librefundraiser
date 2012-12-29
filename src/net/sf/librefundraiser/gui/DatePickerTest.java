@@ -37,10 +37,8 @@ public class DatePickerTest extends Shell {
 	public DatePickerTest(Display display) {
 		super(display, SWT.SHELL_TRIM);
 		setLayout(new GridLayout(2, false));
-		
-		DatePicker composite = new DatePicker(new SimpleDateFormat("yyyy-MM-dd"), this, SWT.NONE);
-		
-		DateTime dateTime = new DateTime(this, SWT.BORDER | SWT.DROP_DOWN);
+		new DatePicker(new SimpleDateFormat("yyyy-MM-dd"), this, SWT.NONE);
+		new DateTime(this, SWT.BORDER | SWT.DROP_DOWN);
 		createContents();
 	}
 
