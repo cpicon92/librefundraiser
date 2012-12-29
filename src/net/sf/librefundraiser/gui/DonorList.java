@@ -178,12 +178,30 @@ public class DonorList extends Composite {
 		mntmOpenDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				DonorTab newTab = null;
-				for (TableItem selectedItem : table.getSelection()) {
-					int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-					newTab = new DonorTab(id,tabFolder);
+				final TableItem[] items = table.getSelection();
+				final int[] i = {0};
+				for (TableItem selectedItem : items) {
+					final int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
+					new Thread(new Runnable() {
+						public void run() {
+							final Donor[] donor = new Donor[] {null};
+							try {
+								donor[0] = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
+							} catch (ArrayIndexOutOfBoundsException e) {
+								donor[0] = new Donor(id);
+							}
+							getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									DonorTab dt = new DonorTab(donor[0],tabFolder);
+									if (i[0] == items.length - 1) {
+										tabFolder.setSelection(dt);
+									}
+									i[0]++;
+								}
+							});
+						}
+					}).start();
 				}
-				if (newTab != null) tabFolder.setSelection(newTab);
 			}
 		});
 		mntmOpenDonor.setText("Open Donor(s)");
@@ -193,8 +211,22 @@ public class DonorList extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				for (TableItem selectedItem : table.getSelection()) {
-					int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-					new DonorTab(id,tabFolder);
+					final int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
+					new Thread(new Runnable() {
+						public void run() {
+							final Donor[] donor = new Donor[] {null};
+							try {
+								donor[0] = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"",true)[0];
+							} catch (ArrayIndexOutOfBoundsException e) {
+								donor[0] = new Donor(id);
+							}
+							getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									new DonorTab(donor[0],tabFolder);
+								}
+							});
+						}
+					}).start();
 				}
 			}
 		});

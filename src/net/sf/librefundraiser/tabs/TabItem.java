@@ -26,7 +26,7 @@ public class TabItem extends Composite {
 	 * @param style
 	 */
 	private Image image;
-	private String text;
+	private String text = "";
 	private Control control;
 	private TabFolder parent;
 	private final TabItem thisTabItem = this;

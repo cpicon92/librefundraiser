@@ -30,11 +30,20 @@ public class DonorTab extends TabItem {
 		this.setImage(unedited);
 	}
 	
+	public DonorTab(Donor donor, TabFolder tabFolder) {
+		super(tabFolder, SWT.NONE);
+		this.donor = donor;
+		DonorEditForm editForm = new DonorEditForm(tabFolder,SWT.NONE,this);
+		this.setControl(editForm);
+		this.setImage(unedited);
+	}
+	
 	public Donor getDonor() {
 		return donor;
 	}
 
 	public void alterSaveButton() {
+		if (this.isDisposed()) return;
 		DonorEditForm form = ((DonorEditForm)this.getControl());
 		form.setEdited(form.isEdited());
 	}

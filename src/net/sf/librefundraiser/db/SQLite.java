@@ -12,6 +12,8 @@ import java.util.ArrayDeque;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
@@ -20,6 +22,8 @@ import net.sf.librefundraiser.Main;
 public class SQLite implements IDonorDB {
 	private final File dbFile;
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private Connection connection = null;
+	private final Lock lock = new ReentrantLock();
 	public String getDbPath() {
 		return dbFile.getPath();
 	}
@@ -51,12 +55,16 @@ public class SQLite implements IDonorDB {
 			System.err.println("Unable to create new database. ");
 			e.printStackTrace();
 		}
-		
+
 	}
 	public Connection getConnection() {
 		try {
+			if (connection != null && !connection.isClosed()) {
+				return connection;
+			}
 			Class.forName("org.sqlite.JDBC");
-			return DriverManager.getConnection("jdbc:sqlite:"+dbFile.getPath());
+			connection = DriverManager.getConnection("jdbc:sqlite:"+dbFile.getPath());
+			return connection;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -65,6 +73,7 @@ public class SQLite implements IDonorDB {
 		return null;
 	}
 	public HashMap<String,String> quickSearch(String query) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		HashMap<String,String> output = new HashMap<String,String>();
 		try {
@@ -89,9 +98,11 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
 	public Donor[] getDonors(String query, boolean fetchGifts) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		ArrayDeque<String> columns = new ArrayDeque<String>();
 		Donor[] output = null;
@@ -151,9 +162,11 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
 	public void saveDonor(Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			ArrayDeque<String> columns = new ArrayDeque<String>();
@@ -222,11 +235,13 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 	}
 	public Donor[] getDonors() {
 		return getDonors("",false);
 	}
 	public int getMaxAccount() {
+		lock.lock();
 		Connection conn = this.getConnection();
 		int output = 0;
 		try {
@@ -246,10 +261,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public int getMaxRecNum() {
+		lock.lock();
 		Connection conn = this.getConnection();
 		int output = 0;
 		try {
@@ -269,10 +286,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public double getTotalGifts(Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
 		try {
@@ -292,10 +311,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public double getYTD (Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
 		try {
@@ -322,10 +343,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public double getLargestGift(Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
 		try {
@@ -345,10 +368,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public String getLastGiftDate(Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		String output = "";
 		try {
@@ -371,10 +396,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public String getFirstGiftDate(Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		String output = "";
 		try {
@@ -397,10 +424,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public double getLastGift (Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
 		try {
@@ -423,10 +452,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return output;
 	}
-	
+
 	public String[] getPreviousValues(String column, String table) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		ArrayDeque<String> results = new ArrayDeque<String>();
 		try {
@@ -449,11 +480,13 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return results.toArray(new String[]{});
 	}
 
 	public void deleteDonor(int id) {
 		String account = String.format("%06d", id);
+		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
@@ -468,10 +501,12 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 	}
-	
+
 	public void deleteGift(int id) {
 		String recnum = String.format("%06d", id);
+		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
@@ -485,9 +520,11 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 	}
 
 	public void refreshGifts(Donor donor) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
@@ -518,15 +555,17 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 	}
 	@Override
 	public String getDbName() {
 		String name = getDbInfo("name");
 		return name==null?"":name;
 	}
-	
+
 	@Override
 	public void setDbName(String name) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
@@ -540,15 +579,17 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-			
+		lock.unlock();
+
 	}
-	
+
 	@Override
 	public int getDbVersion() {
 		return Integer.parseInt(getDbInfo("version"));
 	}
-	
+
 	public String getDbInfo (String key) {
+		lock.lock();
 		Connection conn = this.getConnection();
 		ArrayDeque<String> results = new ArrayDeque<String>();
 		try {
@@ -568,9 +609,10 @@ public class SQLite implements IDonorDB {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		lock.unlock();
 		return results.isEmpty()?null:results.getFirst();
 	}
-	
+
 	public static String formatDate(String date) {
 		try {
 			return Main.getDateFormat().format(dbDateFormat.parse(date));
@@ -578,7 +620,7 @@ public class SQLite implements IDonorDB {
 		}
 		return date;
 	}
-	
+
 	public static String unFormatDate(String date) {
 		try {
 			return dbDateFormat.format(Main.getDateFormat().parse(date));
