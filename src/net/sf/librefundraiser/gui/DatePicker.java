@@ -12,15 +12,22 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.librefundraiser.ResourceManager;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -32,10 +39,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.events.TraverseEvent;
 
 public class DatePicker extends Composite {
 	private Text text;
@@ -98,7 +101,8 @@ public class DatePicker extends Composite {
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		Button btnDropDown = new Button(this, SWT.ARROW | SWT.DOWN);
+		Button btnDropDown = new Button(this, SWT.NONE);
+		btnDropDown.setImage(ResourceManager.getIcon("calendar.png"));
 		btnDropDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -112,6 +116,7 @@ public class DatePicker extends Composite {
 				}
 				calendarPopup = new CalendarPopup(datePicker.getShell(), datePicker, initial);
 				calendarPopup.setVisible(true);
+				calendarPopup.setFocus();
 			}
 		});
 		btnDropDown.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
@@ -240,14 +245,16 @@ public class DatePicker extends Composite {
 		private final CalendarPopup me = this;
 		DateTime calendar;
 		public CalendarPopup(Shell parent, DatePicker sibling, Date initial) {
-			super(parent, SWT.NONE);
+			super(parent, SWT.NO_TRIM);
 			this.setSibling(sibling);
 			createContents();
 			this.setDate(initial);
 		}
 		protected void createContents() {
-			setLayout(new FillLayout(SWT.HORIZONTAL));
-			calendar = new DateTime(this, SWT.BORDER | SWT.CALENDAR);
+			FillLayout layout = new FillLayout(SWT.HORIZONTAL);
+			layout.marginHeight = layout.marginWidth = 1;
+			setLayout(layout);
+			calendar = new DateTime(this, SWT.CALENDAR);
 			calendar.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -267,6 +274,15 @@ public class DatePicker extends Composite {
 				public void shellIconified(ShellEvent e) {
 				}
 			});
+			final Color colorBorder = this.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+//			this.addPaintListener(new PaintListener() {
+//				public void paintControl(PaintEvent e) {
+//					Rectangle gcSize = me.getClientArea();
+//					e.gc.setForeground(colorBorder);
+//					e.gc.drawRectangle(0, 0, gcSize.width - 1, gcSize.height - 1);
+//				}
+//			});
+			this.setBackground(colorBorder);
 		}
 		protected void checkSubclass() {
 			// Disable the check that prevents subclassing of SWT components
