@@ -283,6 +283,7 @@ public class DatePicker extends Composite {
 //				}
 //			});
 			this.setBackground(colorBorder);
+			this.pack();
 		}
 		protected void checkSubclass() {
 			// Disable the check that prevents subclassing of SWT components
@@ -291,6 +292,7 @@ public class DatePicker extends Composite {
 			Point siblingPosition = this.getSibling().toDisplay(0, 0);
 			Rectangle siblingBounds = this.getSibling().getBounds();
 			this.setBounds(siblingPosition.x, siblingPosition.y + siblingBounds.height, 220, 180);
+			this.pack();
 			super.setVisible(visible);
 		}
 		public DatePicker getSibling() {
