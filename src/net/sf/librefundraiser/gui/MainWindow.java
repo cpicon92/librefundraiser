@@ -360,7 +360,6 @@ public class MainWindow {
 			}
 		});
 
-		//TODO: figure out null pointer exception
 		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtSearch.addFocusListener(new FocusAdapter() {
 			public void focusLost(FocusEvent e) {
