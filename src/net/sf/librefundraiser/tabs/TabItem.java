@@ -74,7 +74,7 @@ public class TabItem extends Composite {
 				if (closable) {
 					closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 12, 12);
 				} else {
-					closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 0, 0);
+					closeButtonArea = new Rectangle(gcSize.width - 6, gcSize.height/2 - 6, 0, 0);
 				}
 				int textPosition = 14;
 				if (image != null) {
