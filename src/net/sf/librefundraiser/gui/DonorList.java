@@ -423,10 +423,8 @@ public class DonorList extends Composite {
 					outputSpreadSheet.saveAs(f);
 					if (openFile) OOUtils.open(f);
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
