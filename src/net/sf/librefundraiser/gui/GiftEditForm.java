@@ -43,7 +43,6 @@ public class GiftEditForm extends Composite {
 
 		Label lblAmount = new Label(this, SWT.NONE);
 		lblAmount.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblAmount.setSize(37, 13);
 		lblAmount.setText("Amount");
 
 		Composite compositeTop = new Composite(this, SWT.NONE);
@@ -55,27 +54,24 @@ public class GiftEditForm extends Composite {
 
 		txtAmount = new Combo(compositeTop, SWT.BORDER);
 		txtAmount.setItems(new String[] {"15", "25", "50", "100", "150", "200", "250", "500"});
-		txtAmount.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtAmount.setSize(58, 19);
+		GridData gd_txtAmount = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_txtAmount.widthHint = 30;
+		txtAmount.setLayoutData(gd_txtAmount);
 
 		Label lblDateGiven = new Label(compositeTop, SWT.NONE);
 		lblDateGiven.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblDateGiven.setSize(53, 13);
 		lblDateGiven.setText("Date Given");
 
 		dtDateGiven = new DatePicker(Main.getDateFormat(), compositeTop, SWT.NONE);
 		dtDateGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		dtDateGiven.setSize(58, 19);
 		dtDateGiven.setDate(new Date());
 
 		Label lblSource = new Label(compositeTop, SWT.NONE);
 		lblSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSource.setSize(33, 13);
 		lblSource.setText("Source");
 
 		Combo comboSource = new Combo(compositeTop, SWT.NONE);
 		comboSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboSource.setSize(73, 21);
 		comboSource.setItems(Main.getDonorDB().getPreviousValues("source", "gifts"));
 
 		Label lblNote = new Label(this, SWT.NONE);
