@@ -21,6 +21,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellEvent;
@@ -33,10 +34,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -99,13 +100,13 @@ public class DatePicker extends Composite {
 				selectText(text);
 			}
 		});
-		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Button btnDropDown = new Button(this, SWT.NONE);
+		final Label btnDropDown = new Label(this, SWT.NONE);
 		btnDropDown.setImage(ResourceManager.getIcon("calendar.png"));
-		btnDropDown.addSelectionListener(new SelectionAdapter() {
+		btnDropDown.addMouseListener(new MouseAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void mouseUp(MouseEvent e) {
 				Date initial = null;
 				try {
 					initial = dateFormat.parse(text.getText());
@@ -119,7 +120,17 @@ public class DatePicker extends Composite {
 				calendarPopup.setFocus();
 			}
 		});
-		btnDropDown.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+		btnDropDown.addMouseTrackListener(new MouseTrackListener() {
+			public void mouseEnter(MouseEvent e) {
+				btnDropDown.setImage(ResourceManager.getIcon("calendar_hover.png"));
+			}
+			public void mouseExit(MouseEvent e) {
+				btnDropDown.setImage(ResourceManager.getIcon("calendar.png"));
+			}
+			public void mouseHover(MouseEvent e) {
+			}
+		});
+		btnDropDown.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		setTabList(new Control[]{text});
 
 
