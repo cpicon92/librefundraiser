@@ -454,9 +454,11 @@ public class SQLite implements IDonorDB {
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt
-					.executeQuery("select AMOUNT, max(DATEGIVEN) from gifts where ACCOUNT=\""
-							+ donor.getData("account")
-							+ "\"");
+					.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" +
+							donor.getData("account") +
+							"\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" +
+							donor.getData("account") +
+							"\")");
 			while(rs.next()){
 				output = rs.getDouble("AMOUNT");
 			}
