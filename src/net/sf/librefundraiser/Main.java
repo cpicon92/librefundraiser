@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import net.sf.librefundraiser.db.FileDBASE;
 import net.sf.librefundraiser.db.IDonorDB;
+import net.sf.librefundraiser.db.NewerDbVersionException;
 import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.DonorList;
 import net.sf.librefundraiser.gui.FundRaiserImportDialog;
@@ -66,7 +67,12 @@ public class Main {
 		return localDB;
 	}
 	public static void resetLocalDB() {
-		localDB = new SQLite(getSetting("lastDB"));
+		try {
+			localDB = new SQLite(getSetting("lastDB"));
+		} catch (NewerDbVersionException e) {
+			// TODO Display gui error message about how the file is too new to be opened
+			e.printStackTrace();
+		}
 	}
 	public static String toMoney(double amount) {
 		if (currency == null) currency = NumberFormat.getCurrencyInstance();

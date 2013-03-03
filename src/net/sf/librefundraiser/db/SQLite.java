@@ -21,6 +21,7 @@ import net.sf.librefundraiser.gui.DonorList;
 import net.sf.librefundraiser.Main;
 
 public class SQLite implements IDonorDB {
+	private static final int latestDbVersion = 1;
 	private final File dbFile;
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Connection connection = null;
@@ -33,7 +34,7 @@ public class SQLite implements IDonorDB {
 		String filename = System.getProperty("java.io.tmpdir")+"/temp"+unixTime+".db";
 		dbFile = new File(filename);
 	}
-	public SQLite(String filename) {
+	public SQLite(String filename) throws NewerDbVersionException {
 		dbFile = new File(filename);
 		Connection conn = this.getConnection();
 		try {
@@ -50,14 +51,25 @@ public class SQLite implements IDonorDB {
 			stmt.executeUpdate("create table if not exists gifts ("+giftFields+");");
 			String dbInfoFields = "KEY, VALUE, PRIMARY KEY (KEY)";
 			stmt.executeUpdate("create table if not exists dbinfo ("+dbInfoFields+");");
+			if (this.getDbVersion() != latestDbVersion) {
+				reconcileDbVersion();
+			}
 			stmt.executeUpdate("delete from dbinfo where KEY='version';");
-			stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('version','1');");
+			stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('version','" + latestDbVersion + "');");
 		} catch (SQLException e) {
 			System.err.println("Unable to create new database. ");
 			e.printStackTrace();
 		}
 
 	}
+	
+	private void reconcileDbVersion() throws NewerDbVersionException {
+		int dbVersion = this.getDbVersion();
+		if (dbVersion > latestDbVersion) {
+			throw new NewerDbVersionException();
+		}
+	}
+	
 	public Connection getConnection() {
 		try {
 			if (connection != null && !connection.isClosed()) {
