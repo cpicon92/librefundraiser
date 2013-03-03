@@ -21,7 +21,7 @@ import net.sf.librefundraiser.gui.DonorList;
 import net.sf.librefundraiser.Main;
 
 public class SQLite implements IDonorDB {
-	private static final int latestDbVersion = 1;
+	private static final int latestDbVersion = 2;
 	private final File dbFile;
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Connection connection = null;
@@ -44,16 +44,19 @@ public class SQLite implements IDonorDB {
 					"WORKPHONE, FAX, CATEGORY1, CATEGORY2, MAILNAME, " +
 					"ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY, " +
 					"EMAIL, EMAIL2, WEB, CHANGEDATE, LASTGIVEDT, LASTAMT, " +
-					"PRIMARY KEY (ACCOUNT)";
+					"LASTENTDT, LASTENTAMT, PRIMARY KEY (ACCOUNT)";
 			stmt.executeUpdate("create table if not exists donors ("+donorFields+");");
 			String giftFields = "ACCOUNT, AMOUNT, DATEGIVEN, LETTER, DT_ENTRY, " +
 					"SOURCE, NOTE, RECNUM, PRIMARY KEY (RECNUM)";
 			stmt.executeUpdate("create table if not exists gifts ("+giftFields+");");
 			String dbInfoFields = "KEY, VALUE, PRIMARY KEY (KEY)";
 			stmt.executeUpdate("create table if not exists dbinfo ("+dbInfoFields+");");
+			stmt.close();
 			if (this.getDbVersion() != latestDbVersion) {
 				reconcileDbVersion();
 			}
+			conn = this.getConnection();
+			stmt = conn.createStatement();
 			stmt.executeUpdate("delete from dbinfo where KEY='version';");
 			stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('version','" + latestDbVersion + "');");
 		} catch (SQLException e) {
@@ -63,10 +66,20 @@ public class SQLite implements IDonorDB {
 
 	}
 
-	private void reconcileDbVersion() throws NewerDbVersionException {
+	private void reconcileDbVersion() throws NewerDbVersionException, SQLException {
 		int dbVersion = this.getDbVersion();
 		if (dbVersion > latestDbVersion) {
 			throw new NewerDbVersionException();
+		}
+		if (dbVersion < latestDbVersion) {
+			if (dbVersion == 1) {
+				Statement stmt = this.getConnection().createStatement();
+				stmt.executeUpdate("alter table donors add column LASTENTDT;");
+				stmt.executeUpdate("alter table donors add column LASTENTAMT;");
+				stmt.close();
+			}
+		} else {
+			return;
 		}
 	}
 
@@ -430,6 +443,34 @@ public class SQLite implements IDonorDB {
 		lock.unlock();
 		return output;
 	}
+	
+	public String getLastEntryDate(Donor donor) {
+		lock.lock();
+		Connection conn = this.getConnection();
+		String output = "";
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\""
+							+ donor.getData("account")
+							+ "\"");
+			while(rs.next()){
+				output = rs.getString("last_entry_date");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		lock.unlock();
+		return output;
+	}
 
 	public String getFirstGiftDate(Donor donor) {
 		lock.lock();
@@ -469,6 +510,36 @@ public class SQLite implements IDonorDB {
 					.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" +
 							donor.getData("account") +
 							"\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" +
+							donor.getData("account") +
+							"\")");
+			while(rs.next()){
+				output = rs.getDouble("AMOUNT");
+			}
+			rs.close();
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		lock.unlock();
+		return output;
+	}
+	
+	public double getLastEntryAmount (Donor donor) {
+		lock.lock();
+		Connection conn = this.getConnection();
+		double output = 0;
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt
+					.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" +
+							donor.getData("account") +
+							"\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\"" +
 							donor.getData("account") +
 							"\")");
 			while(rs.next()){
