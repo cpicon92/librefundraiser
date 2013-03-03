@@ -563,6 +563,7 @@ public class MainWindow {
 	}
 	
 	public void updateAllDonorStats() {
+		//TODO: make a progress window and multithread this... 
 		for (Donor d : ((DonorList)compositeDonorList).donors) {
 			d.updateStats();
 			Main.getDonorDB().saveDonor(d);
