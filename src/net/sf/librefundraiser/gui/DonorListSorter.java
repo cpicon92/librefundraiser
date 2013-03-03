@@ -114,7 +114,7 @@ public class DonorListSorter extends ViewerComparator {
 			t2 = addr2 + String.format(" %05d", num2);
 		}
 		//compare money fields as money
-		if (DonorList.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
+		if (DonorList.columns[columnIndex][1].matches(DonorList.moneyColumns)) {
 			Double d1 = Main.fromMoney(t1);
 			Double d2 = Main.fromMoney(t2);
 			output = d1.compareTo(d2);

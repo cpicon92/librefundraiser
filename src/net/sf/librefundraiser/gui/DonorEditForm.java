@@ -824,17 +824,13 @@ public class DonorEditForm extends Composite {
 		}
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
-		donor.putData("alltime", ""+Main.getDonorDB().getTotalGifts(donor));
-		donor.putData("yeartodt", ""+Main.getDonorDB().getYTD(donor));
-		donor.putData("largest", ""+Main.getDonorDB().getLargestGift(donor));
-		donor.putData("lastgivedt", Main.getDonorDB().getLastGiftDate(donor));
-		donor.putData("firstgift", Main.getDonorDB().getFirstGiftDate(donor));
-		donor.putData("lastamt", ""+Main.getDonorDB().getLastGift(donor));
+		this.donor.updateStats();
 		Main.getDonorDB().saveDonor(this.donor);
 		Main.refresh();
 		this.fillForm();
 		this.setEdited(false);
 	}
+
 
 	private void fillField(Control field, String key) {
 		if (field.getClass().equals(Text.class)) {

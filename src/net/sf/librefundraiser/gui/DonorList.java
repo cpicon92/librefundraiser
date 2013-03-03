@@ -68,7 +68,8 @@ public class DonorList extends Composite {
 		{ "Email", "email" }, { "Other Email", "email2" }, { "Web", "web" }, { "Last Change", "changedate" },
 		{ "Last Gift Date", "lastgivedt" }, { "Last Gift", "lastamt" },
 		{ "Total Gifts", "alltime" }, { "Year-to-date", "yeartodt" },
-		{ "First Gift", "firstgift" }, { "Largest Gift", "largest" } };
+		{ "First Gift", "firstgift" }, { "Largest Gift", "largest" } , { "Last Entry Date", "lastentdt" }, { "Last Entry Amount", "lastentamt" } };
+	final static public String moneyColumns = "(yeartodt|lastamt|largest|alltime|lastentamt)";
 	public Donor[] donors = null;
 
 	private TableViewer tableViewer;
@@ -81,7 +82,7 @@ public class DonorList extends Composite {
 		}
 		public String getColumnText(Object element, int columnIndex) {
 			Donor donor = (Donor) element;
-			if (columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime)")) {
+			if (columns[columnIndex][1].matches(moneyColumns)) {
 				return Main.toMoney(donor.getData(columns[columnIndex][1]));
 			}
 			if (columns[columnIndex][1].matches("web")) {

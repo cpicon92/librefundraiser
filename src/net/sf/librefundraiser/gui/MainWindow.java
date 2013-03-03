@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
@@ -223,6 +224,16 @@ public class MainWindow {
 		});
 		mntmOdb.setText("To ODB (LibreOffice Database) file...");
 
+		new MenuItem(menuFile, SWT.SEPARATOR);
+		
+		MenuItem mntmUpdateStats = new MenuItem(menuFile, SWT.NONE);
+		mntmUpdateStats.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateAllDonorStats();
+			}
+		});
+		mntmUpdateStats.setText("Update donor statistics");
+		
 		new MenuItem(menuFile, SWT.SEPARATOR);
 
 		MenuItem mntmExit = new MenuItem(menuFile, SWT.NONE);
@@ -549,6 +560,14 @@ public class MainWindow {
 
 	public void reload() {
 		((DonorList)compositeDonorList).donors = Main.getDonorDB().getDonors();
+	}
+	
+	public void updateAllDonorStats() {
+		for (Donor d : ((DonorList)compositeDonorList).donors) {
+			d.updateStats();
+			Main.getDonorDB().saveDonor(d);
+		}
+		reload();
 	}
 
 	private void quickSearchOpen() {

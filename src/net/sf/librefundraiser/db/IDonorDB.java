@@ -49,4 +49,8 @@ public interface IDonorDB {
 	
 	String getDbPath();
 
+	String getLastEntryDate(Donor donor);
+
+	double getLastEntryAmount(Donor donor);
+
 }
