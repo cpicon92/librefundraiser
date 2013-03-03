@@ -568,7 +568,7 @@ public class MainWindow {
 			d.updateStats();
 			Main.getDonorDB().saveDonor(d);
 		}
-		reload();
+		refresh(false);
 	}
 
 	private void quickSearchOpen() {
