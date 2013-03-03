@@ -62,14 +62,14 @@ public class SQLite implements IDonorDB {
 		}
 
 	}
-	
+
 	private void reconcileDbVersion() throws NewerDbVersionException {
 		int dbVersion = this.getDbVersion();
 		if (dbVersion > latestDbVersion) {
 			throw new NewerDbVersionException();
 		}
 	}
-	
+
 	public Connection getConnection() {
 		try {
 			if (connection != null && !connection.isClosed()) {
@@ -618,7 +618,11 @@ public class SQLite implements IDonorDB {
 
 	@Override
 	public int getDbVersion() {
-		return Integer.parseInt(getDbInfo("version"));
+		try {
+			return Integer.parseInt(getDbInfo("version"));
+		} catch (Exception e) {
+			return latestDbVersion;
+		}
 	}
 
 	public String getDbInfo (String key) {
