@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
+//TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
 	private static IDonorDB localDB = null;
 	private static NumberFormat currency = null;
