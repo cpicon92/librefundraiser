@@ -563,11 +563,22 @@ public class MainWindow {
 	}
 	
 	public void updateAllDonorStats() {
-		//TODO: make a progress window and multithread this... 
-		for (Donor d : ((DonorList)compositeDonorList).donors) {
+		//TODO: make a progress window and make it go faster... 
+		Donor[] donors = ((DonorList)compositeDonorList).donors;
+		int i = 1;
+		int percent = 0;
+		for (Donor d : donors) {
+			int newPercent = (int) Math.round(100*((double)i/(double)donors.length));
+			if (newPercent != percent) {
+				percent = newPercent;
+				System.out.print(percent + (percent==100?"":", "));
+			}
 			d.updateStats();
+			//saving that many donors at once is the slow part, maybe avoid saving gifts, do one big insert?
 			Main.getDonorDB().saveDonor(d);
+			i++;
 		}
+		System.out.println();
 		refresh(false);
 	}
 
