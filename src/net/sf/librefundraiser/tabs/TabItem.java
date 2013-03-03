@@ -51,8 +51,8 @@ public class TabItem extends Composite {
 		});
 		final Color gradBottom = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		final Color gradTop = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, 25);
-		final Color colorTabLines = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		final Color colorTabLinesInactive = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		final Color colorSelectedHighlight = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		final Color colorTabLines = TabFolder.changeColorBrightness(thisTabItem.getDisplay(), gradBottom, -50);		final Color colorTabLinesInactive = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 		final Color colorBlack = new Color(thisTabItem.getDisplay(), 0, 0, 0);
 		final Color colorShadow = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, -20);
 		final Color grayTab = TabFolder.changeColorBrightness(this.getDisplay(), colorShadow, 10);
@@ -75,21 +75,29 @@ public class TabItem extends Composite {
 				}
 				e.gc.setForeground(selected?colorTabLines:colorTabLinesInactive);
 				e.gc.fillPolygon(generateTabShape(gcSize.width, gcSize.height));
+				if (selected) {
+					e.gc.setBackground(colorSelectedHighlight);
+				} else {
+					e.gc.setBackground(colorTabLines);
+				}
+				e.gc.setClipping(0, 0, gcSize.width, 3);
+				e.gc.fillPolygon(generateTabShape(gcSize.width, gcSize.height));
+				e.gc.setClipping(0, 0, gcSize.width, gcSize.height);
 				e.gc.drawPolyline(generateTabShape(gcSize.width, gcSize.height));
 				e.gc.setForeground(colorBlack);
 				if (closable) {
-					closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 6, 12, 12);
+					closeButtonArea = new Rectangle(gcSize.width - 22, gcSize.height/2 - 4, 12, 12);
 				} else {
 					closeButtonArea = new Rectangle(gcSize.width - 6, gcSize.height/2 - 6, 0, 0);
 				}
 				int textPosition = 14;
 				if (image != null) {
-					e.gc.drawImage(image, textPosition, gcSize.height/2 - image.getBounds().height/2);
+					e.gc.drawImage(image, textPosition, gcSize.height/2 - image.getBounds().height/2 + 2);
 					textPosition += image.getBounds().width + 6;
 				}
 				int maxTextWidth = gcSize.width - textPosition - (gcSize.width - closeButtonArea.x);
 
-				e.gc.drawText(shortenText(e.gc, text, maxTextWidth), textPosition, 5, true);
+				e.gc.drawText(shortenText(e.gc, text, maxTextWidth), textPosition, 7, true);
 				if (closable) {
 					String icon = closeHover?"tabclose_hover.png":"tabclose.png";
 					e.gc.drawImage(ResourceManager.getIcon(icon), closeButtonArea.x, closeButtonArea.y);
