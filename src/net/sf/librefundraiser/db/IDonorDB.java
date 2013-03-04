@@ -15,6 +15,8 @@ public interface IDonorDB {
 
 	void saveDonor(Donor donor);
 	
+	void saveDonors(Donor[] donors);
+	
 	void deleteDonor(int account);
 	
 	void deleteGift(int refnum);

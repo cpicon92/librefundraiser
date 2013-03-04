@@ -39,6 +39,8 @@ public class SQLite implements IDonorDB {
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
+			//remember: if you add fields here, add them in FRBW import too
+			//TODO: make it so I don't have to remember that
 			String donorFields = "ACCOUNT, TYPE, LASTNAME, FIRSTNAME, " +
 					"SPOUSELAST, SPOUSEFRST, SALUTATION, HOMEPHONE, " +
 					"WORKPHONE, FAX, CATEGORY1, CATEGORY2, MAILNAME, " +
@@ -210,6 +212,10 @@ public class SQLite implements IDonorDB {
 		return output;
 	}
 	public void saveDonor(Donor donor) {
+		saveDonors(new Donor[]{donor});
+	}
+
+	public void saveDonors(Donor[] donors) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		try {
@@ -229,14 +235,17 @@ public class SQLite implements IDonorDB {
 			}
 			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
 			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
-			PreparedStatement prep = conn.prepareStatement("replace into donors values ("+fieldValues+");");
-			int currentField = 1;
-			for (final String field : columns) {
-				prep.setString(currentField, unFormatDate(donor.getData(field)));
-				currentField++;
-			}
-			prep.addBatch();
+
 			conn.setAutoCommit(false);
+			PreparedStatement prep = conn.prepareStatement("replace into donors values ("+fieldValues+");");
+			for (Donor donor : donors) {
+				int currentField = 1;
+				for (final String field : columns) {
+					prep.setString(currentField, unFormatDate(donor.getData(field)));
+					currentField++;
+				}
+				prep.addBatch();
+			}
 			prep.executeBatch();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
@@ -259,16 +268,18 @@ public class SQLite implements IDonorDB {
 			}
 			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
 			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
-			PreparedStatement prep = conn.prepareStatement("replace into gifts values ("+fieldValues+");");
-			for (Gift g : donor.getGifts().values()) {
-				int currentField = 1;
-				for (final String field : columns) {
-					prep.setString(currentField, unFormatDate(g.getIc(field)));
-					currentField++;
-				}
-				prep.addBatch();
-			}
 			conn.setAutoCommit(false);
+			PreparedStatement prep = conn.prepareStatement("replace into gifts values ("+fieldValues+");");
+			for (Donor donor : donors) {
+				for (Gift g : donor.getGifts().values()) {
+					int currentField = 1;
+					for (final String field : columns) {
+						prep.setString(currentField, unFormatDate(g.getIc(field)));
+						currentField++;
+					}
+					prep.addBatch();
+				}
+			}
 			prep.executeBatch();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
@@ -281,6 +292,7 @@ public class SQLite implements IDonorDB {
 		}
 		lock.unlock();
 	}
+
 	public Donor[] getDonors() {
 		return getDonors("",false);
 	}
@@ -443,7 +455,7 @@ public class SQLite implements IDonorDB {
 		lock.unlock();
 		return output;
 	}
-	
+
 	public String getLastEntryDate(Donor donor) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -529,7 +541,7 @@ public class SQLite implements IDonorDB {
 		lock.unlock();
 		return output;
 	}
-	
+
 	public double getLastEntryAmount (Donor donor) {
 		lock.lock();
 		Connection conn = this.getConnection();

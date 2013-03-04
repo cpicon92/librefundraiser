@@ -48,8 +48,8 @@ public class FileDBASE {
 				fieldValues += ", ?";
 			}
 			if (sourceTableName.equals("Master.dbf")) {
-				fieldNames += ", EMAIL2, WEB, PRIMARY KEY (ACCOUNT)";
-				fieldValues += ", ?, ?";
+				fieldNames += ", LASTENTDT, LASTENTAMT, EMAIL2, WEB, PRIMARY KEY (ACCOUNT)";
+				fieldValues += ", ?, ?, ?, ?";
 			}
 			stat.executeUpdate("drop table if exists "+destTableName+";");
 			stat.executeUpdate("create table "+destTableName+" ("+fieldNames+");");

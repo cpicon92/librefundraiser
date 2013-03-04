@@ -563,7 +563,7 @@ public class MainWindow {
 	}
 	
 	public void updateAllDonorStats() {
-		//TODO: make a progress window and make it go faster... 
+		//TODO: make a progress window and optimize this... 
 		Donor[] donors = ((DonorList)compositeDonorList).donors;
 		int i = 1;
 		int percent = 0;
@@ -574,11 +574,12 @@ public class MainWindow {
 				System.out.print(percent + (percent==100?"":", "));
 			}
 			d.updateStats();
-			//saving that many donors at once is the slow part, maybe avoid saving gifts, do one big insert?
-			Main.getDonorDB().saveDonor(d);
 			i++;
 		}
 		System.out.println();
+		System.out.println("Saving to disk...");
+		Main.getDonorDB().saveDonors(donors);
+		System.out.println("Done");
 		refresh(false);
 	}
 
