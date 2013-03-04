@@ -1,6 +1,5 @@
 package net.sf.librefundraiser;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,7 +129,7 @@ public class Main {
 			path = path + "\\LibreFundraiser\\settings.xml";
 		}
 		try {
-			settings.storeToXML(new BufferedOutputStream(new FileOutputStream(path)),"LibreFundraiser");
+			settings.storeToXML(new FileOutputStream(path),"LibreFundraiser");
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		}
