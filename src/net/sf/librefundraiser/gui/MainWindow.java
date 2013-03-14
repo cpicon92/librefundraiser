@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -60,6 +61,7 @@ public class MainWindow {
 	private Shell shellSearch;
 	private long popupTimer = System.currentTimeMillis();
 	private Runnable saveCurrent;
+	private ProgressBar pbStatusArea;
 
 	/**
 	 * Open the window.
@@ -361,10 +363,12 @@ public class MainWindow {
 		mntmAbout.setText("About...");
 
 		Composite compositeToolbar = new Composite(shell, SWT.NONE);
-		compositeToolbar.setLayout(new GridLayout(2, false));
-
+		compositeToolbar.setLayout(new GridLayout(3, false));
+		GridData gd_compositeToolbar = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		compositeToolbar.setLayoutData(gd_compositeToolbar);
+		
 		ToolBar toolBar = new ToolBar(compositeToolbar, SWT.FLAT | SWT.RIGHT);
-		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		toolBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 		toolBar.setBounds(0, 0, 80, 21);
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
@@ -517,6 +521,11 @@ public class MainWindow {
 				});
 			}
 		});
+		
+		pbStatusArea = new ProgressBar(compositeToolbar, SWT.NONE);
+		GridData gd_statusArea = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
+		gd_statusArea.widthHint = 150;
+		pbStatusArea.setLayoutData(gd_statusArea);
 
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
@@ -637,5 +646,13 @@ public class MainWindow {
 	
 	public Control getFocusControl() {
 		return this.shell.getDisplay().getFocusControl();
+	}
+	
+	public ProgressBar getProgressBar() {
+		return pbStatusArea;
+	}
+	
+	public Display getDisplay() {
+		return display;
 	}
 }

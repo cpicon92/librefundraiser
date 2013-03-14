@@ -21,6 +21,8 @@ import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.gui.DonorList;
 
+import org.eclipse.swt.widgets.ProgressBar;
+
 public class SQLite {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
@@ -755,18 +757,33 @@ public class SQLite {
 		return date;
 	}
 
-	public void updateAllStats(Donor[] donors) {
-		
+	public void updateAllStats(final Donor[] donors) {
+		Main.getWindow().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				ProgressBar pb = Main.getWindow().getProgressBar();
+				pb.setMaximum(donors.length);
+			}
+		});
 		// needed for ytd
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(Calendar.DATE, 1);
 		cal.set(Calendar.MONTH, Calendar.JANUARY);
 		String currentTime = dbDateFormat.format(cal.getTime());
 
+		int progress = 0;
+		
 		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			for (Donor donor : donors) {
+				progress++;
+				final int currentProgress = progress;
+				Main.getWindow().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						ProgressBar pb = Main.getWindow().getProgressBar();
+						pb.setSelection(currentProgress);
+					}
+				});
 				String account = donor.getData("account");
 				Statement stmt = conn.createStatement();
 				ResultSet rsAllTime = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\"");
@@ -788,6 +805,12 @@ public class SQLite {
 						+ account + "\")");
 				donor.putData("lastentamt", getLastResult(rsLastEntAmt, "AMOUNT"));
 			}
+			Main.getWindow().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					ProgressBar pb = Main.getWindow().getProgressBar();
+					pb.setSelection(0);
+				}
+			});
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
