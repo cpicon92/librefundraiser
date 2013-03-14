@@ -72,6 +72,24 @@ public class MainWindow {
 		if (importDb != null) {
 			Main.importFromFRBW(Display.getDefault(), shell, this, importDb);
 		}
+		new Thread (new Runnable() {
+			public void run() {
+				Donor donors[] = Main.getDonorDB().getDonors();
+				while (compositeDonorList == null) {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				((DonorList)compositeDonorList).donors = donors;
+				display.asyncExec(new Runnable() {
+					public void run() {
+						refresh();
+					}
+				});
+			}
+		}).start();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -565,18 +583,19 @@ public class MainWindow {
 	public void updateAllDonorStats() {
 		//TODO: make a progress window and optimize this... 
 		Donor[] donors = ((DonorList)compositeDonorList).donors;
-		int i = 1;
-		int percent = 0;
-		for (Donor d : donors) {
-			int newPercent = (int) Math.round(100*((double)i/(double)donors.length));
-			if (newPercent != percent) {
-				percent = newPercent;
-				System.out.print(percent + (percent==100?"":", "));
-			}
-			d.updateStats();
-			i++;
-		}
-		System.out.println();
+//		int i = 1;
+//		int percent = 0;
+//		for (Donor d : donors) {
+//			int newPercent = (int) Math.round(100*((double)i/(double)donors.length));
+//			if (newPercent != percent) {
+//				percent = newPercent;
+//				System.out.print(percent + (percent==100?"":", "));
+//			}
+//			d.updateStats();
+//			i++;
+//		}
+//		System.out.println();
+		Main.getDonorDB().updateAllStats(donors);
 		System.out.println("Saving to disk...");
 		Main.getDonorDB().saveDonors(donors);
 		System.out.println("Done");

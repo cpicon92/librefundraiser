@@ -111,7 +111,7 @@ public class DonorList extends Composite {
 	 */
 	public DonorList(Composite parent, int style) {
 		super(parent, style);
-		donors = Main.getDonorDB().getDonors();
+		if (donors == null) donors = new Donor[] {};
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
 		tabFolder = new TabFolder(this, SWT.NONE);
 		tabFolder.addTabFolderListener(new TabFolderListener() {

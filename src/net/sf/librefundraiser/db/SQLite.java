@@ -1,4 +1,5 @@
 package net.sf.librefundraiser.db;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,8 +18,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
-import net.sf.librefundraiser.gui.DonorList;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.gui.DonorList;
 
 public class SQLite {
 	private static final int latestDbVersion = 2;
@@ -26,33 +27,32 @@ public class SQLite {
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Connection connection = null;
 	private final Lock lock = new ReentrantLock();
+
 	public String getDbPath() {
 		return dbFile.getPath();
 	}
+
 	public SQLite() {
 		long unixTime = System.currentTimeMillis() / 1000L;
-		String filename = System.getProperty("java.io.tmpdir")+"/temp"+unixTime+".db";
+		String filename = System.getProperty("java.io.tmpdir") + "/temp" + unixTime + ".db";
 		dbFile = new File(filename);
 	}
+
 	public SQLite(String filename) throws NewerDbVersionException {
 		dbFile = new File(filename);
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			//remember: if you add fields here, add them in FRBW import too
-			//TODO: make it so I don't have to remember that
-			String donorFields = "ACCOUNT, TYPE, LASTNAME, FIRSTNAME, " +
-					"SPOUSELAST, SPOUSEFRST, SALUTATION, HOMEPHONE, " +
-					"WORKPHONE, FAX, CATEGORY1, CATEGORY2, MAILNAME, " +
-					"ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY, " +
-					"EMAIL, EMAIL2, WEB, CHANGEDATE, LASTGIVEDT, LASTAMT, " +
-					"LASTENTDT, LASTENTAMT, PRIMARY KEY (ACCOUNT)";
-			stmt.executeUpdate("create table if not exists donors ("+donorFields+");");
-			String giftFields = "ACCOUNT, AMOUNT, DATEGIVEN, LETTER, DT_ENTRY, " +
-					"SOURCE, NOTE, RECNUM, PRIMARY KEY (RECNUM)";
-			stmt.executeUpdate("create table if not exists gifts ("+giftFields+");");
+			// remember: if you add fields here, add them in FRBW import too
+			// TODO: make it so I don't have to remember that
+			String donorFields = "ACCOUNT, TYPE, LASTNAME, FIRSTNAME, " + "SPOUSELAST, SPOUSEFRST, SALUTATION, HOMEPHONE, "
+					+ "WORKPHONE, FAX, CATEGORY1, CATEGORY2, MAILNAME, " + "ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY, "
+					+ "EMAIL, EMAIL2, WEB, CHANGEDATE, LASTGIVEDT, LASTAMT, " + "LASTENTDT, LASTENTAMT, PRIMARY KEY (ACCOUNT)";
+			stmt.executeUpdate("create table if not exists donors (" + donorFields + ");");
+			String giftFields = "ACCOUNT, AMOUNT, DATEGIVEN, LETTER, DT_ENTRY, " + "SOURCE, NOTE, RECNUM, PRIMARY KEY (RECNUM)";
+			stmt.executeUpdate("create table if not exists gifts (" + giftFields + ");");
 			String dbInfoFields = "KEY, VALUE, PRIMARY KEY (KEY)";
-			stmt.executeUpdate("create table if not exists dbinfo ("+dbInfoFields+");");
+			stmt.executeUpdate("create table if not exists dbinfo (" + dbInfoFields + ");");
 			stmt.close();
 			if (this.getDbVersion() != latestDbVersion) {
 				reconcileDbVersion();
@@ -91,7 +91,7 @@ public class SQLite {
 				return connection;
 			}
 			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager.getConnection("jdbc:sqlite:"+dbFile.getPath());
+			connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getPath());
 			return connection;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -100,11 +100,12 @@ public class SQLite {
 		}
 		return null;
 	}
-	public HashMap<String,String> quickSearch(String query) {
+
+	public HashMap<String, String> quickSearch(String query) {
 		lock.lock();
 		Connection conn = this.getConnection();
-		final String[] fields = new String[]{"account", "firstname", "lastname", "spousefrst", "spouselast"};
-		HashMap<String,String> output = new HashMap<String,String>();
+		final String[] fields = new String[] { "account", "firstname", "lastname", "spousefrst", "spouselast" };
+		HashMap<String, String> output = new HashMap<String, String>();
 		try {
 			StringBuilder statement = new StringBuilder("select * from donors where ");
 			for (int i = 0; i < fields.length; i++) {
@@ -116,28 +117,31 @@ public class SQLite {
 				prep.setString(i, query);
 			}
 			ResultSet rs = prep.executeQuery();
-			while(rs.next()) {
+			while (rs.next()) {
 				String firstname = rs.getString("firstname");
 				String lastname = rs.getString("lastname");
 				String account = rs.getString("account");
-				String listEntry = lastname+(!(lastname.equals("")||firstname.equals(""))?", ":"")+firstname;
-				if (listEntry.equals("")) listEntry = account;
+				String listEntry = lastname + (!(lastname.equals("") || firstname.equals("")) ? ", " : "") + firstname;
+				if (listEntry.equals(""))
+					listEntry = account;
 				String matchingField = "";
 				for (String field : fields) {
 					String result = rs.getString(field);
 					if (result.toLowerCase().contains(query.toLowerCase())) {
 						for (String[] c : DonorList.columns) {
-							if (field.equals(c[1])) matchingField = c[0];
+							if (field.equals(c[1]))
+								matchingField = c[0];
 						}
 					}
 				}
-				output.put(account,listEntry + " (" + matchingField + ")");
+				output.put(account, listEntry + " (" + matchingField + ")");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -147,6 +151,7 @@ public class SQLite {
 		lock.unlock();
 		return output;
 	}
+
 	public Donor[] getDonors(String query, boolean fetchGifts) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -155,21 +160,22 @@ public class SQLite {
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
-			while(rs.next()){
+			while (rs.next()) {
 				String str = rs.getString("name");
 				columns.add(str);
 			}
 			rs.close();
-			rs = stmt.executeQuery("select * from donors "+query);
+			rs = stmt.executeQuery("select * from donors " + query);
 			ArrayDeque<Donor> donors = new ArrayDeque<Donor>();
-			while(rs.next()) {
+			while (rs.next()) {
 				Donor donor = new Donor(rs.getInt("account"));
 				for (String column : columns) {
 					String value = "";
 					try {
 						value = formatDate(rs.getString(column));
-					} catch (SQLException e1) {}
-					donor.putData(column, value!=null?value:"");
+					} catch (SQLException e1) {
+					}
+					donor.putData(column, value != null ? value : "");
 				}
 				donors.add(donor);
 			}
@@ -180,15 +186,16 @@ public class SQLite {
 					while (rsGifts.next()) {
 						giftColumns.add(rsGifts.getString("name"));
 					}
-					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\" order by DATEGIVEN desc");
+					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
 					while (rsGifts.next()) {
 						Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
 						for (String column : giftColumns) {
 							String value = "";
 							try {
 								value = formatDate(rsGifts.getString(column));
-							} catch (SQLException e1) {}
-							gift.putIc(column, value!=null?value:"");
+							} catch (SQLException e1) {
+							}
+							gift.putIc(column, value != null ? value : "");
 						}
 						donor.addGift(gift);
 					}
@@ -201,7 +208,8 @@ public class SQLite {
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -209,10 +217,13 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		lock.unlock();
+		updateAllStats(output);
+		saveDonors(output);
 		return output;
 	}
+
 	public void saveDonor(Donor donor) {
-		saveDonors(new Donor[]{donor});
+		saveDonors(new Donor[] { donor });
 	}
 
 	public void saveDonors(Donor[] donors) {
@@ -222,7 +233,7 @@ public class SQLite {
 			ArrayDeque<String> columns = new ArrayDeque<String>();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
-			while(rs.next()){
+			while (rs.next()) {
 				String str = rs.getString("name");
 				columns.add(str);
 			}
@@ -233,11 +244,11 @@ public class SQLite {
 				fieldNames += f + ", ";
 				fieldValues += "?, ";
 			}
-			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
-			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
+			fieldNames = fieldNames.substring(0, fieldNames.length() - 2);
+			fieldValues = fieldValues.substring(0, fieldValues.length() - 2);
 
 			conn.setAutoCommit(false);
-			PreparedStatement prep = conn.prepareStatement("replace into donors values ("+fieldValues+");");
+			PreparedStatement prep = conn.prepareStatement("replace into donors values (" + fieldValues + ");");
 			for (Donor donor : donors) {
 				int currentField = 1;
 				for (final String field : columns) {
@@ -255,7 +266,7 @@ public class SQLite {
 			ArrayDeque<String> columns = new ArrayDeque<String>();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`gifts`)");
-			while(rs.next()){
+			while (rs.next()) {
 				String str = rs.getString("name");
 				columns.add(str);
 			}
@@ -266,10 +277,10 @@ public class SQLite {
 				fieldNames += f + ", ";
 				fieldValues += "?, ";
 			}
-			fieldNames = fieldNames.substring(0,fieldNames.length()-2);
-			fieldValues = fieldValues.substring(0,fieldValues.length()-2);
+			fieldNames = fieldNames.substring(0, fieldNames.length() - 2);
+			fieldValues = fieldValues.substring(0, fieldValues.length() - 2);
 			conn.setAutoCommit(false);
-			PreparedStatement prep = conn.prepareStatement("replace into gifts values ("+fieldValues+");");
+			PreparedStatement prep = conn.prepareStatement("replace into gifts values (" + fieldValues + ");");
 			for (Donor donor : donors) {
 				for (Gift g : donor.getGifts().values()) {
 					int currentField = 1;
@@ -294,8 +305,9 @@ public class SQLite {
 	}
 
 	public Donor[] getDonors() {
-		return getDonors("",false);
+		return getDonors("", false);
 	}
+
 	public int getMaxAccount() {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -303,14 +315,15 @@ public class SQLite {
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("select max(ACCOUNT) as max_account from donors");
-			while(rs.next()){
+			while (rs.next()) {
 				output = rs.getInt("max_account");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -328,14 +341,15 @@ public class SQLite {
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("select max(RECNUM) as max_recnum from gifts");
-			while(rs.next()){
+			while (rs.next()) {
 				output = rs.getInt("max_recnum");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -352,15 +366,16 @@ public class SQLite {
 		double output = 0;
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
+			while (rs.next()) {
 				output = rs.getDouble("total_amount");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -371,7 +386,7 @@ public class SQLite {
 		return output;
 	}
 
-	public double getYTD (Donor donor) {
+	public double getYTD(Donor donor) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
@@ -380,19 +395,17 @@ public class SQLite {
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.set(Calendar.DATE, 1);
 			cal.set(Calendar.MONTH, Calendar.JANUARY);
-			ResultSet rs = stmt
-					.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\""
-							+ donor.getData("account")
-							+ "\" and DATEGIVEN>=Datetime('"
-							+ dbDateFormat.format(cal.getTime()) + "')");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + donor.getData("account")
+					+ "\" and DATEGIVEN>=Datetime('" + dbDateFormat.format(cal.getTime()) + "')");
+			while (rs.next()) {
 				output = rs.getDouble("total_amount");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -409,15 +422,17 @@ public class SQLite {
 		double output = 0;
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
-			while(rs.next()){
-				if (rs.getDouble("AMOUNT") > output) output = rs.getDouble("AMOUNT");
+			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
+			while (rs.next()) {
+				if (rs.getDouble("AMOUNT") > output)
+					output = rs.getDouble("AMOUNT");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -434,18 +449,16 @@ public class SQLite {
 		String output = "";
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\""
-							+ donor.getData("account")
-							+ "\"");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
+			while (rs.next()) {
 				output = rs.getString("last_gift_date");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -462,18 +475,16 @@ public class SQLite {
 		String output = "";
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\""
-							+ donor.getData("account")
-							+ "\"");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
+			while (rs.next()) {
 				output = rs.getString("last_entry_date");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -490,18 +501,16 @@ public class SQLite {
 		String output = "";
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\""
-							+ donor.getData("account")
-							+ "\"");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
+			while (rs.next()) {
 				output = rs.getString("first_gift_date");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -512,26 +521,23 @@ public class SQLite {
 		return output;
 	}
 
-	public double getLastGift (Donor donor) {
+	public double getLastGift(Donor donor) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" +
-							donor.getData("account") +
-							"\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" +
-							donor.getData("account") +
-							"\")");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + donor.getData("account")
+					+ "\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" + donor.getData("account") + "\")");
+			while (rs.next()) {
 				output = rs.getDouble("AMOUNT");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -542,26 +548,23 @@ public class SQLite {
 		return output;
 	}
 
-	public double getLastEntryAmount (Donor donor) {
+	public double getLastEntryAmount(Donor donor) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		double output = 0;
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt
-					.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" +
-							donor.getData("account") +
-							"\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\"" +
-							donor.getData("account") +
-							"\")");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + donor.getData("account")
+					+ "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\"" + donor.getData("account") + "\")");
+			while (rs.next()) {
 				output = rs.getDouble("AMOUNT");
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -578,18 +581,21 @@ public class SQLite {
 		ArrayDeque<String> results = new ArrayDeque<String>();
 		try {
 			Statement stmt = conn.createStatement();
-			String query = "select distinct "+column+" from "+table+" order by "+column+" asc";
-			if (column.equals("zip")) query = "select distinct substr("+column+",1,5) as "+column+" from "+table+" order by "+column+" asc";
+			String query = "select distinct " + column + " from " + table + " order by " + column + " asc";
+			if (column.equals("zip"))
+				query = "select distinct substr(" + column + ",1,5) as " + column + " from " + table + " order by " + column + " asc";
 			ResultSet rs = stmt.executeQuery(query);
-			while(rs.next()){
+			while (rs.next()) {
 				String value = rs.getString(column);
-				if (!value.trim().equals("")) results.add(value);
+				if (!value.trim().equals(""))
+					results.add(value);
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
-			} else e.printStackTrace();
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -597,7 +603,7 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		lock.unlock();
-		return results.toArray(new String[]{});
+		return results.toArray(new String[] {});
 	}
 
 	public void deleteDonor(int id) {
@@ -606,8 +612,8 @@ public class SQLite {
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate("delete from donors where account=\""+account+"\";");
-			stmt.executeUpdate("delete from gifts where account=\""+account+"\";");
+			stmt.executeUpdate("delete from donors where account=\"" + account + "\";");
+			stmt.executeUpdate("delete from gifts where account=\"" + account + "\";");
 		} catch (SQLException e) {
 			System.err.println("Unable to delete donor. ");
 			e.printStackTrace();
@@ -626,7 +632,7 @@ public class SQLite {
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate("delete from gifts where recnum=\""+recnum+"\";");
+			stmt.executeUpdate("delete from gifts where recnum=\"" + recnum + "\";");
 		} catch (SQLException e) {
 			System.err.println("Unable to delete gift. ");
 			e.printStackTrace();
@@ -649,7 +655,7 @@ public class SQLite {
 			while (rsGifts.next()) {
 				giftColumns.add(rsGifts.getString("name"));
 			}
-			rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\""+donor.getData("account")+"\"");
+			rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
 			donor.clearGifts();
 			while (rsGifts.next()) {
 				Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
@@ -657,8 +663,9 @@ public class SQLite {
 					String value = "";
 					try {
 						value = formatDate(rsGifts.getString(column));
-					} catch (SQLException e1) {}
-					gift.putIc(column, value!=null?value:"");
+					} catch (SQLException e1) {
+					}
+					gift.putIc(column, value != null ? value : "");
 				}
 				donor.addGift(gift);
 			}
@@ -676,9 +683,8 @@ public class SQLite {
 
 	public String getDbName() {
 		String name = getDbInfo("name");
-		return name==null?"":name;
+		return name == null ? "" : name;
 	}
-
 
 	public void setDbName(String name) {
 		lock.lock();
@@ -686,7 +692,7 @@ public class SQLite {
 		try {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate("delete from dbinfo where KEY='name';");
-			stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('name','"+name+"');");
+			stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('name','" + name + "');");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -698,7 +704,6 @@ public class SQLite {
 		lock.unlock();
 
 	}
-
 
 	public int getDbVersion() {
 		try {
@@ -708,21 +713,22 @@ public class SQLite {
 		}
 	}
 
-	public String getDbInfo (String key) {
+	public String getDbInfo(String key) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		ArrayDeque<String> results = new ArrayDeque<String>();
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select value from dbinfo where key='"+key+"'");
-			while(rs.next()){
+			ResultSet rs = stmt.executeQuery("select value from dbinfo where key='" + key + "'");
+			while (rs.next()) {
 				results.add(rs.getString("value"));
 			}
 			rs.close();
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query "+key+".");
-			} else e.printStackTrace();
+				System.err.println("Unable to query " + key + ".");
+			} else
+				e.printStackTrace();
 		}
 		try {
 			conn.close();
@@ -730,7 +736,7 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		lock.unlock();
-		return results.isEmpty()?null:results.getFirst();
+		return results.isEmpty() ? null : results.getFirst();
 	}
 
 	public static String formatDate(String date) {
@@ -747,6 +753,69 @@ public class SQLite {
 		} catch (Exception e) {
 		}
 		return date;
+	}
+
+	public void updateAllStats(Donor[] donors) {
+		
+		// needed for ytd
+		GregorianCalendar cal = new GregorianCalendar();
+		cal.set(Calendar.DATE, 1);
+		cal.set(Calendar.MONTH, Calendar.JANUARY);
+		String currentTime = dbDateFormat.format(cal.getTime());
+
+		lock.lock();
+		Connection conn = this.getConnection();
+		try {
+			for (Donor donor : donors) {
+				String account = donor.getData("account");
+				Statement stmt = conn.createStatement();
+				ResultSet rsAllTime = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\"");
+				donor.putData("alltime", getLastResult(rsAllTime, "total_amount"));
+				ResultSet rsYearToDt = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\" and DATEGIVEN>=Datetime('" + currentTime + "')");
+				donor.putData("yeartodt", getLastResult(rsYearToDt, "total_amount"));
+				ResultSet rsLargest = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + account + "\"");
+				donor.putData("largest", getLargestResult(rsLargest, "AMOUNT"));
+				ResultSet rsLastGiveDt = stmt.executeQuery("select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\"" + account + "\"");
+				donor.putData("lastgivedt", getLastResult(rsLastGiveDt, "last_gift_date"));
+				ResultSet rsFirstGift = stmt.executeQuery("select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\"" + account + "\"");
+				donor.putData("firstgift", getLastResult(rsFirstGift, "first_gift_date"));
+				ResultSet rsLastAmt = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + account
+						+ "\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" + account + "\")");
+				donor.putData("lastamt", getLastResult(rsLastAmt, "AMOUNT"));
+				ResultSet rsLastEntDt = stmt.executeQuery("select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\"" + account + "\"");
+				donor.putData("lastentdt", getLastResult(rsLastEntDt, "last_entry_date"));
+				ResultSet rsLastEntAmt = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + account + "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\""
+						+ account + "\")");
+				donor.putData("lastentamt", getLastResult(rsLastEntAmt, "AMOUNT"));
+			}
+		} catch (SQLException e) {
+			if (e.getMessage().equals("query does not return ResultSet")) {
+				System.err.println("Unable to query donor list.");
+			} else
+				e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		lock.unlock();
+
+	}
+
+	public static String getLastResult (ResultSet rs, String columnLabel) throws SQLException {
+		String output = "";
+		while (rs.next()) output = rs.getString(columnLabel); 
+		return output;
+	}
+
+	public static String getLargestResult (ResultSet rs, String columnLabel) throws SQLException {
+		double output = 0;
+		while (rs.next()) {
+			if (rs.getDouble(columnLabel) > output)
+				output = rs.getDouble(columnLabel);
+		}
+		return output + "";
 	}
 
 }

@@ -233,29 +233,33 @@ public class TabItem extends Composite {
 	}
 
 	private void checkCloseButton(int x, int y) {
-		boolean newCloseHover = closeButtonArea.contains(x, y);
-		if (closeHover != newCloseHover) {
-			closeHover = newCloseHover;
-			redraw();
-		}
-		if (closeHover) {
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+		try { 
+			boolean newCloseHover = closeButtonArea.contains(x, y);
+			if (closeHover != newCloseHover) {
+				closeHover = newCloseHover;
+				redraw();
+			}
+			if (closeHover) {
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						try {
+							getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									Point mousePos = toControl(getDisplay().getCursorLocation());
+									checkCloseButton(mousePos.x, mousePos.y);
+								}
+							});
+						} catch (Exception e) {}
 					}
-					try {
-						getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								Point mousePos = toControl(getDisplay().getCursorLocation());
-								checkCloseButton(mousePos.x, mousePos.y);
-							}
-						});
-					} catch (Exception e) {}
-				}
-			}).start();
+				}).start();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

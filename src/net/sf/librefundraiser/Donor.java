@@ -59,14 +59,4 @@ public class Donor {
 	public void clearGifts() {
 		gifts.clear();
 	}
-	public void updateStats() {
-		this.putData("alltime", ""+Main.getDonorDB().getTotalGifts(this));
-		this.putData("yeartodt", ""+Main.getDonorDB().getYTD(this));
-		this.putData("largest", ""+Main.getDonorDB().getLargestGift(this));
-		this.putData("lastgivedt", Main.getDonorDB().getLastGiftDate(this));
-		this.putData("firstgift", Main.getDonorDB().getFirstGiftDate(this));
-		this.putData("lastamt", ""+Main.getDonorDB().getLastGift(this));
-		this.putData("lastentdt", ""+Main.getDonorDB().getLastEntryDate(this));
-		this.putData("lastentamt", ""+Main.getDonorDB().getLastEntryAmount(this));
-	}
 }
