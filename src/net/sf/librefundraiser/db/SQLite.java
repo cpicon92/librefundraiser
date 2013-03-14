@@ -20,7 +20,7 @@ import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.gui.DonorList;
 import net.sf.librefundraiser.Main;
 
-public class SQLite implements IDonorDB {
+public class SQLite {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -673,13 +673,13 @@ public class SQLite implements IDonorDB {
 		}
 		lock.unlock();
 	}
-	@Override
+
 	public String getDbName() {
 		String name = getDbInfo("name");
 		return name==null?"":name;
 	}
 
-	@Override
+
 	public void setDbName(String name) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -699,7 +699,7 @@ public class SQLite implements IDonorDB {
 
 	}
 
-	@Override
+
 	public int getDbVersion() {
 		try {
 			return Integer.parseInt(getDbInfo("version"));
