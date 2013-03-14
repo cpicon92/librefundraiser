@@ -35,6 +35,7 @@ public class NewDatabaseWizard {
 	private boolean canceled = true;
 	private String frbwImportFile = null;
 	private Display display;
+	private final int width = 450;
 	/**
 	 * Open the dialog.
 	 * @return the result
@@ -63,7 +64,7 @@ public class NewDatabaseWizard {
 				if (canceled) System.exit(0);
 			}
 		});
-		shell.setSize(450, 370);
+		shell.setSize(shell.computeSize(width, SWT.DEFAULT));
 		shell.setImages(ResourceManager.getLogo());
 		shell.setText("LibreFundraiser");
 		final StackLayout sl_shlLibreFundraiser = new StackLayout();
@@ -453,6 +454,7 @@ public class NewDatabaseWizard {
 			});
 			btnCancel.setText("Cancel");
 		}
+		shell.setSize(shell.computeSize(width, SWT.DEFAULT));
 	}
 
 	public String getFrbwImportFile() {
