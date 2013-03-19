@@ -782,6 +782,8 @@ public class SQLite {
 		int progress = 0;
 		
 		try {
+			conn.setAutoCommit(false);
+			Statement stmt = conn.createStatement();
 			for (Donor donor : donors) {
 				progress++;
 				final int currentProgress = progress;
@@ -792,27 +794,19 @@ public class SQLite {
 					}
 				});
 				String account = donor.getData("account");
-				Statement stmt = conn.createStatement();
-				ResultSet rsAllTime = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\"");
-				System.out.println("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\"");
-				donor.putData("alltime", getLastResult(rsAllTime, "total_amount"));
-				ResultSet rsYearToDt = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\" and DATEGIVEN>=Datetime('" + currentTime + "')");
-				donor.putData("yeartodt", getLastResult(rsYearToDt, "total_amount"));
-				ResultSet rsLargest = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + account + "\"");
-				donor.putData("largest", getLargestResult(rsLargest, "AMOUNT"));
-				ResultSet rsLastGiveDt = stmt.executeQuery("select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\"" + account + "\"");
-				donor.putData("lastgivedt", getLastResult(rsLastGiveDt, "last_gift_date"));
-				ResultSet rsFirstGift = stmt.executeQuery("select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\"" + account + "\"");
-				donor.putData("firstgift", getLastResult(rsFirstGift, "first_gift_date"));
-				ResultSet rsLastAmt = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + account
-						+ "\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" + account + "\")");
-				donor.putData("lastamt", getLastResult(rsLastAmt, "AMOUNT"));
-				ResultSet rsLastEntDt = stmt.executeQuery("select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\"" + account + "\"");
-				donor.putData("lastentdt", getLastResult(rsLastEntDt, "last_entry_date"));
-				ResultSet rsLastEntAmt = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + account + "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\""
-						+ account + "\")");
-				donor.putData("lastentamt", getLastResult(rsLastEntAmt, "AMOUNT"));
+				stmt.addBatch("update donors set ALLTIME=(select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set YEARTODT=(select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\" and DATEGIVEN>=Datetime('" + currentTime + "')) where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set LARGEST=(select max(AMOUNT) as max_amount from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set LASTGIVEDT=(select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set FIRSTGIFT=(select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set LASTAMT=(select AMOUNT from gifts where ACCOUNT=\"" + account
+						+ "\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" + account + "\")) where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set LASTENTDT=(select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
+				stmt.addBatch("update donors set LASTENTAMT=(select AMOUNT from gifts where ACCOUNT=\"" + account + "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\""
+						+ account + "\")) where ACCOUNT=\"" + account + "\"");
 			}
+			stmt.executeBatch();
+			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
