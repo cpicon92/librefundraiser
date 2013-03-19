@@ -607,6 +607,7 @@ public class SQLite {
 	}
 
 	public void deleteDonor(int id) {
+		//TODO: use batch execute for multiple donors
 		String account = String.format("%06d", id);
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -782,6 +783,7 @@ public class SQLite {
 		int progress = 0;
 		
 		try {
+			final long beforetime = System.currentTimeMillis();
 			conn.setAutoCommit(false);
 			Statement stmt = conn.createStatement();
 			for (Donor donor : donors) {
@@ -805,8 +807,10 @@ public class SQLite {
 				stmt.addBatch("update donors set LASTENTAMT=(select AMOUNT from gifts where ACCOUNT=\"" + account + "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\""
 						+ account + "\")) where ACCOUNT=\"" + account + "\"");
 			}
+			System.out.printf("Batch add took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
 			stmt.executeBatch();
 			conn.setAutoCommit(true);
+			System.out.printf("Batch execute took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
