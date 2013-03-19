@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -247,9 +248,17 @@ public class DonorList extends Composite {
 	}
 
 	public void refresh(boolean pack) {
+		final long beforetime = System.currentTimeMillis();
 		tableViewer.setInput(donors);
-		tableViewer.refresh();
+//		tableViewer.refresh();
 		if (pack) packColumns();
+		System.out.printf("List refresh took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
+		Main.getWindow().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				ProgressBar pb = Main.getWindow().getProgressBar();
+				pb.setSelection(0);
+			}
+		});
 	}
 
 	public void refresh() {
@@ -309,8 +318,7 @@ public class DonorList extends Composite {
 			int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
 			Main.getDonorDB().deleteDonor(id);
 		}
-		donors = Main.getDonorDB().getDonors();
-		refresh(false);
+		Main.getWindow().refresh();
 	}
 
 	public boolean closeAllTabs() {

@@ -219,8 +219,6 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		lock.unlock();
-		updateAllStats(output);
-		saveDonors(output);
 		return output;
 	}
 
@@ -757,7 +755,18 @@ public class SQLite {
 		return date;
 	}
 
-	public void updateAllStats(final Donor[] donors) {
+	public void updateAllStats(Donor[] toUpdate) {
+		
+		final Donor[] donors;
+		if (toUpdate == null) {
+			donors = getDonors("", false);
+		} else {
+			donors = toUpdate;
+		}
+		
+		lock.lock();
+		Connection conn = this.getConnection();
+		
 		Main.getWindow().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				ProgressBar pb = Main.getWindow().getProgressBar();
@@ -772,8 +781,6 @@ public class SQLite {
 
 		int progress = 0;
 		
-		lock.lock();
-		Connection conn = this.getConnection();
 		try {
 			for (Donor donor : donors) {
 				progress++;
@@ -787,6 +794,7 @@ public class SQLite {
 				String account = donor.getData("account");
 				Statement stmt = conn.createStatement();
 				ResultSet rsAllTime = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\"");
+				System.out.println("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\"");
 				donor.putData("alltime", getLastResult(rsAllTime, "total_amount"));
 				ResultSet rsYearToDt = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\" and DATEGIVEN>=Datetime('" + currentTime + "')");
 				donor.putData("yeartodt", getLastResult(rsYearToDt, "total_amount"));
@@ -805,12 +813,6 @@ public class SQLite {
 						+ account + "\")");
 				donor.putData("lastentamt", getLastResult(rsLastEntAmt, "AMOUNT"));
 			}
-			Main.getWindow().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					ProgressBar pb = Main.getWindow().getProgressBar();
-					pb.setSelection(0);
-				}
-			});
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
