@@ -824,9 +824,9 @@ public class DonorEditForm extends Composite {
 		}
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
-		Main.getDonorDB().updateAllStats(new Donor[] {this.donor});
+		Main.getDonorDB().updateAllStats(new Donor[] {this.donor}, null);
 		Main.getDonorDB().saveDonor(this.donor);
-		Main.refresh();
+		Main.getWindow().refresh(true, false);
 		this.fillForm();
 		this.setEdited(false);
 	}
@@ -894,11 +894,11 @@ public class DonorEditForm extends Composite {
 		if (tabTitle.equals("")) tabTitle = donor.getData("account");
 		donorTab.setText((edited?"*":"")+tabTitle);
 		donorTab.setImage(edited?DonorTab.edited:DonorTab.unedited);
-		ToolItem saveButton = Main.getSaveButton();
+		ToolItem saveButton = Main.getWindow().getSaveButton();
 		saveButton.setEnabled(edited);
 		if (edited) {
 			final DonorEditForm me = this;
-			Main.setSaveAction(new Runnable() {
+			Main.getWindow().setSaveAction(new Runnable() {
 				public void run() {
 					me.saveForm();
 				}

@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
 
@@ -26,6 +27,7 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -74,7 +76,7 @@ public class MainWindow {
 		if (importDb != null) {
 			Main.importFromFRBW(Display.getDefault(), shell, this, importDb);
 		}
-		refresh();
+		refresh(true, true);
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -124,7 +126,7 @@ public class MainWindow {
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
-					Main.refresh();
+					refresh(true, false);
 				}
 			}
 		});
@@ -140,7 +142,7 @@ public class MainWindow {
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
-					Main.refresh();
+					refresh(true, false);
 				}
 			}
 		});
@@ -226,16 +228,6 @@ public class MainWindow {
 			}
 		});
 		mntmOdb.setText("To ODB (LibreOffice Database) file...");
-
-		new MenuItem(menuFile, SWT.SEPARATOR);
-
-		MenuItem mntmUpdateStats = new MenuItem(menuFile, SWT.NONE);
-		mntmUpdateStats.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateAllDonorStats();
-			}
-		});
-		mntmUpdateStats.setText("Update donor statistics");
 
 		new MenuItem(menuFile, SWT.SEPARATOR);
 
@@ -557,52 +549,52 @@ public class MainWindow {
 		return (DonorList) compositeDonorList;
 	}
 
-	public void refresh() {
-		refresh(true);
-	}
 
-	public void refresh(final boolean reload) {
+	public void refresh(final boolean reload, final boolean waitCursor) {
 		new Thread(new Runnable() {
 			public void run() {
-				if (reload) reload();
-				display.asyncExec(new Runnable() {
-					public void run() {
-						compositeDonorList.setVisible(false);
-						((DonorList)compositeDonorList).refresh();
-						compositeDonorList.setVisible(true);
-					}
-				});
+				if (reload) {
+					Main.getDonorDB().updateAllStats(null, new ProgressListener() {
+						@Override
+						public void setProgress(final int p) {
+							getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									int progress = p;
+									if (progress == -1) {
+										progress = 0;
+										Donor[] output = Main.getDonorDB().getDonors();
+										Main.getDonorDB().saveDonors(output);
+										((DonorList)compositeDonorList).donors = output;
+										((DonorList)compositeDonorList).refresh();
+									}
+									if (progress != 0) {
+										if (waitCursor) setCursor(SWT.CURSOR_WAIT);
+									} else {
+										setCursor(SWT.CURSOR_ARROW);
+									}
+									getProgressBar().setSelection(p);
+								}
+							});
+						}
+
+						@Override
+						public void setMaxProgress(final int maxProgress) {
+							getDisplay().asyncExec(new Runnable() {
+								public void run() {
+									getProgressBar().setMaximum(maxProgress);
+								}
+							});
+						}
+					});
+				} else {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							((DonorList)compositeDonorList).refresh();
+						}
+					});
+				}
 			}
 		}).start();
-	}
-
-	public void reload() {
-		Main.getDonorDB().updateAllStats(null);
-		Donor[] output = Main.getDonorDB().getDonors();
-		Main.getDonorDB().saveDonors(output);
-		((DonorList)compositeDonorList).donors = output;
-	}
-
-	public void updateAllDonorStats() {
-		//TODO: make a progress window and optimize this... 
-		Donor[] donors = ((DonorList)compositeDonorList).donors;
-		//		int i = 1;
-		//		int percent = 0;
-		//		for (Donor d : donors) {
-		//			int newPercent = (int) Math.round(100*((double)i/(double)donors.length));
-		//			if (newPercent != percent) {
-		//				percent = newPercent;
-		//				System.out.print(percent + (percent==100?"":", "));
-		//			}
-		//			d.updateStats();
-		//			i++;
-		//		}
-		//		System.out.println();
-		Main.getDonorDB().updateAllStats(donors);
-		System.out.println("Saving to disk...");
-		Main.getDonorDB().saveDonors(donors);
-		System.out.println("Done");
-		refresh(false);
 	}
 
 	private void quickSearchOpen() {
@@ -642,11 +634,15 @@ public class MainWindow {
 		return this.shell.getDisplay().getFocusControl();
 	}
 
-	public ProgressBar getProgressBar() {
+	private ProgressBar getProgressBar() {
 		return pbStatusArea;
 	}
 
 	public Display getDisplay() {
 		return display;
+	}
+	
+	public void setCursor(int cursor) {
+		shell.setCursor(new Cursor(display, cursor));
 	}
 }

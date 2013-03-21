@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolItem;
 
 //TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
@@ -93,18 +92,7 @@ public class Main {
 		} catch (ParseException e) {}
 		return 0;
 	}
-	public static ToolItem getSaveButton() {
-		return window.getSaveButton();
-	}
-	public static void setSaveAction(Runnable r) {
-		window.setSaveAction(r);
-	}
-	public static void refresh() {
-		window.refresh();
-	}
-	public static void reloadDonors() {
-		window.reload();
-	}
+
 	public static void loadSettings() {
 		String path = System.getenv("AppData");
 		if (path == null) {
@@ -245,7 +233,7 @@ public class Main {
 					});
 					display.asyncExec(new Runnable() {
 						public void run() {
-							mainWindow.refresh(false);
+							mainWindow.refresh(false, false);
 						}
 					});
 				}

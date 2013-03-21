@@ -19,9 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.gui.DonorList;
-
-import org.eclipse.swt.widgets.ProgressBar;
 
 public class SQLite {
 	private static final int latestDbVersion = 2;
@@ -756,7 +755,7 @@ public class SQLite {
 		return date;
 	}
 
-	public void updateAllStats(Donor[] toUpdate) {
+	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
 		
 		final Donor[] donors;
 		if (toUpdate == null) {
@@ -768,12 +767,7 @@ public class SQLite {
 		lock.lock();
 		Connection conn = this.getConnection();
 		
-		Main.getWindow().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				ProgressBar pb = Main.getWindow().getProgressBar();
-				pb.setMaximum(donors.length);
-			}
-		});
+		if (pl != null) pl.setMaxProgress(donors.length);
 		// needed for ytd
 		GregorianCalendar cal = new GregorianCalendar();
 		cal.set(Calendar.DATE, 1);
@@ -788,13 +782,7 @@ public class SQLite {
 			Statement stmt = conn.createStatement();
 			for (Donor donor : donors) {
 				progress++;
-				final int currentProgress = progress;
-				Main.getWindow().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						ProgressBar pb = Main.getWindow().getProgressBar();
-						pb.setSelection(currentProgress);
-					}
-				});
+				if (pl != null) pl.setProgress(progress);
 				String account = donor.getData("account");
 				stmt.addBatch("update donors set ALLTIME=(select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
 				stmt.addBatch("update donors set YEARTODT=(select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\" and DATEGIVEN>=Datetime('" + currentTime + "')) where ACCOUNT=\"" + account + "\"");
@@ -811,6 +799,7 @@ public class SQLite {
 			stmt.executeBatch();
 			conn.setAutoCommit(true);
 			System.out.printf("Batch execute took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
+			if (pl != null) pl.setProgress(-1);
 		} catch (SQLException e) {
 			if (e.getMessage().equals("query does not return ResultSet")) {
 				System.err.println("Unable to query donor list.");
