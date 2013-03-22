@@ -113,9 +113,10 @@ public class SQLite {
 				statement.append(fields[i] + " like ?");
 				statement.append(i == fields.length - 1 ? ";" : " or ");
 			}
+			System.out.println(statement);
 			PreparedStatement prep = conn.prepareStatement(statement.toString());
 			for (int i = 1; i <= fields.length; i++) {
-				prep.setString(i, query);
+				prep.setString(i, "%" + query + "%");
 			}
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
