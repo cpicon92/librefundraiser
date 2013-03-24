@@ -25,7 +25,7 @@ public class FileDBASE {
 	public FileDBASE(String URL) {
 		database = new Database(new File(URL), Version.DBASE_3, "ISO-8859-1");
 	}
-
+	//TODO: this is spaghetti code...
 	public boolean loadTable(String sourceTableName, String destTableName) {
 		final Table table = database.getTable(sourceTableName);
 		try {
