@@ -38,22 +38,44 @@ public class SQLite {
 		String filename = System.getProperty("java.io.tmpdir") + "/temp" + unixTime + ".db";
 		dbFile = new File(filename);
 	}
+	public static final String[] donorFields = new String[] {
+			"ACCOUNT", "TYPE", "LASTNAME", "FIRSTNAME",
+			"SPOUSELAST", "SPOUSEFRST", "SALUTATION", "HOMEPHONE",
+			"WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "MAILNAME",
+			"ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY",
+			"EMAIL, EMAIL2", "WEB", "CHANGEDATE", "LASTGIVEDT", "LASTAMT",
+			"LASTENTDT", "LASTENTAMT"
+			};
+	public static final String[] giftFields = new String[] {
+		"ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY", 
+		"SOURCE", "NOTE", "RECNUM"
+	};
+	public static final String[] dbInfoFields = new String[] {
+		"KEY", "VALUE"
+	};
 
+	public static String generateTableCreateSQL(String[] fields, String primaryKey) {
+		StringBuilder output = new StringBuilder();
+		for (int i = 0; i < fields.length; i++) {
+			output.append(fields[i]);
+			output.append(", ");
+		}
+		output.append("PRIMARY KEY (" + primaryKey + ")");
+		return output.toString();
+	}
+	
 	public SQLite(String filename) throws NewerDbVersionException {
 		dbFile = new File(filename);
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			// remember: if you add fields here, add them in FRBW import too
-			// TODO: make it so I don't have to remember that
-			String donorFields = "ACCOUNT, TYPE, LASTNAME, FIRSTNAME, " + "SPOUSELAST, SPOUSEFRST, SALUTATION, HOMEPHONE, "
-					+ "WORKPHONE, FAX, CATEGORY1, CATEGORY2, MAILNAME, " + "ADDRESS1, ADDRESS2, CITY, STATE, ZIP, COUNTRY, "
-					+ "EMAIL, EMAIL2, WEB, CHANGEDATE, LASTGIVEDT, LASTAMT, " + "LASTENTDT, LASTENTAMT, PRIMARY KEY (ACCOUNT)";
-			stmt.executeUpdate("create table if not exists donors (" + donorFields + ");");
-			String giftFields = "ACCOUNT, AMOUNT, DATEGIVEN, LETTER, DT_ENTRY, " + "SOURCE, NOTE, RECNUM, PRIMARY KEY (RECNUM)";
-			stmt.executeUpdate("create table if not exists gifts (" + giftFields + ");");
-			String dbInfoFields = "KEY, VALUE, PRIMARY KEY (KEY)";
-			stmt.executeUpdate("create table if not exists dbinfo (" + dbInfoFields + ");");
+
+			String donorTableSQL = generateTableCreateSQL(donorFields, "ACCOUNT");
+			String giftTableSQL = generateTableCreateSQL(giftFields, "RECNUM");
+			String dbInfoTableSQL = generateTableCreateSQL(dbInfoFields, "KEY");
+			stmt.executeUpdate("create table if not exists donors (" + donorTableSQL + ");");
+			stmt.executeUpdate("create table if not exists gifts (" + giftTableSQL + ");");
+			stmt.executeUpdate("create table if not exists dbinfo (" + dbInfoTableSQL + ");");
 			stmt.close();
 			if (this.getDbVersion() != latestDbVersion) {
 				reconcileDbVersion();
@@ -120,23 +142,31 @@ public class SQLite {
 			}
 			ResultSet rs = prep.executeQuery();
 			while (rs.next()) {
+				String matchingFieldName = "";
+				String matchingField = "";
+				fieldSearch:for (String field : fields) {
+					String result = rs.getString(field);
+					if (result.toLowerCase().contains(query.toLowerCase())) {
+						for (String[] c : DonorList.columns) {
+							if (field.equals(c[1])) {
+								matchingFieldName = c[0];
+								matchingField = c[1];
+								break fieldSearch;
+							}
+						}
+					}
+				}
 				String firstname = rs.getString("firstname");
 				String lastname = rs.getString("lastname");
+				if (matchingField.equals("spousefrst") || matchingField.equals("spouselast")) {
+					firstname = rs.getString("spousefrst");
+					lastname = rs.getString("spouselast");
+				}
 				String account = rs.getString("account");
 				String listEntry = lastname + (!(lastname.equals("") || firstname.equals("")) ? ", " : "") + firstname;
 				if (listEntry.equals(""))
 					listEntry = account;
-				String matchingField = "";
-				for (String field : fields) {
-					String result = rs.getString(field);
-					if (result.toLowerCase().contains(query.toLowerCase())) {
-						for (String[] c : DonorList.columns) {
-							if (field.equals(c[1]))
-								matchingField = c[0];
-						}
-					}
-				}
-				output.put(account, listEntry + " (" + matchingField + ")");
+				output.put(account, listEntry + " (" + matchingFieldName + ")");
 			}
 			rs.close();
 		} catch (SQLException e) {
