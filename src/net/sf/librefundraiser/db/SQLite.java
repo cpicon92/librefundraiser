@@ -56,9 +56,9 @@ public class SQLite {
 
 	public static String generateTableCreateSQL(String[] fields, String primaryKey) {
 		StringBuilder output = new StringBuilder();
-		for (int i = 0; i < fields.length; i++) {
-			output.append(fields[i]);
-			output.append(", ");
+		String sep = ", ";
+		for (String f : fields) {
+			output.append(f).append(sep);
 		}
 		output.append("PRIMARY KEY (" + primaryKey + ")");
 		return output.toString();
@@ -131,9 +131,10 @@ public class SQLite {
 		HashMap<String, String> output = new HashMap<String, String>();
 		try {
 			StringBuilder statement = new StringBuilder("select * from donors where ");
-			for (int i = 0; i < fields.length; i++) {
-				statement.append(fields[i] + " like ?");
-				statement.append(i == fields.length - 1 ? ";" : " or ");
+			String sep = "";
+			for (String f : fields) {
+				statement.append(sep).append(f + " like ?");
+				sep = " or ";
 			}
 			System.out.println(statement);
 			PreparedStatement prep = conn.prepareStatement(statement.toString());
@@ -390,220 +391,6 @@ public class SQLite {
 		return output;
 	}
 
-	public double getTotalGifts(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		double output = 0;
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
-			while (rs.next()) {
-				output = rs.getDouble("total_amount");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public double getYTD(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		double output = 0;
-		try {
-			Statement stmt = conn.createStatement();
-			GregorianCalendar cal = new GregorianCalendar();
-			cal.set(Calendar.DATE, 1);
-			cal.set(Calendar.MONTH, Calendar.JANUARY);
-			ResultSet rs = stmt.executeQuery("select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + donor.getData("account")
-					+ "\" and DATEGIVEN>=Datetime('" + dbDateFormat.format(cal.getTime()) + "')");
-			while (rs.next()) {
-				output = rs.getDouble("total_amount");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public double getLargestGift(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		double output = 0;
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
-			while (rs.next()) {
-				if (rs.getDouble("AMOUNT") > output)
-					output = rs.getDouble("AMOUNT");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public String getLastGiftDate(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		String output = "";
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
-			while (rs.next()) {
-				output = rs.getString("last_gift_date");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public String getLastEntryDate(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		String output = "";
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
-			while (rs.next()) {
-				output = rs.getString("last_entry_date");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public String getFirstGiftDate(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		String output = "";
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
-			while (rs.next()) {
-				output = rs.getString("first_gift_date");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public double getLastGift(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		double output = 0;
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + donor.getData("account")
-					+ "\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" + donor.getData("account") + "\")");
-			while (rs.next()) {
-				output = rs.getDouble("AMOUNT");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
-
-	public double getLastEntryAmount(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		double output = 0;
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select AMOUNT from gifts where ACCOUNT=\"" + donor.getData("account")
-					+ "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\"" + donor.getData("account") + "\")");
-			while (rs.next()) {
-				output = rs.getDouble("AMOUNT");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
-	}
 
 	public String[] getPreviousValues(String column, String table) {
 		lock.lock();
@@ -844,21 +631,6 @@ public class SQLite {
 		}
 		lock.unlock();
 
-	}
-
-	public static String getLastResult (ResultSet rs, String columnLabel) throws SQLException {
-		String output = "";
-		while (rs.next()) output = rs.getString(columnLabel); 
-		return output;
-	}
-
-	public static String getLargestResult (ResultSet rs, String columnLabel) throws SQLException {
-		double output = 0;
-		while (rs.next()) {
-			if (rs.getDouble(columnLabel) > output)
-				output = rs.getDouble(columnLabel);
-		}
-		return output + "";
 	}
 
 }
