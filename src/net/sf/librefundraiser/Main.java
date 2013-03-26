@@ -16,8 +16,6 @@ import java.util.Properties;
 import net.sf.librefundraiser.db.FileDBASE;
 import net.sf.librefundraiser.db.NewerDbVersionException;
 import net.sf.librefundraiser.db.SQLite;
-import net.sf.librefundraiser.gui.DonorList;
-import net.sf.librefundraiser.gui.FundRaiserImportDialog;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
 
@@ -187,64 +185,22 @@ public class Main {
 	}
 	
 	public static void importFromFRBW(final Display display, final Shell parent, final MainWindow mainWindow, final String path) {
-		final FundRaiserImportDialog dialog = new FundRaiserImportDialog(parent,SWT.NONE);
 		if (path == null) return;
 		new Thread(new Runnable() {
 			public void run() {
 				FileDBASE db = new FileDBASE(path);
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.setCancelable(false);
-						dialog.setStatusText("Importing donor list...");
-					}
-				});
-				if (!db.loadTable("Master.dbf","donors")) {
-					display.asyncExec(new Runnable() {
-						public void run() {
-							MessageBox error = new MessageBox(parent,SWT.ICON_ERROR);
-							error.setText("LibreFundraiser Error");
-							error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
-							dialog.dispose();
-						}
-					});
-					return;
+				Donor[] importedDonors = new Donor[] {};
+				try {
+					importedDonors = db.importFRBW();
+				} catch (Exception e) {
+					e.printStackTrace();
+					MessageBox error = new MessageBox(parent,SWT.ICON_ERROR);
+					error.setText("LibreFundraiser Error");
+					error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
 				}
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.setProgress(25);
-						dialog.setStatusText("Importing gifts...");
-					}
-				});
-				db.loadTable("Gifts.dbf","gifts");
-				if (mainWindow != null) {
-					display.asyncExec(new Runnable() {
-						public void run() {
-							dialog.setProgress(50);
-							dialog.setStatusText("Consolidating donors and gifts...");
-						}
-					});
-					final DonorList compositeDonorList = mainWindow.getCompositeDonorList();
-					compositeDonorList.donors = Main.getDonorDB().getDonors();
-					display.asyncExec(new Runnable() {
-						public void run() {
-							dialog.setProgress(75);
-							dialog.setStatusText("Refreshing donor list...");
-						}
-					});
-					display.asyncExec(new Runnable() {
-						public void run() {
-							mainWindow.refresh(false, false);
-						}
-					});
-				}
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dialog.dispose();
-					}
-				});
-				
+				Main.getDonorDB().saveDonors(importedDonors);
+				Main.getWindow().refresh(true, true);				
 			}
 		}).start();
-		dialog.open();
 	}
 }

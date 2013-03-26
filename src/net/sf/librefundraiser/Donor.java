@@ -28,7 +28,7 @@ public class Donor {
 	}
 	private final HashMap<String,String> data;
 	private final HashMap<Integer,Gift> gifts;
-	private int id;
+	private final int id;
 	public Donor(int id) {
 		data = new HashMap<String,String>();
 		gifts = new HashMap<Integer,Gift>();

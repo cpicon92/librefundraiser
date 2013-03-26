@@ -38,21 +38,15 @@ public class SQLite {
 		String filename = System.getProperty("java.io.tmpdir") + "/temp" + unixTime + ".db";
 		dbFile = new File(filename);
 	}
-	public static final String[] donorFields = new String[] {
-			"ACCOUNT", "TYPE", "LASTNAME", "FIRSTNAME",
-			"SPOUSELAST", "SPOUSEFRST", "SALUTATION", "HOMEPHONE",
-			"WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "MAILNAME",
-			"ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY",
-			"EMAIL, EMAIL2", "WEB", "CHANGEDATE", "LASTGIVEDT", "LASTAMT",
-			"LASTENTDT", "LASTENTAMT"
-			};
-	public static final String[] giftFields = new String[] {
-		"ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY", 
-		"SOURCE", "NOTE", "RECNUM"
-	};
-	public static final String[] dbInfoFields = new String[] {
-		"KEY", "VALUE"
-	};
+
+	public static final String[] donorFields = new String[] { "ACCOUNT", "TYPE", "FIRSTNAME", "LASTNAME", "SPOUSEFRST",
+			"SPOUSELAST", "SALUTATION", "HOMEPHONE", "WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "CONTACT",
+			"MAILNAME", "ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY", "ENTRYDATE", "CHANGEDATE", "NOTES",
+			"LASTGIVEDT", "LASTAMT", "ALLTIME", "YEARTODT", "FIRSTGIFT", "LARGEST", "FILTER", "EMAIL", "LASTENTDT",
+			"LASTENTAMT", "EMAIL2", "WEB" };
+	public static final String[] giftFields = new String[] { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
+			"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
+	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
 
 	public static String generateTableCreateSQL(String[] fields, String primaryKey) {
 		StringBuilder output = new StringBuilder();
