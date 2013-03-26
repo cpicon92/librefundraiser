@@ -8,3 +8,4 @@ Exec=librefundraiser
 Name=LibreFundraiser
 MimeType=application/x-librefundraiser
 StartupNotify=true
+Comment=Keep track of all your donor information easily and efficiently. 
