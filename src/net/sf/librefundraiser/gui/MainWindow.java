@@ -526,13 +526,7 @@ public class MainWindow {
 	public void setSaveAction(Runnable r) {
 		saveCurrent = r;
 	}
-	//TODO reconcile this with the method in Main
-	public String newDBfile() {
-		FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-		fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
-		fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
-		return fileDialog.open();
-	}
+
 	public void importFRBW() {
 		MessageBox warning = new MessageBox(shell,SWT.ICON_WARNING|SWT.YES|SWT.NO);
 		warning.setText("LibreFundraiser Warning");

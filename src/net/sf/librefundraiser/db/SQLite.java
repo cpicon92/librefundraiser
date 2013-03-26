@@ -418,14 +418,22 @@ public class SQLite {
 	}
 
 	public void deleteDonor(int id) {
-		//TODO: use batch execute for multiple donors
-		String account = String.format("%06d", id);
+		deleteDonors(new int[] {id});
+	}
+	
+	public void deleteDonors(int[] ids) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			stmt.executeUpdate("delete from donors where account=\"" + account + "\";");
-			stmt.executeUpdate("delete from gifts where account=\"" + account + "\";");
+			conn.setAutoCommit(false);
+			for (int id : ids) {
+				String account = String.format("%06d", id);
+				stmt.addBatch("delete from donors where account=\"" + account + "\";");
+				stmt.addBatch("delete from gifts where account=\"" + account + "\";");
+			}
+			conn.setAutoCommit(true);
+			stmt.executeBatch();
 		} catch (SQLException e) {
 			System.err.println("Unable to delete donor. ");
 			e.printStackTrace();

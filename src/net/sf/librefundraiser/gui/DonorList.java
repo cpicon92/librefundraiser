@@ -306,10 +306,14 @@ public class DonorList extends Composite {
 		warning.setText("LibreFundraiser Warning");
 		warning.setMessage("All data for these donors will be erased IRRETRIEVABLY. Do you want to continue?");
 		if (warning.open() == SWT.NO) return;
+		int[] ids = new int[table.getSelectionCount()];
+		int i = 0;
 		for (TableItem selectedItem : table.getSelection()) {
 			int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-			Main.getDonorDB().deleteDonor(id);
+			ids[i] = id;
+			i++;
 		}
+		Main.getDonorDB().deleteDonors(ids);
 		Main.getWindow().refresh(true, false);
 	}
 
