@@ -48,10 +48,10 @@ public class DonorTab extends TabItem {
 		form.setEdited(form.isEdited());
 	}
 	
-	public void save() {
+	public void save(boolean refresh) {
 		DonorEditForm form = ((DonorEditForm)this.getControl());
 		if (form.isEdited()) {
-			form.saveForm();
+			form.saveForm(refresh);
 		}
 	}
 	

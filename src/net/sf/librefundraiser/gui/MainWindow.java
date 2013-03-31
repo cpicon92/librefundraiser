@@ -591,6 +591,7 @@ public class MainWindow {
 		}).start();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void quickSearchOpen() {
 		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
 		try {

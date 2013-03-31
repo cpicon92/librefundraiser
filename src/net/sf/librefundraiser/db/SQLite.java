@@ -11,7 +11,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -372,7 +371,8 @@ public class SQLite {
 		return output;
 	}
 
-	public int getMaxRecNum() {
+	private final ArrayList<Integer> reserved = new ArrayList<Integer>();
+	public int getUniqueRecNum() {
 		lock.lock();
 		Connection conn = this.getConnection();
 		int output = 0;
@@ -398,7 +398,10 @@ public class SQLite {
 		for (Integer i : recnums) {
 			if (i > output) output = i;
 		}
+		output++;
 		lock.unlock();
+		while (reserved.contains(output)) output++;
+		reserved.add(output);
 		return output;
 	}
 
@@ -592,7 +595,6 @@ public class SQLite {
 		return date;
 	}
 
-	@SuppressWarnings("static-method")
 	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
 		//		if (pl != null) pl.setProgress(1);
 		//		final Donor[] donors;

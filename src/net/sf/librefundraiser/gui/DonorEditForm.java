@@ -581,11 +581,10 @@ public class DonorEditForm extends Composite {
 		tbrGifts.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		tbrGifts.setBounds(0, 0, 89, 23);
 
-		//TODO:reserve new gifts to prevent overwriting
 		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
 		tltmAdd.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Gift gift = new Gift(Main.getDonorDB().getMaxRecNum()+1);
+				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
 				gift.putIc("account", donor.getData("account"));
 				editGift(gift);
 			}
@@ -806,7 +805,7 @@ public class DonorEditForm extends Composite {
 		}
 	}
 
-	public void saveForm() {
+	public void saveForm(boolean refresh) {
 		if (!business) {
 			txtBusinessName.setText(txtLastName.getText());
 			txtContactLast.setText(txtSpouseLast.getText());
@@ -824,7 +823,7 @@ public class DonorEditForm extends Composite {
 		}
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
-		Main.getWindow().refresh(true, false);
+		if (refresh) Main.getWindow().refresh(true, false);
 		this.fillForm();
 		this.setEdited(false);
 	}
@@ -898,7 +897,7 @@ public class DonorEditForm extends Composite {
 			final DonorEditForm me = this;
 			Main.getWindow().setSaveAction(new Runnable() {
 				public void run() {
-					me.saveForm();
+					me.saveForm(true);
 				}
 			});
 		}

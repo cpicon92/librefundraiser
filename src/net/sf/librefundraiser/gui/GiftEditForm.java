@@ -137,7 +137,7 @@ public class GiftEditForm extends Composite {
 			saveField((Control)field[0],(String)field[1]);
 		}
 		gift.putIc("dt_entry",Main.getDateFormat().format(new Date()));
-		gift.putIc("recnum", String.format("%06d",gift.recnum));
+		gift.putIc("recnum", String.format("%d",gift.recnum));
 	}
 	
 	private void fillField(Control field, String key) {

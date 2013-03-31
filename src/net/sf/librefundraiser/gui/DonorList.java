@@ -290,7 +290,7 @@ public class DonorList extends Composite {
 	public void saveAll() {
 		for (TabItem i : tabFolder.getItems()) {
 			if (i.getClass().equals(DonorTab.class)) {
-				((DonorTab)i).save();
+				((DonorTab)i).save(false);
 			}
 		}
 		TabItem t = tabFolder.getSelection();
@@ -299,6 +299,7 @@ public class DonorList extends Composite {
 		} else {
 			((DonorTab)t).alterSaveButton();
 		}
+		Main.getWindow().refresh(true, false);
 	}
 
 	public void deleteDonors() {
