@@ -824,8 +824,6 @@ public class DonorEditForm extends Composite {
 		}
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
-		Main.getDonorDB().updateAllStats(new Donor[] {this.donor}, null);
-		Main.getDonorDB().saveDonor(this.donor);
 		Main.getWindow().refresh(true, false);
 		this.fillForm();
 		this.setEdited(false);

@@ -557,7 +557,7 @@ public class MainWindow {
 									if (progress == -1) {
 										progress = 0;
 										Donor[] output = Main.getDonorDB().getDonors();
-										Main.getDonorDB().saveDonors(output);
+//										Main.getDonorDB().saveDonors(output);
 										((DonorList)compositeDonorList).donors = output;
 										((DonorList)compositeDonorList).refresh();
 									}
@@ -592,7 +592,6 @@ public class MainWindow {
 	}
 
 	private void quickSearchOpen() {
-		@SuppressWarnings("unchecked")
 		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
 		try {
 			if (keys != null && !keys.isEmpty()) {

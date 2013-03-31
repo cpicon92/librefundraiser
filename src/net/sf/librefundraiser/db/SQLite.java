@@ -10,8 +10,8 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -40,12 +40,12 @@ public class SQLite {
 	}
 
 	public static final String[] donorFields = new String[] { "ACCOUNT", "TYPE", "FIRSTNAME", "LASTNAME", "SPOUSEFRST",
-			"SPOUSELAST", "SALUTATION", "HOMEPHONE", "WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "CONTACT",
-			"MAILNAME", "ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY", "ENTRYDATE", "CHANGEDATE", "NOTES",
-			"LASTGIVEDT", "LASTAMT", "ALLTIME", "YEARTODT", "FIRSTGIFT", "LARGEST", "FILTER", "EMAIL", "LASTENTDT",
-			"LASTENTAMT", "EMAIL2", "WEB" };
+		"SPOUSELAST", "SALUTATION", "HOMEPHONE", "WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "CONTACT",
+		"MAILNAME", "ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY", "ENTRYDATE", "CHANGEDATE", "NOTES",
+		"LASTGIVEDT", "LASTAMT", "ALLTIME", "YEARTODT", "FIRSTGIFT", "LARGEST", "FILTER", "EMAIL", "LASTENTDT",
+		"LASTENTAMT", "EMAIL2", "WEB" };
 	public static final String[] giftFields = new String[] { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
-			"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
+		"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
 	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
 
 	public static String generateTableCreateSQL(String[] fields, String primaryKey) {
@@ -57,7 +57,7 @@ public class SQLite {
 		output.append("PRIMARY KEY (" + primaryKey + ")");
 		return output.toString();
 	}
-	
+
 	public SQLite(String filename) throws NewerDbVersionException {
 		dbFile = new File(filename);
 		Connection conn = this.getConnection();
@@ -179,7 +179,7 @@ public class SQLite {
 		return output;
 	}
 
-	public Donor[] getDonors(String query, boolean fetchGifts) {
+	public Donor[] getDonors(String query) {
 		lock.lock();
 		Connection conn = this.getConnection();
 		ArrayDeque<String> columns = new ArrayDeque<String>();
@@ -206,7 +206,7 @@ public class SQLite {
 				}
 				donors.add(donor);
 			}
-			if (fetchGifts) {
+			/*fetch gifts*/ {
 				for (Donor donor : donors) {
 					ArrayDeque<String> giftColumns = new ArrayDeque<String>();
 					ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
@@ -214,8 +214,9 @@ public class SQLite {
 						giftColumns.add(rsGifts.getString("name"));
 					}
 					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
+					ArrayList<Gift> gifts = new ArrayList<Gift>();
 					while (rsGifts.next()) {
-						Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
+						Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
 						for (String column : giftColumns) {
 							String value = "";
 							try {
@@ -224,9 +225,10 @@ public class SQLite {
 							}
 							gift.putIc(column, value != null ? value : "");
 						}
-						donor.addGift(gift);
+						gifts.add(gift);
 					}
 					rsGifts.close();
+					donor.addGifts(gifts);
 				}
 			}
 			rs.close();
@@ -244,6 +246,13 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		lock.unlock();
+		final Donor[] toSave = output;
+		new Thread(new Runnable() {
+			public void run() {
+				saveDonors(toSave);
+				System.out.println("saved");
+			}
+		}).start();
 		return output;
 	}
 
@@ -310,7 +319,11 @@ public class SQLite {
 				for (Gift g : donor.getGifts().values()) {
 					int currentField = 1;
 					for (final String field : columns) {
-						prep.setString(currentField, unFormatDate(g.getIc(field)));
+						if (!field.equalsIgnoreCase("recnum")) {
+							prep.setString(currentField, unFormatDate(g.getIc(field)));
+						} else {
+							prep.setInt(currentField, Integer.parseInt(g.getIc(field)));
+						}
 						currentField++;
 					}
 					prep.addBatch();
@@ -330,7 +343,7 @@ public class SQLite {
 	}
 
 	public Donor[] getDonors() {
-		return getDonors("", false);
+		return getDonors("");
 	}
 
 	public int getMaxAccount() {
@@ -363,11 +376,12 @@ public class SQLite {
 		lock.lock();
 		Connection conn = this.getConnection();
 		int output = 0;
+		ArrayList<Integer> recnums = new ArrayList<Integer>();
 		try {
 			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("select max(RECNUM) as max_recnum from gifts");
+			ResultSet rs = stmt.executeQuery("select RECNUM from gifts");
 			while (rs.next()) {
-				output = rs.getInt("max_recnum");
+				recnums.add(rs.getInt("RECNUM"));
 			}
 			rs.close();
 		} catch (SQLException e) {
@@ -380,6 +394,9 @@ public class SQLite {
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		for (Integer i : recnums) {
+			if (i > output) output = i;
 		}
 		lock.unlock();
 		return output;
@@ -420,7 +437,7 @@ public class SQLite {
 	public void deleteDonor(int id) {
 		deleteDonors(new int[] {id});
 	}
-	
+
 	public void deleteDonors(int[] ids) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -575,63 +592,31 @@ public class SQLite {
 		return date;
 	}
 
+	@SuppressWarnings("static-method")
 	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
-		
-		final Donor[] donors;
-		if (toUpdate == null) {
-			donors = getDonors("", false);
-		} else {
-			donors = toUpdate;
-		}
-		
-		lock.lock();
-		Connection conn = this.getConnection();
-		
-		if (pl != null) pl.setMaxProgress(donors.length);
-		// needed for ytd
-		GregorianCalendar cal = new GregorianCalendar();
-		cal.set(Calendar.DATE, 1);
-		cal.set(Calendar.MONTH, Calendar.JANUARY);
-		String currentTime = dbDateFormat.format(cal.getTime());
-
-		int progress = 0;
-		
-		try {
-			final long beforetime = System.currentTimeMillis();
-			conn.setAutoCommit(false);
-			Statement stmt = conn.createStatement();
-			for (Donor donor : donors) {
-				progress++;
-				if (pl != null) pl.setProgress(progress);
-				String account = donor.getData("account");
-				stmt.addBatch("update donors set ALLTIME=(select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set YEARTODT=(select total(AMOUNT) as total_amount from gifts where ACCOUNT=\"" + account + "\" and DATEGIVEN>=Datetime('" + currentTime + "')) where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set LARGEST=(select max(AMOUNT) as max_amount from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set LASTGIVEDT=(select max(DATEGIVEN) as last_gift_date from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set FIRSTGIFT=(select min(DATEGIVEN) as first_gift_date from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set LASTAMT=(select AMOUNT from gifts where ACCOUNT=\"" + account
-						+ "\" and DATEGIVEN=(select max(DATEGIVEN) from gifts where ACCOUNT=\"" + account + "\")) where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set LASTENTDT=(select max(DT_ENTRY) as last_entry_date from gifts where ACCOUNT=\"" + account + "\") where ACCOUNT=\"" + account + "\"");
-				stmt.addBatch("update donors set LASTENTAMT=(select AMOUNT from gifts where ACCOUNT=\"" + account + "\" and DT_ENTRY=(select max(DT_ENTRY) from gifts where ACCOUNT=\""
-						+ account + "\")) where ACCOUNT=\"" + account + "\"");
-			}
-			System.out.printf("Batch add took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
-			stmt.executeBatch();
-			conn.setAutoCommit(true);
-			System.out.printf("Batch execute took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
-			if (pl != null) pl.setProgress(-1);
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
+		//		if (pl != null) pl.setProgress(1);
+		//		final Donor[] donors;
+		//		if (toUpdate == null) {
+		//			donors = getDonors("", true);
+		//		} else {
+		//			StringBuilder queryString = new StringBuilder();
+		//			String sep = " where ";
+		//			for (Donor d : toUpdate) {
+		//				queryString.append(sep).append("ACCOUNT='" + d.getData("ACCOUNT") + "'");
+		//				sep = " or ";
+		//			}
+		//			System.out.println(queryString.toString());
+		//			donors = getDonors(queryString.toString(), true);
+		//		}
+		//		if (pl != null) pl.setMaxProgress(donors.length);
+		//		int progress = 0;
+		//		for (Donor d : donors) {
+		//			if (pl != null) pl.setProgress(++progress);
+		//			d.recalculateGiftStats();
+		//		}
+		//		
+		//		this.saveDonors(donors);
+		if (pl != null) pl.setProgress(-1);
 
 	}
 
