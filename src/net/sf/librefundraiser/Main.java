@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import net.sf.librefundraiser.db.FileDBASE;
+import net.sf.librefundraiser.db.FileLFD;
+import net.sf.librefundraiser.db.IDatabase;
 import net.sf.librefundraiser.db.NewerDbVersionException;
 import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.MainWindow;
@@ -27,7 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 
 //TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
-	private static SQLite localDB = null;
+	private static IDatabase localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
@@ -58,8 +60,8 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	public static SQLite getDonorDB() {
-		if (localDB == null) localDB = new SQLite();
+	public static IDatabase getDonorDB() {
+		if (localDB == null) localDB = new FileLFD();
 		return localDB;
 	}
 	public static void resetLocalDB() {
