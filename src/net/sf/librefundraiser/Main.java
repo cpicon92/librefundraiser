@@ -17,7 +17,6 @@ import net.sf.librefundraiser.db.FileDBASE;
 import net.sf.librefundraiser.db.FileLFD;
 import net.sf.librefundraiser.db.IDatabase;
 import net.sf.librefundraiser.db.NewerDbVersionException;
-import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
 
@@ -66,7 +65,7 @@ public class Main {
 	}
 	public static void resetLocalDB() {
 		try {
-			localDB = new SQLite(getSetting("lastDB"));
+			localDB = new FileLFD(getSetting("lastDB"));
 		} catch (NewerDbVersionException e) {
 			// TODO Display gui error message about how the file is too new to be opened
 			e.printStackTrace();

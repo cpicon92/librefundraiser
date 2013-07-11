@@ -1,6 +1,5 @@
 package net.sf.librefundraiser.db;
 
-import java.sql.Connection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ public interface IDatabase {
 			"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
 	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
 
-	Connection getConnection();
 
 	HashMap<String, String> quickSearch(String query);
 

@@ -1,6 +1,9 @@
 package net.sf.librefundraiser.db;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,12 +17,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.gui.DonorList;
+
+import com.google.gson.Gson;
 
 public class FileLFD implements IDatabase {
 	private static final int latestDbVersion = 2;
@@ -101,7 +108,7 @@ public class FileLFD implements IDatabase {
 		}
 	}
 
-	public Connection getConnection() {
+	private Connection getConnection() {
 		try {
 			if (connection != null && !connection.isClosed()) {
 				return connection;
@@ -260,6 +267,24 @@ public class FileLFD implements IDatabase {
 	}
 
 	public void saveDonors(Donor[] donors) {
+		long startSave = System.currentTimeMillis();
+		try {
+			ZipOutputStream zip = new ZipOutputStream(new FileOutputStream("/home/kristian/newlfdtest.lfd"));
+			PrintStream zipWriter = new PrintStream(zip);
+			for (Donor d : donors) {
+				zip.putNextEntry(new ZipEntry(String.format("%06d.json", d.getId()))); 
+				Gson gson = new Gson();
+				String json = gson.toJson(d);
+				zipWriter.print(json);
+//				zip.write(json.getBytes("UTF-8"));
+				zip.closeEntry();
+			}
+			zipWriter.close();
+			zip.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		System.out.printf("New LFD save took: %dms\n", System.currentTimeMillis() - startSave);
 		lock.lock();
 		Connection conn = this.getConnection();
 		try {

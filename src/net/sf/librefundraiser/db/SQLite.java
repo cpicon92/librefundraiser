@@ -90,7 +90,6 @@ public class SQLite implements IDatabase {
 		}
 	}
 
-	@Override
 	public Connection getConnection() {
 		try {
 			if (connection != null && !connection.isClosed()) {
