@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.db;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -267,14 +268,21 @@ public class FileLFD implements IDatabase {
 	}
 
 	public void saveDonors(Donor[] donors) {
+		System.out.println("Starting serializion...");
 		long startSave = System.currentTimeMillis();
+		String[] jsonDonors = new String[donors.length];
+		Gson gson = new Gson();
+//	    ObjectMapper mapper = new ObjectMapper();
+		for (int i = 0; i < jsonDonors.length; i++) {
+			jsonDonors[i] = gson.toJson(donors[i]);
+		}
 		try {
-			ZipOutputStream zip = new ZipOutputStream(new FileOutputStream("/home/kristian/newlfdtest.lfd"));
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream("/home/kristian/newlfdtest.lfd")));
 			PrintStream zipWriter = new PrintStream(zip);
-			for (Donor d : donors) {
-				zip.putNextEntry(new ZipEntry(String.format("%06d.json", d.getId()))); 
-				Gson gson = new Gson();
-				String json = gson.toJson(d);
+			int d = 0;
+			for (String json : jsonDonors) {
+				d++;
+				zip.putNextEntry(new ZipEntry(String.format("%06d.json", d))); 
 				zipWriter.print(json);
 //				zip.write(json.getBytes("UTF-8"));
 				zip.closeEntry();
