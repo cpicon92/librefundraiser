@@ -1,9 +1,12 @@
 package net.sf.librefundraiser.db;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,9 +19,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.sf.librefundraiser.Donor;
@@ -35,6 +40,7 @@ public class FileLFD implements IDatabase {
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Connection connection = null;
 	private final Lock lock = new ReentrantLock();
+	private final HashMap<String, Donor> donorCache = new HashMap<String,Donor>();
 
 	public String getDbPath() {
 		return dbFile.getPath();
@@ -67,6 +73,7 @@ public class FileLFD implements IDatabase {
 
 	public FileLFD(String filename) throws NewerDbVersionException {
 		dbFile = new File(filename);
+		this.refresh();
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
@@ -269,21 +276,25 @@ public class FileLFD implements IDatabase {
 
 	public void saveDonors(Donor[] donors) {
 		System.out.println("Starting serializion...");
+		for (Donor d : donors) {
+			donorCache.put(d.getData("account"), d);
+		}
 		long startSave = System.currentTimeMillis();
-		String[] jsonDonors = new String[donors.length];
+		String[][] jsonDonors = new String[donorCache.size()][2];
 		Gson gson = new Gson();
 //	    ObjectMapper mapper = new ObjectMapper();
-		for (int i = 0; i < jsonDonors.length; i++) {
-			jsonDonors[i] = gson.toJson(donors[i]);
+		int i = 0;
+		for (Entry<String,Donor> e : donorCache.entrySet()) {
+			jsonDonors[i][0] = e.getKey();
+			jsonDonors[i][1] = gson.toJson(e.getValue());
+			i++;
 		}
 		try {
 			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream("/home/kristian/newlfdtest.lfd")));
 			PrintStream zipWriter = new PrintStream(zip);
-			int d = 0;
-			for (String json : jsonDonors) {
-				d++;
-				zip.putNextEntry(new ZipEntry(String.format("%06d.json", d))); 
-				zipWriter.print(json);
+			for (String[] json : jsonDonors) {
+				zip.putNextEntry(new ZipEntry(json[0])); 
+				zipWriter.print(json[1]);
 //				zip.write(json.getBytes("UTF-8"));
 				zip.closeEntry();
 			}
@@ -374,8 +385,28 @@ public class FileLFD implements IDatabase {
 		lock.unlock();
 	}
 
-	public Donor[] getDonors() {
-		return getDonors("");
+	public Donor[] getDonors() {	
+		return donorCache.values().toArray(new Donor[]{});
+	}
+	
+	private void refresh() {
+		long loadStart = System.currentTimeMillis();
+		donorCache.clear();
+		Gson gson = new Gson();
+		try {
+			ZipInputStream zip = new ZipInputStream(new BufferedInputStream(new FileInputStream("/home/kristian/newlfdtest.lfd")));
+			ZipEntry entry = zip.getNextEntry();
+			while (entry != null) {
+				Donor d = gson.fromJson(new InputStreamReader(zip), Donor.class);
+				donorCache.put(d.getData("account"), d);
+				entry = zip.getNextEntry();
+			}
+
+		} catch (IOException e) {
+			System.err.println("Error refreshing donors, see stack trace. ");
+			e.printStackTrace();
+		}
+		System.out.printf("Donor load took: %dms\n", System.currentTimeMillis()-loadStart);
 	}
 
 	public int getMaxAccount() {

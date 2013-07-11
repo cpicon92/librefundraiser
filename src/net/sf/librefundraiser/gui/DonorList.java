@@ -252,7 +252,7 @@ public class DonorList extends Composite {
 		tableViewer.setInput(donors);
 //		tableViewer.refresh();
 		packColumns();
-		System.out.printf("List refresh took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
+		System.out.printf("List refresh took: %dms\n", System.currentTimeMillis()-beforetime);
 		setVisible(true);
 	}
 
