@@ -25,7 +25,9 @@ public interface IDatabase {
 
 	HashMap<String, String> quickSearch(String query);
 
-	Donor[] getDonors(String query);
+	Donor[] getDonors(int[] ids);
+	
+	Donor[] getDonors(String[] ids);
 
 	void saveDonor(Donor donor);
 
