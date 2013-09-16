@@ -2,34 +2,44 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d710fe63-2504-4c29-83ac-127a0f8ce63e" name="Default" comment="start work on new swing-based gui">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/OfficeLnFs.xml" />
-    </list>
-    <list id="41b07b54-fcca-43f0-bc17-d97e80b23073" name="Failed commit: Default" comment="start work on new swing-based gui">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorBasicInfo.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorBasicInfo.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorEdit.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorList.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorList.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/GiftList.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/GiftList.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/laf_plugin_7_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/laf_widget_7_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/librefundraiser.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/substance_7_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/substance_swingx_7_2_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/swingx_all_1_6_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/swt.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/trident_7_2_1.xml" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/Forms/MainWindow.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/Frames/MainFrame.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/frames/MainFrame.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/AboutDialog.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/AboutDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DatabasePropertiesDialog.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DatabasePropertiesDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DatePicker.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DatePicker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DatePickerTest.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DatePickerTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/Donor.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/Donor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorEditForm.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorEditForm.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorList.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorListSorter.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorListSorter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorTab.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorTab.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/FileDBASE.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/FileDBASE.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/FileLFD.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/FileLFD.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/GiftEditForm.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/GiftEditForm.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/GiftTable.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/GiftTable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/IDatabase.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/IDatabase.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/LinkEditForm.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/LinkEditForm.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/Main.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/MainWindow.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/MainWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/NewDatabaseWizard.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/NewDatabaseWizard.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/ODB.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/ODB.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/ResourceManager.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/ResourceManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/SQLite.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/db/SQLite.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/tabs/TabFolder.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/tabs/TabFolder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/tabs/TabItem.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/tabs/TabItem.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/Tester.java" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/Tester.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/net/sf/librefundraiser/odbtemplate/settings.xml" afterPath="$PROJECT_DIR$/src/net/sf/librefundraiser/odbtemplate/settings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
+    <list id="41b07b54-fcca-43f0-bc17-d97e80b23073" name="Failed commit: Default" comment="start work on new swing-based gui" />
     <ignored path="librefundraiser.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379290312780" ignored="false" />
+    <file path="/Dummy.txt" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379334627550" ignored="false" />
     <file path="/MainWindow.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379289852473" ignored="false" />
     <file path="/MainFrame.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379273593291" ignored="false" />
     <file path="/a.dummy" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379266759751" ignored="false" />
     <file path="/JTextPrompt.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379268957654" ignored="false" />
-    <file path="/DonorList.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379277383279" ignored="false" />
+    <file path="/DonorList.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379334928206" ignored="false" />
     <file path="/DonorEdit.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379289755258" ignored="false" />
     <file path="/DonorBasicInfo.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379280349683" ignored="false" />
     <file path="/GiftEdit.java" changelist="d710fe63-2504-4c29-83ac-127a0f8ce63e" time="1379288800531" ignored="false" />
@@ -47,7 +57,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -84,6 +93,7 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -96,21 +106,17 @@
       <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="175" column="32" selection-start="5552" selection-end="5552" vertical-scroll-proportion="-150.5">
+            <state line="54" column="24" selection-start="1876" selection-end="1876" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainFrame.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/frames/MainFrame.java">
+      <file leaf-file-name="IDatabase.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/db/IDatabase.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="114" selection-start="643" selection-end="643" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#458#4215#0" expanded="true" />
-                <element signature="e#4204#4205#0" expanded="true" />
-              </folding>
+            <state line="9" column="17" selection-start="230" selection-end="230" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -122,13 +128,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainWindow.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.java">
+      <file leaf-file-name="MainFrame.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/frames/MainFrame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="101" selection-start="1197" selection-end="1197" vertical-scroll-proportion="0.0">
+            <state line="16" column="0" selection-start="232" selection-end="378" vertical-scroll-proportion="0.39865997">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLite.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/db/SQLite.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="167" column="24" selection-start="5417" selection-end="5417" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MainWindow.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="20" selection-start="20" selection-end="20" vertical-scroll-proportion="0.0">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -151,7 +175,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GiftList.form" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="GiftList.form" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/GiftList.form">
           <provider selected="true" editor-type-id="ui-designer">
             <state />
@@ -162,17 +186,8 @@
         <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorEdit.java">
           <provider selected="true" editor-type-id="text-editor">
             <state line="18" column="50" selection-start="602" selection-end="602" vertical-scroll-proportion="0.0">
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <folding />
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainWindow.form" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.form">
-          <provider selected="true" editor-type-id="ui-designer">
-            <state />
           </provider>
         </entry>
       </file>
@@ -194,9 +209,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/Components/JTextPrompt.java" />
-        <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/Forms/MainWindow.form" />
-        <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/Forms/MainWindow.java" />
         <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/components/JPlaceholderTextField.java" />
         <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorList.java" />
         <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorBasicInfo.java" />
@@ -210,14 +222,16 @@
         <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorEdit.java" />
         <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.java" />
         <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/GiftList.form" />
+        <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorList.java" />
+        <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorTab.java" />
+        <option value="$PROJECT_DIR$/src/net/sf/librefundraiser/db/SQLite.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1696" />
-    <option name="height" value="1026" />
+    <option name="x" value="1917" />
+    <option name="width" value="1926" />
+    <option name="height" value="1058" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -250,6 +264,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -318,68 +334,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="guiswing" />
+              <option name="myItemId" value="gui" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="frames" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="librefundraiser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="librefundraiser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="librefundraiser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiswing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="forms" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="librefundraiser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="librefundraiser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="librefundraiser" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="guiswing" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="forms" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="DonorList" />
-              <option name="myItemType" value="com.intellij.uiDesigner.projectView.FormNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -398,13 +354,12 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="project.structure.last.edited" value="Modules" />
+    <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="recentsLimit" value="5" />
@@ -414,12 +369,12 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="FullScreen" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
+    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -473,19 +428,6 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -511,6 +453,19 @@
       <envs />
       <properties />
       <listeners />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -614,31 +569,31 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
+    <frame x="1917" y="0" width="1926" height="1058" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22671568" sideWeight="0.67049366" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22426471" sideWeight="0.67049366" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295063" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.226254" sideWeight="0.67049366" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="JetGradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19637139" sideWeight="0.67049366" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3295063" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295838" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295063" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15992647" sideWeight="0.67164177" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Documentation" active="true" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32965687" sideWeight="0.67164177" order="-1" side_tool="false" content_ui="tabs" x="1231" y="92" width="357" height="826" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15955175" sideWeight="0.6816192" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31838074" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="true" anchor="right" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32965687" sideWeight="0.67164177" order="3" side_tool="false" content_ui="tabs" x="1231" y="92" width="357" height="826" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295063" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -714,35 +669,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.7.0_04/src.zip!/javax/swing/ImageIcon.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="227" column="0" selection-start="7108" selection-end="7108" vertical-scroll-proportion="0.33213645">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/ResourceManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="83" selection-start="469" selection-end="499" vertical-scroll-proportion="0.0">
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="175" column="32" selection-start="5552" selection-end="5552" vertical-scroll-proportion="-150.5">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/frames/MainFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="114" selection-start="643" selection-end="643" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#458#4215#0" expanded="true" />
-            <element signature="e#4204#4205#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -768,28 +698,7 @@
     <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorEdit.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="18" column="50" selection-start="602" selection-end="602" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorList.form">
-      <provider selected="true" editor-type-id="ui-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.form">
-      <provider selected="true" editor-type-id="ui-designer">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="101" selection-start="1197" selection-end="1197" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -803,6 +712,62 @@
     <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/GiftList.form">
       <provider selected="true" editor-type-id="ui-designer">
         <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/DonorList.form">
+      <provider selected="true" editor-type-id="ui-designer">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/forms/MainWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="20" selection-start="20" selection-end="20" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/db/IDatabase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="17" selection-start="230" selection-end="230" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="171" column="79" selection-start="6695" selection-end="6695" vertical-scroll-proportion="0.49122807">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/gui/DonorTab.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="61" selection-start="797" selection-end="797" vertical-scroll-proportion="0.39473686">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/db/SQLite.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="167" column="24" selection-start="5417" selection-end="5417" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="54" column="24" selection-start="1876" selection-end="1876" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/net/sf/librefundraiser/guiswing/frames/MainFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="232" selection-end="378" vertical-scroll-proportion="0.39865997">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>

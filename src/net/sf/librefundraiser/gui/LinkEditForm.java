@@ -1,33 +1,20 @@
 package net.sf.librefundraiser.gui;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayDeque;
-import java.util.StringTokenizer;
-
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.ResourceManager;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseTrackListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.*;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayDeque;
+import java.util.StringTokenizer;
 
 public class LinkEditForm extends Group {
 	private ArrayDeque<String> links;

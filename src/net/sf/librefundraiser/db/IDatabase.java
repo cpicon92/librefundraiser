@@ -1,11 +1,11 @@
 package net.sf.librefundraiser.db;
 
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.ProgressListener;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.ProgressListener;
 
 public interface IDatabase {
 

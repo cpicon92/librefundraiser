@@ -1,9 +1,9 @@
 package net.sf.librefundraiser;
 
-import java.util.HashMap;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+
+import java.util.HashMap;
 
 public class ResourceManager {
 	public static HashMap<String, Image> icons = new HashMap<String, Image>();
