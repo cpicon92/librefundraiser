@@ -193,80 +193,19 @@ public class FileLFD implements IDatabase {
 		return output;
 	}
 
-	public Donor[] getDonors(String query) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		ArrayDeque<String> columns = new ArrayDeque<String>();
+	public Donor[] getDonors(int[] ids) {
+		String[] sIds = new String[ids.length];
+		for (int i = 0; i < ids.length; i++) {
+			sIds[i] = String.format("%06d", ids[i]);
+		}
+		return getDonors(sIds);
+	}
+	
+	public Donor[] getDonors(String[] ids) {
 		Donor[] output = null;
-		try {
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
-			while (rs.next()) {
-				String str = rs.getString("name");
-				columns.add(str);
-			}
-			rs.close();
-			rs = stmt.executeQuery("select * from donors " + query);
-			ArrayDeque<Donor> donors = new ArrayDeque<Donor>();
-			while (rs.next()) {
-				Donor donor = new Donor(rs.getInt("account"));
-				for (String column : columns) {
-					String value = "";
-					try {
-						value = formatDate(rs.getString(column));
-					} catch (SQLException e1) {
-					}
-					donor.putData(column, value != null ? value : "");
-				}
-				donors.add(donor);
-			}
-			/*fetch gifts*/ {
-				for (Donor donor : donors) {
-					ArrayDeque<String> giftColumns = new ArrayDeque<String>();
-					ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
-					while (rsGifts.next()) {
-						giftColumns.add(rsGifts.getString("name"));
-					}
-					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
-					ArrayList<Gift> gifts = new ArrayList<Gift>();
-					while (rsGifts.next()) {
-						Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
-						for (String column : giftColumns) {
-							String value = "";
-							try {
-								value = formatDate(rsGifts.getString(column));
-							} catch (SQLException e1) {
-							}
-							gift.putIc(column, value != null ? value : "");
-						}
-						gifts.add(gift);
-					}
-					rsGifts.close();
-					donor.addGifts(gifts);
-				}
-			}
-			rs.close();
-
-			output = donors.toArray(new Donor[0]);
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		lock.lock();
+		//TODO implement this
 		lock.unlock();
-		final Donor[] toSave = output;
-		new Thread(new Runnable() {
-			public void run() {
-				saveDonors(toSave);
-				System.out.println("saved");
-			}
-		}).start();
 		return output;
 	}
 
