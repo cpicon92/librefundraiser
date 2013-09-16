@@ -290,7 +290,7 @@ public class FileLFD implements IDatabase {
 			i++;
 		}
 		try {
-			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream("/home/kristian/newlfdtest.lfd")));
+			ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream("C:/Users/Kristian/Documents/newlfdtest.lfd")));
 			PrintStream zipWriter = new PrintStream(zip);
 			for (String[] json : jsonDonors) {
 				zip.putNextEntry(new ZipEntry(json[0])); 
@@ -394,7 +394,7 @@ public class FileLFD implements IDatabase {
 		donorCache.clear();
 		Gson gson = new Gson();
 		try {
-			ZipInputStream zip = new ZipInputStream(new BufferedInputStream(new FileInputStream("/home/kristian/newlfdtest.lfd")));
+			ZipInputStream zip = new ZipInputStream(new BufferedInputStream(new FileInputStream("C:/Users/Kristian/Documents/newlfdtest.lfd")));
 			ZipEntry entry = zip.getNextEntry();
 			while (entry != null) {
 				Donor d = gson.fromJson(new InputStreamReader(zip), Donor.class);
