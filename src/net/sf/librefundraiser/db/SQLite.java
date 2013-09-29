@@ -1,25 +1,20 @@
 package net.sf.librefundraiser.db;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.gui.DonorList;
 
-public abstract class SQLite implements IDatabase {
+import java.io.File;
+import java.sql.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class SQLite implements IDatabase {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
 	private Connection connection = null;
@@ -167,6 +162,16 @@ public abstract class SQLite implements IDatabase {
 		lock.unlock();
 		return output;
 	}
+
+    @Override
+    public Donor[] getDonors(int[] ids) {
+        return new Donor[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Donor[] getDonors(String[] ids) {
+        return new Donor[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
 
 	public Donor[] getDonors(String query) {

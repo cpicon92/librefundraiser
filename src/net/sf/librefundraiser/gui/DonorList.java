@@ -1,14 +1,6 @@
 package net.sf.librefundraiser.gui;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
+import au.com.bytecode.opencsv.CSVWriter;
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
@@ -16,38 +8,28 @@ import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabFolderEvent;
 import net.sf.librefundraiser.tabs.TabFolderListener;
 import net.sf.librefundraiser.tabs.TabItem;
-
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Column;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 
 

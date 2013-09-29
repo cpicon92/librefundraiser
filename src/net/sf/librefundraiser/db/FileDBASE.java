@@ -1,21 +1,15 @@
 package net.sf.librefundraiser.db;
+
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Donor.Gift;
+import nl.knaw.dans.common.dbflib.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.Format;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
-import nl.knaw.dans.common.dbflib.CorruptedTableException;
-import nl.knaw.dans.common.dbflib.Database;
-import nl.knaw.dans.common.dbflib.Field;
-import nl.knaw.dans.common.dbflib.IfNonExistent;
-import nl.knaw.dans.common.dbflib.Record;
-import nl.knaw.dans.common.dbflib.Table;
-import nl.knaw.dans.common.dbflib.Type;
-import nl.knaw.dans.common.dbflib.Version;
 
 public class FileDBASE {
 	final Database database;

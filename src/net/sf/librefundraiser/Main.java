@@ -1,17 +1,4 @@
 package net.sf.librefundraiser;
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Properties;
 
 import net.sf.librefundraiser.db.FileDBASE;
 import net.sf.librefundraiser.db.FileLFD;
@@ -19,12 +6,18 @@ import net.sf.librefundraiser.db.IDatabase;
 import net.sf.librefundraiser.db.NewerDbVersionException;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import java.io.*;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 //TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {

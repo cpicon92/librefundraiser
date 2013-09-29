@@ -1,19 +1,14 @@
 package net.sf.librefundraiser.db;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.google.gson.Gson;
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ProgressListener;
+import net.sf.librefundraiser.gui.DonorList;
+
+import java.io.*;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
@@ -25,14 +20,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ProgressListener;
-import net.sf.librefundraiser.gui.DonorList;
-
-import com.google.gson.Gson;
 
 public class FileLFD implements IDatabase {
 	private static final int latestDbVersion = 2;

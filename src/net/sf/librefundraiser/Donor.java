@@ -1,10 +1,6 @@
 package net.sf.librefundraiser;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Set;
+
+import java.util.*;
 
 
 public class Donor {
