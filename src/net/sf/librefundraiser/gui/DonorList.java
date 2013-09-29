@@ -187,7 +187,7 @@ public class DonorList extends Composite {
 						public void run() {
 							final Donor[] donor = new Donor[] {null};
 							try {
-								donor[0] = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"")[0];
+								donor[0] = Main.getDonorDB().getDonors(new int[]{id})[0];
 							} catch (ArrayIndexOutOfBoundsException e) {
 								donor[0] = new Donor(id);
 							}
@@ -217,7 +217,7 @@ public class DonorList extends Composite {
 						public void run() {
 							final Donor[] donor = new Donor[] {null};
 							try {
-								donor[0] = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"")[0];
+								donor[0] = Main.getDonorDB().getDonors(new int[]{id})[0];
 							} catch (ArrayIndexOutOfBoundsException e) {
 								donor[0] = new Donor(id);
 							}

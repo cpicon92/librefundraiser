@@ -20,7 +20,7 @@ public class DonorTab extends TabItem {
 		super(tabFolder, SWT.NONE);
 		Donor donor;
 		try {
-			donor = Main.getDonorDB().getDonors("where ACCOUNT=\""+String.format("%06d",id)+"\"")[0];
+			donor = Main.getDonorDB().getDonors(new int[]{id})[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			donor = new Donor(id);
 		}

@@ -19,7 +19,7 @@ import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.gui.DonorList;
 
-public class SQLite implements IDatabase {
+public abstract class SQLite implements IDatabase {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
 	private Connection connection = null;
@@ -168,7 +168,7 @@ public class SQLite implements IDatabase {
 		return output;
 	}
 
-	@Override
+
 	public Donor[] getDonors(String query) {
 		lock.lock();
 		Connection conn = this.getConnection();
