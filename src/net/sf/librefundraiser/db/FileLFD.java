@@ -58,8 +58,8 @@ public class FileLFD implements IDatabase {
 		return output.toString();
 	}
 
-	public FileLFD(String filename) throws NewerDbVersionException {
-		dbFile = new File(filename);
+	public FileLFD(File dbFile) throws NewerDbVersionException {
+		this.dbFile = dbFile;
 		this.refresh();
 		Connection conn = this.getConnection();
 		try {
