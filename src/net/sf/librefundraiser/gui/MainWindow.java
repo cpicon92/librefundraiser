@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class MainWindow {
@@ -367,15 +366,12 @@ public class MainWindow {
 		new Label(compositeToolbar, SWT.NONE);
 		
 		SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
-		mainPanel.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_SIZEWE));
 		mainPanel.setSashWidth(5);
 		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
 		donorTable = new DonorTable(mainPanel, SWT.NONE);
-		donorTable.setCursor(null);
 
 		compositeDonorList = new DonorTabFolder(mainPanel, SWT.NONE);
-		compositeDonorList.setCursor(null);
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
 		donorTable.setTabFolder(((DonorTabFolder) compositeDonorList).tabFolder);
