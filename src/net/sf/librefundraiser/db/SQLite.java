@@ -19,7 +19,7 @@ import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ProgressListener;
-import net.sf.librefundraiser.gui.DonorList;
+import net.sf.librefundraiser.gui.DonorTable;
 
 public class SQLite {
 	private static final int latestDbVersion = 2;
@@ -141,7 +141,7 @@ public class SQLite {
 				fieldSearch:for (String field : fields) {
 					String result = rs.getString(field);
 					if (result.toLowerCase().contains(query.toLowerCase())) {
-						for (String[] c : DonorList.columns) {
+						for (String[] c : DonorTable.columns) {
 							if (field.equals(c[1])) {
 								matchingFieldName = c[0];
 								matchingField = c[1];

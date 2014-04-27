@@ -96,7 +96,7 @@ public class DonorListSorter extends ViewerComparator {
 	public int compare(Viewer v, Object c1, Object c2) {
 		Assert.isTrue(v == this.viewer);
 		ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();
-		String column = DonorList.columns[columnIndex][0];
+		String column = DonorTable.columns[columnIndex][0];
 		String t1 = labelProvider.getColumnText(c1,columnIndex);
 		String t2 = labelProvider.getColumnText(c2,columnIndex);
 		int output = 0;
@@ -114,7 +114,7 @@ public class DonorListSorter extends ViewerComparator {
 			t2 = addr2 + String.format(" %05d", num2);
 		}
 		//compare money fields as money
-		if (DonorList.columns[columnIndex][1].matches(DonorList.moneyColumns)) {
+		if (DonorTable.columns[columnIndex][1].matches(DonorTable.moneyColumns)) {
 			Double d1 = Main.fromMoney(t1);
 			Double d2 = Main.fromMoney(t2);
 			output = d1.compareTo(d2);

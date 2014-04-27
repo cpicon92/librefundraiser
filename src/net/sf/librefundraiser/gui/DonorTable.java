@@ -13,8 +13,6 @@ import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.tabs.TabFolder;
-import net.sf.librefundraiser.tabs.TabFolderEvent;
-import net.sf.librefundraiser.tabs.TabFolderListener;
 import net.sf.librefundraiser.tabs.TabItem;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -56,7 +54,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 
 
-public class DonorList extends Composite {
+public class DonorTable extends Composite {
 	private Table table;
 
 	final static public String[][] columns = { { "Account", "account" },
@@ -79,7 +77,8 @@ public class DonorList extends Composite {
 
 	private TableViewer tableViewer;
 
-	public TabFolder tabFolder;
+	private TabFolder tabFolder;
+
 
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -114,36 +113,13 @@ public class DonorList extends Composite {
 	 * @param parent
 	 * @param style
 	 */
-	public DonorList(Composite parent, int style) {
+	public DonorTable(Composite parent, int style) {
 		super(parent, style);
 		if (donors == null) donors = new Donor[] {};
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
-		tabFolder = new TabFolder(this, SWT.NONE);
-		tabFolder.addTabFolderListener(new TabFolderListener() {
-			public void close(TabFolderEvent event) {
-				TabItem closing = event.item;
-				if (!closing.getText().substring(0, 1).equals("*")) return;
-				MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
-				verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
-				verify.setText("LibreFundraiser Warning");
-				event.doit = verify.open() == SWT.YES;
-			}
-		});
 
-		final TabItem tbtmDonors = new TabItem(tabFolder, SWT.NONE);
-		tbtmDonors.setImage(ResourceManager.getIcon("home-tab.png"));
-		tbtmDonors.setText("Donors");
-		tabFolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TabItem t = tabFolder.getSelection();
-				if (!t.getClass().equals(DonorTab.class)) {
-					Main.getWindow().getSaveButton().setEnabled(false);
-				} else {
-					((DonorTab)t).alterSaveButton();
-				}
-			}
-		});
-		Composite compositeTable = new Composite(tabFolder, SWT.NONE);
+
+		Composite compositeTable = new Composite(this, SWT.NONE);
 		GridLayout gl_compositeTable = new GridLayout(2, false);
 		gl_compositeTable.marginHeight = 0;
 		gl_compositeTable.marginWidth = 0;
@@ -163,7 +139,7 @@ public class DonorList extends Composite {
 			private long recentId;
 			public void modifyText(ModifyEvent e) {
 				recentId = System.currentTimeMillis();
-				DonorList.this.getDisplay().timerExec(300, new Runnable() {
+				DonorTable.this.getDisplay().timerExec(300, new Runnable() {
 					long id = recentId;
 					@Override
 					public void run() {
@@ -185,13 +161,11 @@ public class DonorList extends Composite {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				TableItem selectedItem = table.getSelection()[0];
 				int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-				DonorTab newTab = new DonorTab(id,tabFolder);
-				tabFolder.setSelection(newTab);
+				DonorTab newTab = new DonorTab(id, DonorTable.this.tabFolder);
+				DonorTable.this.tabFolder.setSelection(newTab);
 			}
 		});
 		table.setHeaderVisible(true);
-		tbtmDonors.setControl(compositeTable);
-		tbtmDonors.setClosable(false);
 
 		for (String[] c : columns) {
 			TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -203,7 +177,6 @@ public class DonorList extends Composite {
 		tableViewer.setLabelProvider(new TableLabelProvider());
 		tableViewer.setContentProvider(new ContentProvider());
 		tableViewer.setInput(donors);
-		tabFolder.setSelection(tbtmDonors);
 		new DonorListSorter(tableViewer);
 
 		Menu menuDonorList = new Menu(table);
@@ -227,9 +200,9 @@ public class DonorList extends Composite {
 							}
 							getDisplay().asyncExec(new Runnable() {
 								public void run() {
-									DonorTab dt = new DonorTab(donor[0],tabFolder);
+									DonorTab dt = new DonorTab(donor[0], DonorTable.this.tabFolder);
 									if (i[0] == items.length - 1) {
-										tabFolder.setSelection(dt);
+										DonorTable.this.tabFolder.setSelection(dt);
 									}
 									i[0]++;
 								}
@@ -257,7 +230,7 @@ public class DonorList extends Composite {
 							}
 							getDisplay().asyncExec(new Runnable() {
 								public void run() {
-									new DonorTab(donor[0],tabFolder);
+									new DonorTab(donor[0], DonorTable.this.tabFolder);
 								}
 							});
 						}
@@ -470,5 +443,13 @@ public class DonorList extends Composite {
 			}
 		}).start();
 		
+	}
+
+	public TabFolder getTabFolder() {
+		return tabFolder;
+	}
+
+	public void setTabFolder(TabFolder tabFolder) {
+		this.tabFolder = tabFolder;
 	}
 }

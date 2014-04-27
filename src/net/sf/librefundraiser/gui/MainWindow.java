@@ -8,6 +8,7 @@ import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 
 public class MainWindow {
@@ -42,6 +45,7 @@ public class MainWindow {
 	private Display display;
 	private Runnable saveCurrent;
 	private ProgressBar pbStatusArea;
+	private DonorTable donorTable;
 
 	/**
 	 * Open the window.
@@ -75,7 +79,7 @@ public class MainWindow {
 		shell.addListener(SWT.Close, new Listener() {	
 			@Override
 			public void handleEvent(Event event) {
-				if (!((DonorList)compositeDonorList).closeAllTabs()) event.doit = false;
+				if (!((DonorTabFolder)compositeDonorList).closeAllTabs()) event.doit = false;
 			}
 		});
 		refreshTitle();
@@ -166,7 +170,7 @@ public class MainWindow {
 				final String path = fileDialog.open();
 				if (path == null) return;
 				File f = new File(path);
-				((DonorList)compositeDonorList).writeCSV(f);
+				MainWindow.this.donorTable.writeCSV(f);
 			}
 		});
 		mntmCsv.setText("To CSV file...");
@@ -181,7 +185,7 @@ public class MainWindow {
 				final String path = fileDialog.open();
 				if (path == null) return;
 				File f = new File(path);
-				((DonorList)compositeDonorList).writeODS(f, true);
+				MainWindow.this.donorTable.writeODS(f, true);
 			}
 		});
 		mntmOds.setText("To ODS (LibreOffice Spreadsheet) file...");
@@ -296,7 +300,7 @@ public class MainWindow {
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				((DonorList)compositeDonorList).saveAll();
+				((DonorTabFolder)compositeDonorList).saveAll();
 			}
 		});
 		mntmSaveAllDonors.setText("Save All Donors");
@@ -317,11 +321,9 @@ public class MainWindow {
 
 		Composite compositeToolbar = new Composite(shell, SWT.NONE);
 		compositeToolbar.setLayout(new GridLayout(3, false));
-		GridData gd_compositeToolbar = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		compositeToolbar.setLayoutData(gd_compositeToolbar);
+		compositeToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		ToolBar toolBar = new ToolBar(compositeToolbar, SWT.FLAT | SWT.RIGHT);
-		toolBar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 		toolBar.setBounds(0, 0, 80, 21);
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
@@ -362,9 +364,22 @@ public class MainWindow {
 		GridData gd_statusArea = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
 		gd_statusArea.widthHint = 150;
 		pbStatusArea.setLayoutData(gd_statusArea);
+		new Label(compositeToolbar, SWT.NONE);
+		
+		SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
+		mainPanel.setCursor(SWTResourceManager.getCursor(SWT.CURSOR_SIZEWE));
+		mainPanel.setSashWidth(5);
+		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		donorTable = new DonorTable(mainPanel, SWT.NONE);
+		donorTable.setCursor(null);
 
-		compositeDonorList = new DonorList(shell, SWT.NONE);
+		compositeDonorList = new DonorTabFolder(mainPanel, SWT.NONE);
+		compositeDonorList.setCursor(null);
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		donorTable.setTabFolder(((DonorTabFolder) compositeDonorList).tabFolder);
+		mainPanel.setWeights(new int[] {1, 3});
 
 	}
 	public ToolItem getSaveButton() {
@@ -386,8 +401,8 @@ public class MainWindow {
 		final String path = fileDialog.open();
 		Main.importFromFRBW(display, shell, this, path);
 	}
-	public DonorList getCompositeDonorList() {
-		return (DonorList) compositeDonorList;
+	public DonorTabFolder getCompositeDonorList() {
+		return (DonorTabFolder) compositeDonorList;
 	}
 
 
@@ -405,8 +420,8 @@ public class MainWindow {
 										progress = 0;
 										Donor[] output = Main.getDonorDB().getDonors();
 //										Main.getDonorDB().saveDonors(output);
-										((DonorList)compositeDonorList).donors = output;
-										((DonorList)compositeDonorList).refresh();
+										donorTable.donors = output;
+										donorTable.refresh();
 									}
 									if (progress != 0) {
 										if (waitCursor) setCursor(SWT.CURSOR_WAIT);
@@ -430,7 +445,7 @@ public class MainWindow {
 				} else {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							((DonorList)compositeDonorList).refresh();
+							donorTable.refresh();
 						}
 					});
 				}
@@ -439,7 +454,7 @@ public class MainWindow {
 	}
 
 	public void newDonor() {
-		((DonorList)compositeDonorList).newDonor();
+		((DonorTabFolder)compositeDonorList).newDonor();
 	}
 
 	public void refreshTitle() {
@@ -468,5 +483,9 @@ public class MainWindow {
 	
 	public void setCursor(int cursor) {
 		shell.setCursor(new Cursor(display, cursor));
+	}
+
+	public DonorTable getDonorTable() {
+		return donorTable;
 	}
 }

@@ -36,7 +36,7 @@ public class ODB {
 				out.closeEntry();
 			}
 			out.close();
-			Main.getWindow().getCompositeDonorList().writeODS(odsFile, false);
+			Main.getWindow().getDonorTable().writeODS(odsFile, false);
 			if (register) registerDB(f);
 			OOUtils.open(f);
 		} catch (FileNotFoundException e) {
