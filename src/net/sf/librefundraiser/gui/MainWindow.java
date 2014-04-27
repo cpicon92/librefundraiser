@@ -1,8 +1,5 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
@@ -11,26 +8,12 @@ import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -40,7 +23,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -55,13 +37,9 @@ import org.eclipse.swt.widgets.ToolItem;
 public class MainWindow {
 
 	protected Shell shell;
-	private Text txtSearch;
 	private ToolItem tltmSave;
 	private Composite compositeDonorList;
 	private Display display;
-	private List listSearch;
-	private Shell shellSearch;
-	private long popupTimer = System.currentTimeMillis();
 	private Runnable saveCurrent;
 	private ProgressBar pbStatusArea;
 
@@ -378,143 +356,12 @@ public class MainWindow {
 
 		//TODO add advanced search with SQL queries
 
-		new ToolItem(toolBar, SWT.SEPARATOR);
-
-		shellSearch = new Shell(shell, SWT.NONE);
-		listSearch = new List(shellSearch, SWT.SINGLE);
-		shellSearch.setLayout(new FillLayout());
-		shellSearch.addShellListener(new ShellListener() {
-			public void shellActivated(ShellEvent e) {
-				txtSearch.setFocus();
-				Rectangle bounds = txtSearch.getBounds();
-				Point location = txtSearch.toDisplay(-2, bounds.height-2);
-				shellSearch.setLocation(location);
-				shellSearch.pack();
-			}
-			public void shellClosed(ShellEvent e) {
-			}
-			public void shellDeactivated(ShellEvent e) {
-			}
-			public void shellDeiconified(ShellEvent e) {
-			}
-			public void shellIconified(ShellEvent e) {
-			}
-		});
-
-		txtSearch = new Text(compositeToolbar, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
-		txtSearch.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e) {
-				display.timerExec(100, new Runnable() {
-					public void run() {
-						try {
-							if (!display.getFocusControl().equals(txtSearch) && !display.getFocusControl().equals(listSearch)) {
-								shellSearch.setVisible(false);
-							}
-						} catch (NullPointerException e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}
-		});
-		GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_txtSearch.widthHint = 150;
-		txtSearch.setLayoutData(gd_txtSearch);
-		txtSearch.setBounds(0, 0, 76, 19);
-		txtSearch.setMessage("Quick Find");
-
-		listSearch.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				quickSearchOpen();
-			}
-		});
-
-		txtSearch.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				switch (e.keyCode) {
-				case SWT.ARROW_DOWN: 
-					listSearch.select(listSearch.getSelectionIndex()+1);
-					break;
-				case SWT.ARROW_UP:
-					listSearch.select(listSearch.getSelectionIndex()-1);
-					break;
-				case SWT.ESC:
-					shellSearch.setVisible(false);
-					break;
-				}
-			}
-		});
-
-		txtSearch.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN || e.keyCode == SWT.ARROW_UP) {
-					display.timerExec(1, new Runnable() {
-						public void run() {
-							txtSearch.setSelection(txtSearch.getCharCount()+1);
-						}
-					});
-				}
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					quickSearchOpen();
-				}
-			}
-		});
-		txtSearch.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				popupTimer = System.currentTimeMillis();
-				display.timerExec(500, new Runnable() {
-					long time = System.currentTimeMillis();
-					public void run() {
-						if (time != popupTimer) return;
-						shellSearch.setVisible(false);
-						listSearch.setItems(new String[]{});
-						if (txtSearch.getCharCount() > 1) {
-							HashMap<String,String> results = Main.getDonorDB().quickSearch(txtSearch.getText());
-							ArrayList<String> keys = new ArrayList<String>();
-							int maxItems = 10;
-							int items = 0;
-							for (Entry<String, String> entry : results.entrySet()) {
-								items++;
-								if (items >= maxItems) break;
-								String key = entry.getKey();
-								String value = entry.getValue();
-								keys.add(key);
-								listSearch.add(value);
-							}
-							if (items > 0) {
-								listSearch.setData(keys);
-								Rectangle bounds = txtSearch.getBounds();
-								Point location = txtSearch.toDisplay(-2, bounds.height-2);
-								shellSearch.setLocation(location);
-								shellSearch.setMinimumSize(bounds.width, 0);
-								shellSearch.pack();
-								shellSearch.setVisible(true);
-								listSearch.select(0);
-							}
-						}
-					}
-				});
-			}
-		});
+	
 
 		pbStatusArea = new ProgressBar(compositeToolbar, SWT.NONE);
 		GridData gd_statusArea = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
 		gd_statusArea.widthHint = 150;
 		pbStatusArea.setLayoutData(gd_statusArea);
-
-		shell.addControlListener(new ControlAdapter() {
-			public void controlMoved(ControlEvent e) {
-				carryResults();
-			}
-			public void controlResized(ControlEvent e) {
-				carryResults();
-			}
-			private void carryResults() {
-				Rectangle bounds = txtSearch.getBounds();
-				Point location = txtSearch.toDisplay(-2, bounds.height-2);
-				shellSearch.setLocation(location);
-			}
-		});
 
 		compositeDonorList = new DonorList(shell, SWT.NONE);
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -589,23 +436,6 @@ public class MainWindow {
 				}
 			}
 		}).start();
-	}
-
-	@SuppressWarnings("unchecked")
-	private void quickSearchOpen() {
-		ArrayList<String> keys = (ArrayList<String>)listSearch.getData();
-		try {
-			if (keys != null && !keys.isEmpty()) {
-				String key = keys.get(listSearch.getSelectionIndex());
-				int id = Integer.parseInt(key);
-				DonorTab newTab = new DonorTab(id,((DonorList)compositeDonorList).tabFolder);
-				shellSearch.setVisible(false);
-				listSearch.setItems(new String[]{});
-				txtSearch.setText("");
-				((DonorList)compositeDonorList).tabFolder.setSelection(newTab);
-				((DonorList)compositeDonorList).tabFolder.setFocus();
-			}
-		} catch (Exception e1) {}
 	}
 
 	public void newDonor() {

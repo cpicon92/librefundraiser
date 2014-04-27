@@ -23,7 +23,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -36,12 +39,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
 import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Column;
 import org.jopendocument.dom.spreadsheet.Sheet;
@@ -139,13 +144,42 @@ public class DonorList extends Composite {
 			}
 		});
 		Composite compositeTable = new Composite(tabFolder, SWT.NONE);
-		GridLayout gl_compositeTable = new GridLayout(1, false);
+		GridLayout gl_compositeTable = new GridLayout(2, false);
 		gl_compositeTable.marginHeight = 0;
 		gl_compositeTable.marginWidth = 0;
 		compositeTable.setLayout(gl_compositeTable);
+		
+		Label lblFilter = new Label(compositeTable, SWT.NONE);
+		lblFilter.setAlignment(SWT.RIGHT);
+		GridData gd_lblFilter = new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1);
+		gd_lblFilter.widthHint = 20;
+		lblFilter.setLayoutData(gd_lblFilter);
+		lblFilter.setImage(ResourceManager.getIcon("filter.png"));
+		
+		final DonorListFilter tableFilter = new DonorListFilter();
+		
+		final Text txtFilter = new Text(compositeTable, SWT.BORDER);
+		txtFilter.addModifyListener(new ModifyListener() {
+			private long recentId;
+			public void modifyText(ModifyEvent e) {
+				recentId = System.currentTimeMillis();
+				DonorList.this.getDisplay().timerExec(300, new Runnable() {
+					long id = recentId;
+					@Override
+					public void run() {
+						if (id != recentId) return;
+						tableFilter.setFilter(txtFilter.getText());
+						tableViewer.refresh();
+					}
+				});
+			}
+		});
+		txtFilter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		
 		tableViewer = new TableViewer(compositeTable, SWT.FULL_SELECTION | SWT.MULTI);
+		tableViewer.setFilters(new ViewerFilter[] {tableFilter});
 		table = tableViewer.getTable();
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {

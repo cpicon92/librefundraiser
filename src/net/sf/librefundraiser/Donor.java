@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 
 
@@ -93,6 +94,12 @@ public class Donor {
 	}
 	public void clearGifts() {
 		gifts.clear();
+	}
+	public boolean match (String filter) {
+		for (Entry<String, String> e : this.data.entrySet()) {
+			if (e.getValue().toLowerCase().contains(filter.toLowerCase())) return true;
+		}
+		return false;
 	}
 	public void recalculateGiftStats() {
 		double allTime = 0;
