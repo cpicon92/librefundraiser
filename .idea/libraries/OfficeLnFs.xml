@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="OfficeLnFs">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/OfficeLnFs.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

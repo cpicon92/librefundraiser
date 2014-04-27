@@ -1,12 +1,12 @@
 package net.sf.librefundraiser.gui;
 
+import java.text.SimpleDateFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
-import java.text.SimpleDateFormat;
 
 public class DatePickerTest extends Shell {
 

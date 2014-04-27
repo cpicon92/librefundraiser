@@ -1,27 +1,33 @@
 package net.sf.librefundraiser;
-
-import net.sf.librefundraiser.db.FileDBASE;
-import net.sf.librefundraiser.db.FileLFD;
-import net.sf.librefundraiser.db.IDatabase;
-import net.sf.librefundraiser.db.NewerDbVersionException;
-import net.sf.librefundraiser.gui.MainWindow;
-import net.sf.librefundraiser.gui.NewDatabaseWizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
+import net.sf.librefundraiser.db.FileDBASE;
+import net.sf.librefundraiser.db.NewerDbVersionException;
+import net.sf.librefundraiser.db.SQLite;
+import net.sf.librefundraiser.gui.MainWindow;
+import net.sf.librefundraiser.gui.NewDatabaseWizard;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+
 //TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
-	private static IDatabase localDB = null;
+	private static SQLite localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
@@ -52,13 +58,13 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	public static IDatabase getDonorDB() {
-		if (localDB == null) localDB = new FileLFD();
+	public static SQLite getDonorDB() {
+		if (localDB == null) localDB = new SQLite();
 		return localDB;
 	}
 	public static void resetLocalDB() {
 		try {
-			localDB = new FileLFD(getSetting("lastDB"));
+			localDB = new SQLite(getSetting("lastDB"));
 		} catch (NewerDbVersionException e) {
 			// TODO Display gui error message about how the file is too new to be opened
 			e.printStackTrace();

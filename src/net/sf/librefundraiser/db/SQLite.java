@@ -1,26 +1,33 @@
 package net.sf.librefundraiser.db;
 
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ProgressListener;
-import net.sf.librefundraiser.gui.DonorList;
-
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class SQLite implements IDatabase {
+import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ProgressListener;
+import net.sf.librefundraiser.gui.DonorList;
+
+public class SQLite {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
+	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private Connection connection = null;
 	private final Lock lock = new ReentrantLock();
 
-	@Override
 	public String getDbPath() {
 		return dbFile.getPath();
 	}
@@ -30,6 +37,15 @@ public class SQLite implements IDatabase {
 		String filename = System.getProperty("java.io.tmpdir") + "/temp" + unixTime + ".db";
 		dbFile = new File(filename);
 	}
+
+	public static final String[] donorFields = new String[] { "ACCOUNT", "TYPE", "FIRSTNAME", "LASTNAME", "SPOUSEFRST",
+		"SPOUSELAST", "SALUTATION", "HOMEPHONE", "WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "CONTACT",
+		"MAILNAME", "ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY", "ENTRYDATE", "CHANGEDATE", "NOTES",
+		"LASTGIVEDT", "LASTAMT", "ALLTIME", "YEARTODT", "FIRSTGIFT", "LARGEST", "FILTER", "EMAIL", "LASTENTDT",
+		"LASTENTAMT", "EMAIL2", "WEB" };
+	public static final String[] giftFields = new String[] { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
+		"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
+	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
 
 	public static String generateTableCreateSQL(String[] fields, String primaryKey) {
 		StringBuilder output = new StringBuilder();
@@ -101,7 +117,6 @@ public class SQLite implements IDatabase {
 		return null;
 	}
 
-	@Override
 	public HashMap<String, String> quickSearch(String query) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -162,17 +177,6 @@ public class SQLite implements IDatabase {
 		lock.unlock();
 		return output;
 	}
-
-    @Override
-    public Donor[] getDonors(int[] ids) {
-        return new Donor[0];  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Donor[] getDonors(String[] ids) {
-        return new Donor[0];  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
 
 	public Donor[] getDonors(String query) {
 		lock.lock();
@@ -251,12 +255,10 @@ public class SQLite implements IDatabase {
 		return output;
 	}
 
-	@Override
 	public void saveDonor(Donor donor) {
 		saveDonors(new Donor[] { donor });
 	}
 
-	@Override
 	public void saveDonors(Donor[] donors) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -339,12 +341,10 @@ public class SQLite implements IDatabase {
 		lock.unlock();
 	}
 
-	@Override
 	public Donor[] getDonors() {
 		return getDonors("");
 	}
 
-	@Override
 	public int getMaxAccount() {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -372,7 +372,6 @@ public class SQLite implements IDatabase {
 	}
 
 	private final ArrayList<Integer> reserved = new ArrayList<Integer>();
-	@Override
 	public int getUniqueRecNum() {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -407,7 +406,6 @@ public class SQLite implements IDatabase {
 	}
 
 
-	@Override
 	public String[] getPreviousValues(String column, String table) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -439,12 +437,10 @@ public class SQLite implements IDatabase {
 		return results.toArray(new String[] {});
 	}
 
-	@Override
 	public void deleteDonor(int id) {
 		deleteDonors(new int[] {id});
 	}
 
-	@Override
 	public void deleteDonors(int[] ids) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -470,7 +466,6 @@ public class SQLite implements IDatabase {
 		lock.unlock();
 	}
 
-	@Override
 	public void deleteGift(int id) {
 		String recnum = String.format("%06d", id);
 		lock.lock();
@@ -490,7 +485,6 @@ public class SQLite implements IDatabase {
 		lock.unlock();
 	}
 
-	@Override
 	public void refreshGifts(Donor donor) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -527,13 +521,11 @@ public class SQLite implements IDatabase {
 		lock.unlock();
 	}
 
-	@Override
 	public String getDbName() {
 		String name = getDbInfo("name");
 		return name == null ? "" : name;
 	}
 
-	@Override
 	public void setDbName(String name) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -553,7 +545,6 @@ public class SQLite implements IDatabase {
 
 	}
 
-	@Override
 	public int getDbVersion() {
 		try {
 			return Integer.parseInt(getDbInfo("version"));
@@ -562,7 +553,6 @@ public class SQLite implements IDatabase {
 		}
 	}
 
-	@Override
 	public String getDbInfo(String key) {
 		lock.lock();
 		Connection conn = this.getConnection();
@@ -605,7 +595,6 @@ public class SQLite implements IDatabase {
 		return date;
 	}
 
-	@Override
 	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
 		//		if (pl != null) pl.setProgress(1);
 		//		final Donor[] donors;

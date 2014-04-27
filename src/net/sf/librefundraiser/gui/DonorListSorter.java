@@ -1,6 +1,6 @@
 package net.sf.librefundraiser.gui;
-
 import net.sf.librefundraiser.Main;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
