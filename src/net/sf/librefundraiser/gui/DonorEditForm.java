@@ -481,7 +481,10 @@ public class DonorEditForm extends Composite {
 
 		
 		compositeGifts = new Composite(DonorEditForm.this, SWT.NONE);
-		compositeGifts.setLayout(new GridLayout(1, false));
+		GridLayout gl_compositeGifts = new GridLayout(1, false);
+		gl_compositeGifts.marginWidth = 0;
+		gl_compositeGifts.marginHeight = 0;
+		compositeGifts.setLayout(gl_compositeGifts);
 		compositeGifts.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		compositeGifts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		if (System.getProperty("os.name").indexOf("nux") >= 0) {
@@ -553,7 +556,10 @@ public class DonorEditForm extends Composite {
 
 
 		compositeDetails = new Composite(DonorEditForm.this, SWT.NONE);
-		compositeDetails.setLayout(new GridLayout(2, false));
+		GridLayout gl_compositeDetails = new GridLayout(2, false);
+		gl_compositeDetails.marginHeight = 0;
+		gl_compositeDetails.marginWidth = 0;
+		compositeDetails.setLayout(gl_compositeDetails);
 		compositeDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		if (System.getProperty("os.name").indexOf("nux") >= 0) {
 			compositeDetails.setBackground(DonorEditForm.this.getBackground());
