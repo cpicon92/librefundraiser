@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -44,7 +43,6 @@ public class MainWindow {
 	private Composite compositeDonorList;
 	private Display display;
 	private Runnable saveCurrent;
-	private ProgressBar pbStatusArea;
 	private DonorTable donorTable;
 
 	/**
@@ -370,12 +368,6 @@ public class MainWindow {
 
 		//TODO add advanced search with SQL queries
 
-	
-
-		pbStatusArea = new ProgressBar(compositeToolbar, SWT.NONE);
-		GridData gd_statusArea = new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1);
-		gd_statusArea.widthHint = 150;
-		pbStatusArea.setLayoutData(gd_statusArea);
 		new Label(compositeToolbar, SWT.NONE);
 		
 		SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
@@ -439,7 +431,6 @@ public class MainWindow {
 									} else {
 										setCursor(SWT.CURSOR_ARROW);
 									}
-									getProgressBar().setSelection(p);
 								}
 							});
 						}
@@ -449,7 +440,6 @@ public class MainWindow {
 							getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									getProgressBar().setMaximum(maxProgress);
 								}
 							});
 						}
@@ -484,10 +474,6 @@ public class MainWindow {
 
 	public Control getFocusControl() {
 		return this.shell.getDisplay().getFocusControl();
-	}
-
-	private ProgressBar getProgressBar() {
-		return pbStatusArea;
 	}
 
 	public Display getDisplay() {
