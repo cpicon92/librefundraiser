@@ -15,10 +15,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -375,13 +380,26 @@ public class MainWindow {
 		new Label(compositeToolbar, SWT.NONE);
 		
 		final SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
-		mainPanel.setSashWidth(5);
+		mainPanel.setSashWidth(6);
 		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
 		
 		donorTable = new DonorTable(mainPanel, SWT.NONE);
 
 		compositeDonorList = new DonorTabFolder(mainPanel, SWT.NONE);
+		FillLayout fillLayout = (FillLayout) compositeDonorList.getLayout();
+		fillLayout.marginWidth = 1;
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+//		mainPanel.setBackground(new Color(display, 0, 0, 0));
+		final Color divider = TabFolder.changeColorBrightness(display, display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -50);
+		compositeDonorList.addPaintListener(new PaintListener() {
+			@Override
+			public void paintControl(PaintEvent e) {
+				Rectangle size = compositeDonorList.getClientArea();
+				e.gc.setForeground(divider);
+				e.gc.drawLine(size.x, size.y, size.x, size.y + size.height);
+			}
+		});
 		
 		final TabFolder tabFolder = ((DonorTabFolder) compositeDonorList).tabFolder;
 		donorTable.setTabFolder(tabFolder);
