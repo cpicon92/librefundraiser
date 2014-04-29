@@ -81,9 +81,11 @@ public class DonorTable extends Composite {
 
 
 	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			Donor donor = (Donor) element;
 			if (columns[columnIndex][1].matches(moneyColumns)) {
@@ -99,11 +101,14 @@ public class DonorTable extends Composite {
 		}
 	}
 	private static class ContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (Object[])inputElement;
 		}
+		@Override
 		public void dispose() {
 		}
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
@@ -137,6 +142,7 @@ public class DonorTable extends Composite {
 		final Text txtFilter = new Text(compositeTable, SWT.BORDER);
 		txtFilter.addModifyListener(new ModifyListener() {
 			private long recentId;
+			@Override
 			public void modifyText(ModifyEvent e) {
 				recentId = System.currentTimeMillis();
 				DonorTable.this.getDisplay().timerExec(300, new Runnable() {
@@ -191,6 +197,7 @@ public class DonorTable extends Composite {
 				for (TableItem selectedItem : items) {
 					final int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
 					new Thread(new Runnable() {
+						@Override
 						public void run() {
 							final Donor[] donor = new Donor[] {null};
 							try {
@@ -200,6 +207,7 @@ public class DonorTable extends Composite {
 								donor[0] = new Donor(id);
 							}
 							getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									DonorTab dt = new DonorTab(donor[0], DonorTable.this.tabFolder);
 									if (i[0] == items.length - 1) {
@@ -222,6 +230,7 @@ public class DonorTable extends Composite {
 				for (TableItem selectedItem : table.getSelection()) {
 					final int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
 					new Thread(new Runnable() {
+						@Override
 						public void run() {
 							final Donor[] donor = new Donor[] {null};
 							try {
@@ -231,6 +240,7 @@ public class DonorTable extends Composite {
 								donor[0] = new Donor(id);
 							}
 							getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									new DonorTab(donor[0], DonorTable.this.tabFolder);
 								}
@@ -279,6 +289,7 @@ public class DonorTable extends Composite {
 		return -1;
 	}
 
+	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
@@ -342,7 +353,7 @@ public class DonorTable extends Composite {
 	}
 
 	public void writeCSV(File f) {
-		ArrayList<String[]> l = new ArrayList<String[]>();
+		ArrayList<String[]> l = new ArrayList<>();
 		String[] columnTitles = new String[columns.length+1];
 		columnTitles[columns.length] = "Notes";
 		for (int i = 0; i < columnTitles.length-1; i++) {
@@ -376,7 +387,7 @@ public class DonorTable extends Composite {
 		new Thread(new Runnable(){
 			@Override
 			public void run() {
-				ArrayDeque<String[]> l = new ArrayDeque<String[]>();
+				ArrayDeque<String[]> l = new ArrayDeque<>();
 				String[] columnTitles = new String[columns.length+1];
 				columnTitles[columns.length] = "Notes";
 				for (int i = 0; i < columnTitles.length-1; i++) {

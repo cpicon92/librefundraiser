@@ -62,6 +62,7 @@ public class DatePicker extends Composite {
 		setLayout(gridLayout);
 		text = new Text(this, SWT.BORDER);
 		text.addTraverseListener(new TraverseListener() {
+			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
 					if (tabRight()) {
@@ -121,12 +122,15 @@ public class DatePicker extends Composite {
 			}
 		});
 		btnDropDown.addMouseTrackListener(new MouseTrackListener() {
+			@Override
 			public void mouseEnter(MouseEvent e) {
 				btnDropDown.setImage(ResourceManager.getIcon("calendar_hover.png"));
 			}
+			@Override
 			public void mouseExit(MouseEvent e) {
 				btnDropDown.setImage(ResourceManager.getIcon("calendar.png"));
 			}
+			@Override
 			public void mouseHover(MouseEvent e) {
 			}
 		});
@@ -169,7 +173,7 @@ public class DatePicker extends Composite {
 	}
 
 	private static Integer[] getDateIndexes(Date date, DateFormat dateFormat) {
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		ArrayList<Integer> indexes = new ArrayList<>();
 		AttributedCharacterIterator charIterator = dateFormat.formatToCharacterIterator(date);
 		Field previous = null;
 		for (int i = charIterator.getBeginIndex(); i < charIterator.getEndIndex(); i++) {
@@ -273,15 +277,20 @@ public class DatePicker extends Composite {
 				}
 			});
 			this.addShellListener(new ShellListener() {
+				@Override
 				public void shellActivated(ShellEvent e) {
 				}
+				@Override
 				public void shellClosed(ShellEvent e) {
 				}
+				@Override
 				public void shellDeactivated(ShellEvent e) {
 					me.dispose();
 				}
+				@Override
 				public void shellDeiconified(ShellEvent e) {
 				}
+				@Override
 				public void shellIconified(ShellEvent e) {
 				}
 			});
@@ -296,9 +305,11 @@ public class DatePicker extends Composite {
 			this.setBackground(colorBorder);
 			this.pack();
 		}
+		@Override
 		protected void checkSubclass() {
 			// Disable the check that prevents subclassing of SWT components
 		}
+		@Override
 		public void setVisible(boolean visible) {
 			Point siblingPosition = this.getSibling().toDisplay(0, 0);
 			Rectangle siblingBounds = this.getSibling().getBounds();

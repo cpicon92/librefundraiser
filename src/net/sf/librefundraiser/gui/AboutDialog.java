@@ -67,6 +67,7 @@ public class AboutDialog extends Dialog {
 		shell.setLayout(gl_shell);
 		
 		SelectionAdapter linkAdapter = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					Program.launch(new URL(e.text).toString());
@@ -141,6 +142,7 @@ public class AboutDialog extends Dialog {
 		
 		Button btnOk = new Button(compositeInfo, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shell.close();
 			}

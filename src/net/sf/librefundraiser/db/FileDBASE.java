@@ -25,7 +25,7 @@ public class FileDBASE {
 	}
 
 	public Donor[] importFRBW() throws CorruptedTableException, IOException {
-		final HashMap<Integer, Donor> importedDonors = new HashMap<Integer, Donor>();
+		final HashMap<Integer, Donor> importedDonors = new HashMap<>();
 		final Table donorTable = database.getTable("Master.dbf");
 		final Table giftTable = database.getTable("Gifts.dbf");
 		final Format dateFormat = FileLFD.dbDateFormat;

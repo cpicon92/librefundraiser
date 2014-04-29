@@ -2,8 +2,11 @@ package net.sf.librefundraiser.db;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import net.sf.librefundraiser.Donor;
@@ -22,6 +26,7 @@ import net.sf.librefundraiser.ProgressListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
 public class FileLFD {
 	private static final int latestDbVersion = 2;
@@ -29,16 +34,12 @@ public class FileLFD {
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private List<Donor> donors = new ArrayList<>();
 	private Map<String, String> info = new HashMap<>();
-//	private Connection connection = null;
-//	private final Lock lock = new ReentrantLock();
 
 	public String getDbPath() {
 		return dbFile.getPath();
 	}
 
-
-
-	public static final String[] donorFields = new String[] { "ACCOUNT", "TYPE", "FIRSTNAME", "LASTNAME", "SPOUSEFRST",
+	public static final String[] donorFields = { "ACCOUNT", "TYPE", "FIRSTNAME", "LASTNAME", "SPOUSEFRST",
 		"SPOUSELAST", "SALUTATION", "HOMEPHONE", "WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "CONTACT",
 		"MAILNAME", "ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY", "ENTRYDATE", "CHANGEDATE", "NOTES",
 		"LASTGIVEDT", "LASTAMT", "ALLTIME", "YEARTODT", "FIRSTGIFT", "LARGEST", "FILTER", "EMAIL", "LASTENTDT",
@@ -62,47 +63,78 @@ public class FileLFD {
 		String filename = System.getProperty("java.io.tmpdir") + "/temp" + unixTime + ".db";
 		dbFile = new File(filename);
 	}
-	
-	private void readAll() throws IOException {
-		Gson gson = new GsonBuilder()
-	            .registerTypeAdapter(Gift.class, new GiftDeserializer())
-	            .create();
-        JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(dbFile), "UTF-8"));
-        List<Donor> donors = new ArrayList<Donor>();
-        reader.beginObject();
-        while (reader.hasNext()) {
-        	String name = reader.nextName();
-        	if (name.equals("info")) {
-        		this.info = gson.fromJson(reader, Map.class);
-        	} else if (name.equals("donors")) {
-                reader.beginArray();
-                while (reader.hasNext()) {
-                    Donor donor = gson.fromJson(reader, Donor.class);
-                    donors.add(donor);
-                }
-                reader.endArray();
-        	} else {
-        		reader.skipValue();
-        	}
-        }
-        reader.endObject();
-        reader.close();
-        this.donors = donors;
-	}
-	
-	private void writeAll() {
 
+	private void readAll() {
+		try {
+			Gson gson = new GsonBuilder()
+			.registerTypeAdapter(Gift.class, new GiftDeserializer())
+			.create();
+			JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(dbFile), "UTF-8"));
+			List<Donor> donors = new ArrayList<>();
+			reader.beginObject();
+			while (reader.hasNext()) {
+				String name = reader.nextName();
+				if (name.equals("info")) {
+					this.info = gson.fromJson(reader, Map.class);
+				} else if (name.equals("donors")) {
+					reader.beginArray();
+					while (reader.hasNext()) {
+						Donor donor = gson.fromJson(reader, Donor.class);
+						donors.add(donor);
+					}
+					reader.endArray();
+				} else {
+					reader.skipValue();
+				}
+			}
+			reader.endObject();
+			reader.close();
+			this.donors = donors;
+		} catch (IOException e) {
+			throw new DatabaseIOException(e);
+		}
+	}
+
+	private void writeAll() {
+		try {
+			Gson gson = new Gson();
+			OutputStream os = new FileOutputStream(this.dbFile);
+			JsonWriter writer = new JsonWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.beginObject();
+			writer.name("info");
+			gson.toJson(this.info, Map.class, writer);
+			writer.name("donors");
+			writer.beginArray();
+			for (Donor donor: this.donors) {
+				gson.toJson(donor, Donor.class, writer);
+			}
+			writer.endArray();
+			writer.endObject();
+			writer.close();
+		} catch (IOException e) {
+			throw new DatabaseIOException(e);
+		}
 	}
 
 	public void saveDonor(Donor donor) {
+		saveDonors(new Donor[] {donor});
 	}
 
 	public void saveDonors(Donor[] donors) {
-
+		for (Donor donor : donors) {
+			for (ListIterator<Donor> iter = this.donors.listIterator(); iter.hasNext();) {
+				Donor existingDonor = iter.next();
+				if (existingDonor.getId() == donor.getId()) {
+					iter.set(donor);
+					break;
+				}
+			}
+		}
+		this.writeAll();
 	}
 
 	public List<Donor> getDonors() {
-		return new ArrayList<Donor>(this.donors);
+		return new ArrayList<>(this.donors);
 	}
 	
 	public Donor getDonor(int id) {
@@ -130,7 +162,7 @@ public class FileLFD {
 		for (Donor d : this.donors) {
 			previousValues.add(d.getData(field));
 		}
-		return new ArrayList<String>(previousValues);
+		return new ArrayList<>(previousValues);
 	}
 	
 	public List<String> getPreviousGiftValues(String field) {
@@ -140,7 +172,7 @@ public class FileLFD {
 				previousValues.add(g.getIc(field));
 			}
 		}
-		return new ArrayList<String>(previousValues);
+		return new ArrayList<>(previousValues);
 	}
 
 	public void deleteDonor(int id) {
@@ -154,6 +186,7 @@ public class FileLFD {
 				if (donor.getId() == id) iter.remove();
 			}
 		}
+		this.writeAll();
 	}
 
 	public void deleteGift(int recnum) {
@@ -176,6 +209,7 @@ public class FileLFD {
 
 	public void setDbName(String name) {
 		this.info.put("name", name);
+		this.writeAll();
 	}
 
 	public int getDbVersion() {
@@ -231,6 +265,22 @@ public class FileLFD {
 		//		this.saveDonors(donors);
 		if (pl != null) pl.setProgress(-1);
 
+	}
+	
+	public static class DatabaseIOException extends RuntimeException {
+		private static final long serialVersionUID = -4322061981988425539L;
+		public DatabaseIOException() {
+			super();
+		}
+		public DatabaseIOException(String message) {
+			super(message);
+		}
+		public DatabaseIOException(String message, Throwable cause) {
+			super(message, cause);
+		}
+		public DatabaseIOException(Throwable cause) {
+			super(cause);
+		}
 	}
 
 }

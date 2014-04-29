@@ -100,6 +100,7 @@ public class MainWindow {
 
 		MenuItem mntmNewDatabase = new MenuItem(menuFile, SWT.NONE);
 		mntmNewDatabase.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
 				fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
@@ -116,6 +117,7 @@ public class MainWindow {
 
 		MenuItem mntmOpenDatabase = new MenuItem(menuFile, SWT.NONE);
 		mntmOpenDatabase.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
 				fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
@@ -144,6 +146,7 @@ public class MainWindow {
 
 		MenuItem mntmFromFundraiserBasic = new MenuItem(menuImport, SWT.NONE);
 		mntmFromFundraiserBasic.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importFRBW();
 			}
@@ -215,6 +218,7 @@ public class MainWindow {
 
 		MenuItem mntmExit = new MenuItem(menuFile, SWT.NONE);
 		mntmExit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shell.close();
 			}
@@ -277,6 +281,7 @@ public class MainWindow {
 
 		MenuItem mntmNewDonor = new MenuItem(menuDonor, SWT.NONE);
 		mntmNewDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				newDonor();
 			}
@@ -285,12 +290,14 @@ public class MainWindow {
 
 		final MenuItem mntmSaveCurrentDonor = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveCurrentDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (saveCurrent == null) return;
 				saveCurrent.run();
 			}
 		});
 		menuDonor.addMenuListener(new MenuAdapter() {
+			@Override
 			public void menuShown(MenuEvent e) {
 				mntmSaveCurrentDonor.setEnabled(tltmSave.getEnabled());
 			}
@@ -299,6 +306,7 @@ public class MainWindow {
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
 		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				((DonorTabFolder)compositeDonorList).saveAll();
 			}
@@ -313,6 +321,7 @@ public class MainWindow {
 
 		MenuItem mntmAbout = new MenuItem(menuHelp, SWT.NONE);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				new AboutDialog(shell, SWT.DIALOG_TRIM).open();
 			}
@@ -328,6 +337,7 @@ public class MainWindow {
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
 		tltmNewDonor.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				newDonor();
 			}
@@ -340,6 +350,7 @@ public class MainWindow {
 		tltmSave.setEnabled(false);
 		tltmSave.setImage(ResourceManager.getIcon("save.png"));
 		tltmSave.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (saveCurrent == null) return;
 				saveCurrent.run();
@@ -349,6 +360,7 @@ public class MainWindow {
 
 		ToolItem tltmDbProperties = new ToolItem(toolBar, SWT.NONE);
 		tltmDbProperties.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				new DatabasePropertiesDialog(shell, SWT.DIALOG_TRIM).open();
 			}
@@ -405,12 +417,14 @@ public class MainWindow {
 
 	public void refresh(final boolean reload, final boolean waitCursor) {
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				if (reload) {
 					Main.getDonorDB().updateAllStats(null, new ProgressListener() {
 						@Override
 						public void setProgress(final int p) {
 							getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									int progress = p;
 									if (progress == -1) {
@@ -433,6 +447,7 @@ public class MainWindow {
 						@Override
 						public void setMaxProgress(final int maxProgress) {
 							getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									getProgressBar().setMaximum(maxProgress);
 								}
@@ -441,6 +456,7 @@ public class MainWindow {
 					});
 				} else {
 					display.asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							donorTable.refresh();
 						}

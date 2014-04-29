@@ -24,11 +24,11 @@ public class TabFolder extends Composite {
 
 	private Composite compositeTabs;
 	private Composite compositeControlArea;
-	private final ArrayList<TabFolderListener> listeners = new ArrayList<TabFolderListener>();
-	private final ArrayList<SelectionAdapter> selectionAdapters = new ArrayList<SelectionAdapter>();
+	private final ArrayList<TabFolderListener> listeners = new ArrayList<>();
+	private final ArrayList<SelectionAdapter> selectionAdapters = new ArrayList<>();
 	private TabItem currentSelection = null;
 	private int maxTabWidth = 200;
-	private ArrayDeque<TabItem> selectionOrder = new ArrayDeque<TabItem>();
+	private ArrayDeque<TabItem> selectionOrder = new ArrayDeque<>();
 
 	/**
 	 * Create the composite.
@@ -51,6 +51,7 @@ public class TabFolder extends Composite {
 //		final Color colorTabLines = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
 		final Color colorTabLines = TabFolder.changeColorBrightness(compositeTabs.getDisplay(), gradBottom, -50);
 		compositeTabs.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				Rectangle gcSize = compositeTabs.getClientArea();
 				e.gc.setForeground(gradBottom);
@@ -151,7 +152,7 @@ public class TabFolder extends Composite {
 	}
 	
 	public void closeAllTabs(TabItem[] exceptions) {
-		ArrayList<TabItem> ex = new ArrayList<TabItem>(exceptions.length);
+		ArrayList<TabItem> ex = new ArrayList<>(exceptions.length);
 		Collections.addAll(ex, exceptions);
 		for (Control c : compositeTabs.getChildren()) {
 			try {
@@ -189,7 +190,7 @@ public class TabFolder extends Composite {
 	}
 	
 	public TabItem[] getItems() {
-		ArrayList<TabItem> items = new ArrayList<TabItem>();
+		ArrayList<TabItem> items = new ArrayList<>();
 		for (Control c : compositeTabs.getChildren()) {
 			try {
 				items.add((TabItem) c);

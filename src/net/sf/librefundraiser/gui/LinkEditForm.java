@@ -37,6 +37,7 @@ public class LinkEditForm extends Group {
 	private Composite compositeLinkForm;
 	private final Donor donor;
 	private static SelectionAdapter linkAdapter = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			try {
 				Program.launch(new URL(e.text).toString());
@@ -53,7 +54,7 @@ public class LinkEditForm extends Group {
 	public LinkEditForm(Composite parent, int style, Donor donor) {
 		super(parent, style);
 		this.donor = donor;
-		links = new ArrayDeque<String>();
+		links = new ArrayDeque<>();
 		StringTokenizer token = new StringTokenizer(donor.getData("web"),"\n");
 		while (token.hasMoreElements()) {
 			links.add((String)token.nextElement());
@@ -78,6 +79,7 @@ public class LinkEditForm extends Group {
 		
 		ToolItem tltmAddALink = new ToolItem(btnNewLink, SWT.NONE);
 		tltmAddALink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				txtNewAddress.setText("http://");
 				StackLayout sl = (StackLayout)compositeNewLink.getLayout();
@@ -100,6 +102,7 @@ public class LinkEditForm extends Group {
 		
 		Button btnAdd = new Button(compositeLinkForm, SWT.NONE);
 		btnAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				links.add(txtNewAddress.getText());
 				((DonorEditForm)getParent().getParent().getParent().getParent()).setEdited(true);

@@ -93,6 +93,7 @@ public class DatabasePropertiesDialog extends Dialog {
 		
 		txtDatabaseName = new Text(grpGeneral, SWT.BORDER);
 		txtDatabaseName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				changeEffected();
 			}

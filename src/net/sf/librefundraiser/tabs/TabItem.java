@@ -45,6 +45,7 @@ public class TabItem extends Composite {
 	public TabItem(final TabFolder parent, int style) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		addMouseMoveListener(new MouseMoveListener() {
+			@Override
 			public void mouseMove(MouseEvent e) {
 				checkCloseButton(e);
 			}
@@ -58,6 +59,7 @@ public class TabItem extends Composite {
 		final Color grayTab = TabFolder.changeColorBrightness(this.getDisplay(), colorShadow, 10);
 		final boolean[] repainting = new boolean[] {false};
 		addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent e) {
 				if (repainting[0]) return;
 				repainting[0] = true;
@@ -241,6 +243,7 @@ public class TabItem extends Composite {
 			}
 			if (closeHover) {
 				new Thread(new Runnable() {
+					@Override
 					public void run() {
 						try {
 							Thread.sleep(2000);
@@ -249,6 +252,7 @@ public class TabItem extends Composite {
 						}
 						try {
 							getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									Point mousePos = toControl(getDisplay().getCursorLocation());
 									checkCloseButton(mousePos.x, mousePos.y);

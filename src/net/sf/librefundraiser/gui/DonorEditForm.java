@@ -81,6 +81,7 @@ public class DonorEditForm extends Composite {
 	private boolean edited = false;
 	private Object[][] fields;
 	private ModifyListener modifyListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			boolean edited = true;
 			//for some reason dropping a combobox causes this listener to get called even if no change is made
@@ -502,6 +503,7 @@ public class DonorEditForm extends Composite {
 
 		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
 		tltmAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
 				gift.putIc("account", donor.getData("account"));
@@ -517,6 +519,7 @@ public class DonorEditForm extends Composite {
 		tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
 		tltmEdit.setEnabled(false);
 		tltmEdit.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem selectedItem = giftTable.getTable().getSelection()[0];
 				int id = Integer.parseInt(selectedItem.getText(6));
@@ -552,6 +555,7 @@ public class DonorEditForm extends Composite {
 		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
 		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		giftTable.getTable().addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TableItem[] selection = giftTable.getTable().getSelection();
 				if (selection.length == 1) tltmEdit.setEnabled(true);
@@ -698,6 +702,7 @@ public class DonorEditForm extends Composite {
 
 		//load previous values in another thread
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				Object[][] toFill = new Object[][] {{comboCategory, "category1"}, {comboDonorSource, "category2"}, {comboCity, "city"}, {comboZip, "zip"}, {comboCountry, "country"}};
 				for (Object[] data : toFill) {
@@ -705,6 +710,7 @@ public class DonorEditForm extends Composite {
 					String dbField = (String) data[1];
 					final List<String> previousValues = Main.getDonorDB().getPreviousDonorValues(dbField);
 					getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							//temporarily remove modifylistener to prevent tab from incorrectly being marked as unsaved
 							combo.removeModifyListener(modifyListener);
@@ -824,6 +830,7 @@ public class DonorEditForm extends Composite {
 		if (edited) {
 			final DonorEditForm me = this;
 			Main.getWindow().setSaveAction(new Runnable() {
+				@Override
 				public void run() {
 					me.saveForm(true);
 				}
@@ -835,6 +842,7 @@ public class DonorEditForm extends Composite {
 		if (compositeEditForm.getChildren().length == 0) {
 			final GiftEditForm giftEditForm = new GiftEditForm(compositeEditForm, SWT.NONE, gift);
 			giftEditForm.addDisposeListener(new DisposeListener(){
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					try {
 						if (!giftEditForm.canceled) {

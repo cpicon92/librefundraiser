@@ -29,6 +29,7 @@ public class DonorTabFolder extends Composite {
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
 		tabFolder = new TabFolder(this, SWT.NONE);
 		tabFolder.addTabFolderListener(new TabFolderListener() {
+			@Override
 			public void close(TabFolderEvent event) {
 				TabItem closing = event.item;
 				if (!closing.getText().substring(0, 1).equals("*")) return;
@@ -40,6 +41,7 @@ public class DonorTabFolder extends Composite {
 		});
 		new Label(tabFolder, SWT.NONE);
 		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TabItem t = tabFolder.getSelection();
 				if (!t.getClass().equals(DonorTab.class)) {
@@ -52,6 +54,7 @@ public class DonorTabFolder extends Composite {
 		
 	}
 
+	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}

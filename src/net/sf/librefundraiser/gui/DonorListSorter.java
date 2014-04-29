@@ -24,6 +24,7 @@ public class DonorListSorter extends ViewerComparator {
 	final private TableViewer viewer;
 
 	final private SelectionListener selectionHandler = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			DonorListSorter sorter = (DonorListSorter) DonorListSorter.this.viewer.getComparator();
 			Assert.isTrue(DonorListSorter.this == sorter);
@@ -93,6 +94,7 @@ public class DonorListSorter extends ViewerComparator {
 		viewer.refresh();
 	}
 
+	@Override
 	public int compare(Viewer v, Object c1, Object c2) {
 		Assert.isTrue(v == this.viewer);
 		ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();

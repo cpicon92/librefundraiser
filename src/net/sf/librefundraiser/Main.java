@@ -121,6 +121,7 @@ public class Main {
 	public static void addSetting(String key, String value) {
 		settings.setProperty(key, value);
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				saveSettings();
 			}
@@ -186,6 +187,7 @@ public class Main {
 	public static void importFromFRBW(final Display display, final Shell parent, final MainWindow mainWindow, final String path) {
 		if (path == null) return;
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				FileDBASE db = new FileDBASE(path);
 				Donor[] importedDonors = new Donor[] {};

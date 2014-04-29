@@ -122,7 +122,7 @@ public class SQLite {
 		lock.lock();
 		Connection conn = this.getConnection();
 		final String[] fields = new String[] { "account", "firstname", "lastname", "spousefrst", "spouselast" };
-		HashMap<String, String> output = new HashMap<String, String>();
+		HashMap<String, String> output = new HashMap<>();
 		try {
 			StringBuilder statement = new StringBuilder("select * from donors where ");
 			String sep = "";
@@ -182,7 +182,7 @@ public class SQLite {
 	public Donor[] getDonors(String query) {
 		lock.lock();
 		Connection conn = this.getConnection();
-		ArrayDeque<String> columns = new ArrayDeque<String>();
+		ArrayDeque<String> columns = new ArrayDeque<>();
 		Donor[] output = null;
 		try {
 			Statement stmt = conn.createStatement();
@@ -193,7 +193,7 @@ public class SQLite {
 			}
 			rs.close();
 			rs = stmt.executeQuery("select * from donors " + query);
-			ArrayDeque<Donor> donors = new ArrayDeque<Donor>();
+			ArrayDeque<Donor> donors = new ArrayDeque<>();
 			while (rs.next()) {
 				Donor donor = new Donor(rs.getInt("account"));
 				for (String column : columns) {
@@ -208,13 +208,13 @@ public class SQLite {
 			}
 			/*fetch gifts*/ {
 				for (Donor donor : donors) {
-					ArrayDeque<String> giftColumns = new ArrayDeque<String>();
+					ArrayDeque<String> giftColumns = new ArrayDeque<>();
 					ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
 					while (rsGifts.next()) {
 						giftColumns.add(rsGifts.getString("name"));
 					}
 					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
-					ArrayList<Gift> gifts = new ArrayList<Gift>();
+					ArrayList<Gift> gifts = new ArrayList<>();
 					while (rsGifts.next()) {
 						Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
 						for (String column : giftColumns) {
@@ -248,6 +248,7 @@ public class SQLite {
 		lock.unlock();
 		final Donor[] toSave = output;
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				saveDonors(toSave);
 				System.out.println("saved");
@@ -264,7 +265,7 @@ public class SQLite {
 		lock.lock();
 		Connection conn = this.getConnection();
 		try {
-			ArrayDeque<String> columns = new ArrayDeque<String>();
+			ArrayDeque<String> columns = new ArrayDeque<>();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
 			while (rs.next()) {
@@ -297,7 +298,7 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		try {
-			ArrayDeque<String> columns = new ArrayDeque<String>();
+			ArrayDeque<String> columns = new ArrayDeque<>();
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`gifts`)");
 			while (rs.next()) {
@@ -372,12 +373,12 @@ public class SQLite {
 		return output;
 	}
 
-	private final ArrayList<Integer> reserved = new ArrayList<Integer>();
+	private final ArrayList<Integer> reserved = new ArrayList<>();
 	public int getUniqueRecNum() {
 		lock.lock();
 		Connection conn = this.getConnection();
 		int output = 0;
-		ArrayList<Integer> recnums = new ArrayList<Integer>();
+		ArrayList<Integer> recnums = new ArrayList<>();
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("select RECNUM from gifts");
@@ -410,7 +411,7 @@ public class SQLite {
 	public String[] getPreviousValues(String column, String table) {
 		lock.lock();
 		Connection conn = this.getConnection();
-		ArrayDeque<String> results = new ArrayDeque<String>();
+		ArrayDeque<String> results = new ArrayDeque<>();
 		try {
 			Statement stmt = conn.createStatement();
 			String query = "select distinct " + column + " from " + table + " order by " + column + " asc";
@@ -491,7 +492,7 @@ public class SQLite {
 		Connection conn = this.getConnection();
 		try {
 			Statement stmt = conn.createStatement();
-			ArrayDeque<String> giftColumns = new ArrayDeque<String>();
+			ArrayDeque<String> giftColumns = new ArrayDeque<>();
 			ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
 			while (rsGifts.next()) {
 				giftColumns.add(rsGifts.getString("name"));
@@ -557,7 +558,7 @@ public class SQLite {
 	public String getDbInfo(String key) {
 		lock.lock();
 		Connection conn = this.getConnection();
-		ArrayDeque<String> results = new ArrayDeque<String>();
+		ArrayDeque<String> results = new ArrayDeque<>();
 		try {
 			Statement stmt = conn.createStatement();
 			ResultSet rs = stmt.executeQuery("select value from dbinfo where key='" + key + "'");

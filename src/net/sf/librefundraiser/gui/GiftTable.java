@@ -65,7 +65,7 @@ public class GiftTable extends Composite {
 	}
 	
 	protected void fillTable() {
-		List<Gift> gifts = new ArrayList<Gift>(donor.getGifts().values());
+		List<Gift> gifts = new ArrayList<>(donor.getGifts().values());
 		Collections.sort(gifts);
 		for (Gift gift : gifts) {
 			TableItem tableItem = new TableItem(tableGifts, SWT.NONE);
@@ -84,6 +84,7 @@ public class GiftTable extends Composite {
 		// Disable the check that prevents subclassing of SWT components
 	}
 	
+	@Override
 	public void setEnabled(boolean e) {
 		tableGifts.setEnabled(e);
 	}

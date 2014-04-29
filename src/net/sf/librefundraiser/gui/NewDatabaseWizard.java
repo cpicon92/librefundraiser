@@ -60,6 +60,7 @@ public class NewDatabaseWizard {
 	private void createContents() {
 		shell = new Shell(SWT.DIALOG_TRIM);
 		shell.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (canceled) System.exit(0);
 			}
@@ -168,6 +169,7 @@ public class NewDatabaseWizard {
 			final Button btnNext = new Button(compositeButtons, SWT.NONE);
 			btnNext.setLayoutData(new RowData(80, SWT.DEFAULT));
 			btnNext.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (currentSelection[0] == null) return;
 					if (currentSelection[0].equals(btnLocalDatabase)) {
@@ -190,6 +192,7 @@ public class NewDatabaseWizard {
 			btnNext.setText("Next >");
 			
 			btnBrowse.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
 					fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
@@ -204,12 +207,14 @@ public class NewDatabaseWizard {
 
 			Button btnCancel = new Button(compositeButtons, SWT.NONE);
 			btnCancel.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					shell.dispose();
 				}
 			});
 			btnCancel.setText("Cancel");
 			SelectionAdapter dbType = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					currentSelection[0] = e.getSource();
 					boolean browse = currentSelection[0].equals(btnExistingLocalDatabase);
@@ -359,6 +364,7 @@ public class NewDatabaseWizard {
 			
 			final Button btnFinish = new Button(compositeButtons, SWT.NONE);
 			btnFinish.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (currentSelection[0] == null) return;
 					result = txtFilename.getText();
@@ -394,6 +400,7 @@ public class NewDatabaseWizard {
 			});
 			
 			btnBrowse.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					String path = Main.newDbFilePrompt(shell);
 					if (path != null) {
@@ -404,6 +411,7 @@ public class NewDatabaseWizard {
 				}
 			});			
 			btnBrowseImport.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					DirectoryDialog fileDialog = new DirectoryDialog(shell);
 					fileDialog.setMessage("Please indicate the FundRaiser Basic installation folder");
@@ -421,6 +429,7 @@ public class NewDatabaseWizard {
 			btnFinish.setEnabled(false);
 			
 			SelectionAdapter dbContents = new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					currentSelection[0] = e.getSource();
 					boolean importEnabled = false;
@@ -448,6 +457,7 @@ public class NewDatabaseWizard {
 
 			Button btnCancel = new Button(compositeButtons, SWT.NONE);
 			btnCancel.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					shell.dispose();
 				}

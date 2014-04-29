@@ -23,8 +23,8 @@ public class FormatConverter {
 	public static void main(String[] args) throws NewerDbVersionException, IOException {
 		long startTime = System.currentTimeMillis();
 		Gson gson = new Gson();
-		OutputStream os = new FileOutputStream(new File("C:/Users/Kristian/Desktop/newformat.lfd"));
-		SQLite db = new SQLite("C:/Users/Kristian/Desktop/friends.lfd");
+		OutputStream os = new FileOutputStream(new File("/home/waffles/Downloads/newformat.lfd"));
+		SQLite db = new SQLite("/home/waffles/Downloads/FOILdatabase.lfd");
 		Donor[] donors = db.getDonors();
 		System.out.printf("Got %d donors in %dms%n", donors.length, System.currentTimeMillis() - startTime);
 		Map<String, String> dbInfo = db.getDbInfo();
@@ -43,8 +43,8 @@ public class FormatConverter {
 		writer.close();
 		System.out.printf("Write took %dms%n", System.currentTimeMillis() - startTime);
 		startTime = System.currentTimeMillis();
-        JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(new File("C:/Users/Kristian/Desktop/newformat.lfd")), "UTF-8"));
-        List<Donor> messages = new ArrayList<Donor>();
+        JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(new File("/home/waffles/Downloads/newformat.lfd")), "UTF-8"));
+        List<Donor> messages = new ArrayList<>();
         reader.beginObject();
         while (reader.hasNext()) {
         	String name = reader.nextName();

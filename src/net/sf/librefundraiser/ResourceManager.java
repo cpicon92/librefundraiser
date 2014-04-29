@@ -6,7 +6,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class ResourceManager {
-	public static HashMap<String, Image> icons = new HashMap<String, Image>();
+	public static HashMap<String, Image> icons = new HashMap<>();
 	
 	public static Image getIcon(String filename) {
 		Display display = Display.getCurrent();

@@ -97,6 +97,7 @@ public class GiftEditForm extends Composite {
 
 		Button btnCancel = new Button(compositeBottom, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				dispose();
 			}
@@ -105,6 +106,7 @@ public class GiftEditForm extends Composite {
 
 		Button btnSave = new Button(compositeBottom, SWT.NONE);
 		btnSave.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				canceled = false;
 				saveForm();

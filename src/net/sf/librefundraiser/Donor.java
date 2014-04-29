@@ -72,8 +72,8 @@ public class Donor {
 	private final HashMap<Integer,Gift> gifts;
 	private final int id;
 	public Donor(int id) {
-		data = new HashMap<String,String>();
-		gifts = new HashMap<Integer,Gift>();
+		data = new HashMap<>();
+		gifts = new HashMap<>();
 		this.id = id;
 		this.putData("account", String.format("%06d",id));
 		this.putData("type", "I"); //default to individual
