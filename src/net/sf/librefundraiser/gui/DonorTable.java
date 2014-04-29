@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -167,7 +168,7 @@ public class DonorTable extends Composite {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				TableItem selectedItem = table.getSelection()[0];
 				int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-				DonorTab newTab = new DonorTab(id, DonorTable.this.tabFolder);
+				DonorTab newTab = DonorTable.this.openDonorTab(id);
 				DonorTable.this.tabFolder.setSelection(newTab);
 			}
 		});
@@ -206,7 +207,7 @@ public class DonorTable extends Composite {
 							getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									DonorTab dt = new DonorTab(donor[0], DonorTable.this.tabFolder);
+									DonorTab dt = DonorTable.this.openDonorTab(donor[0]);
 									if (i[0] == items.length - 1) {
 										DonorTable.this.tabFolder.setSelection(dt);
 									}
@@ -236,7 +237,7 @@ public class DonorTable extends Composite {
 							getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									new DonorTab(donor[0], DonorTable.this.tabFolder);
+									DonorTable.this.openDonorTab(donor[0]);
 								}
 							});
 						}
@@ -298,7 +299,7 @@ public class DonorTable extends Composite {
 			} catch (Exception e) {
 			}
 		}
-		tabFolder.setSelection(new DonorTab(id,tabFolder));
+		tabFolder.setSelection(DonorTable.this.openDonorTab(id));
 	}
 
 	public void saveAll() {
@@ -458,5 +459,28 @@ public class DonorTable extends Composite {
 
 	public void setTabFolder(TabFolder tabFolder) {
 		this.tabFolder = tabFolder;
+	}
+	
+	public DonorTab openDonorTab(Donor donor) {
+		this.resizeSash();
+		return new DonorTab(donor, DonorTable.this.tabFolder);
+	}	
+	
+	public DonorTab openDonorTab(int id) {
+		this.resizeSash();
+		return new DonorTab(id, DonorTable.this.tabFolder);
+	}
+	
+	public void resizeSash() {
+		if (this.getParent() instanceof SashForm) {
+			SashForm sash = (SashForm) this.getParent();
+			int[] weights = sash.getWeights();
+			for (int w : weights) {
+				if (w == 0) {
+					sash.setWeights(new int[] {1, 3});
+					return;
+				}
+			}
+		}
 	}
 }

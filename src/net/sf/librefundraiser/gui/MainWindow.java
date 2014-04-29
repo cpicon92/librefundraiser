@@ -7,6 +7,9 @@ import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
+import net.sf.librefundraiser.tabs.TabFolder;
+import net.sf.librefundraiser.tabs.TabFolderEvent;
+import net.sf.librefundraiser.tabs.TabFolderListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -369,8 +372,9 @@ public class MainWindow {
 		//TODO add advanced search with SQL queries
 
 		new Label(compositeToolbar, SWT.NONE);
+		new Label(compositeToolbar, SWT.NONE);
 		
-		SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
+		final SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
 		mainPanel.setSashWidth(5);
 		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
@@ -379,8 +383,15 @@ public class MainWindow {
 		compositeDonorList = new DonorTabFolder(mainPanel, SWT.NONE);
 		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
-		donorTable.setTabFolder(((DonorTabFolder) compositeDonorList).tabFolder);
-		mainPanel.setWeights(new int[] {1, 3});
+		final TabFolder tabFolder = ((DonorTabFolder) compositeDonorList).tabFolder;
+		donorTable.setTabFolder(tabFolder);
+		tabFolder.addTabFolderListener(new TabFolderListener() {
+			@Override
+			public void close(TabFolderEvent e) {
+				if (tabFolder.getItems().length <= 1) mainPanel.setWeights(new int[] {1, 0});
+			}
+		});
+		mainPanel.setWeights(new int[] {1, 0});
 
 	}
 	public ToolItem getSaveButton() {
