@@ -199,11 +199,8 @@ public class DonorTable extends Composite {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							final Donor[] donor = new Donor[] {null};
-							try {
-								donor[0] = Main.getDonorDB().getDonor(id);
-								//TODO: check for null instead of catching exception
-							} catch (ArrayIndexOutOfBoundsException e) {
+							final Donor[] donor = {Main.getDonorDB().getDonor(id)};
+							if (donor[0] == null) {
 								donor[0] = new Donor(id);
 							}
 							getDisplay().asyncExec(new Runnable() {
@@ -232,11 +229,8 @@ public class DonorTable extends Composite {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							final Donor[] donor = new Donor[] {null};
-							try {
-								donor[0] = Main.getDonorDB().getDonor(id);
-								//TODO: check for null instead of catching exception
-							} catch (ArrayIndexOutOfBoundsException e) {
+							final Donor[] donor = new Donor[] {Main.getDonorDB().getDonor(id)};
+							if (donor[0] == null) {
 								donor[0] = new Donor(id);
 							}
 							getDisplay().asyncExec(new Runnable() {

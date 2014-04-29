@@ -54,8 +54,11 @@ public class FileLFD {
 	}
 
 	public FileLFD(File dbFile) throws IOException {
+		this(dbFile, dbFile.exists());
+	}	
+	public FileLFD(File dbFile, boolean read) throws IOException {
 		this.dbFile = dbFile;
-		this.readAll();
+		if (read) this.readAll();
 	}	
 	
 	public FileLFD() {
@@ -121,14 +124,15 @@ public class FileLFD {
 	}
 
 	public void saveDonors(Donor[] donors) {
-		for (Donor donor : donors) {
+		insert: for (Donor donor : donors) {
 			for (ListIterator<Donor> iter = this.donors.listIterator(); iter.hasNext();) {
 				Donor existingDonor = iter.next();
 				if (existingDonor.getId() == donor.getId()) {
 					iter.set(donor);
-					break;
+					continue insert;
 				}
 			}
+			this.donors.add(donor);
 		}
 		this.writeAll();
 	}
@@ -153,8 +157,14 @@ public class FileLFD {
 		return output;
 	}
 
+	int previousMaxRecnum = 0;
 	public int getUniqueRecNum() {
-		return 0;
+		for (Donor d : donors) {
+			for (Gift g : d.getGifts().values()) {
+				if (g.recnum > previousMaxRecnum) previousMaxRecnum = g.recnum;
+			}
+		}
+		return ++previousMaxRecnum;
 	}
 
 	public List<String> getPreviousDonorValues(String field) {
@@ -208,8 +218,7 @@ public class FileLFD {
 	}
 
 	public void setDbName(String name) {
-		this.info.put("name", name);
-		this.writeAll();
+		this.putDbInfo("name", name);
 	}
 
 	public int getDbVersion() {
@@ -222,6 +231,16 @@ public class FileLFD {
 
 	public String getDbInfo(String key) {
 		return this.info.get(key);
+	}
+	
+	public void putDbInfo(String key, String value) {
+		this.info.put(key, value);
+		this.writeAll();
+	}
+	
+	public void putDbInfo(Map<String, String> entries) {
+		this.info.putAll(entries);
+		this.writeAll();
 	}
 
 	public static String formatDate(String date) {

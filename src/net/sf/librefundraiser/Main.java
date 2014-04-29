@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import net.sf.librefundraiser.db.FileDBASE;
 import net.sf.librefundraiser.db.FileLFD;
+import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
 
@@ -63,6 +64,12 @@ public class Main {
 	}
 	public static void resetLocalDB() {
 		try {
+			try {
+				//attempt to load/convert legacy SQLite db
+				SQLite sqLite = new SQLite(getSetting("lastDB"));
+				sqLite.toFileLFD();
+			} catch (Exception e) {
+			}
 			localDB = new FileLFD(getSetting("lastDB"));
 		} catch (IOException e) {
 			// TODO Display gui error message about this

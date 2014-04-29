@@ -1,6 +1,7 @@
 package net.sf.librefundraiser.db;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -83,6 +84,26 @@ public class SQLite {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public FileLFD toFileLFD() {
+		Donor[] donors = this.getDonors();
+		Map<String, String> info = this.getDbInfo();
+		try {
+			this.connection.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		this.dbFile.delete();
+		try {
+			FileLFD fileLFD = new FileLFD(this.dbFile, false);
+			fileLFD.saveDonors(donors);
+			fileLFD.putDbInfo(info);
+			return fileLFD;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private void reconcileDbVersion() throws NewerDbVersionException, SQLException {

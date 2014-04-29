@@ -18,11 +18,8 @@ public class DonorTab extends TabItem {
 	
 	public DonorTab(int id, TabFolder tabFolder) {
 		super(tabFolder, SWT.NONE);
-		Donor donor;
-		try {
-			donor = Main.getDonorDB().getDonor(id);
-			//TODO: check for null instead of catching exception
-		} catch (ArrayIndexOutOfBoundsException e) {
+		Donor donor = Main.getDonorDB().getDonor(id);
+		if (donor == null) {
 			donor = new Donor(id);
 		}
 		this.donor = donor;
