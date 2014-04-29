@@ -10,6 +10,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -170,19 +171,23 @@ public class FileLFD {
 	public List<String> getPreviousDonorValues(String field) {
 		HashSet<String> previousValues = new HashSet<>();
 		for (Donor d : this.donors) {
-			previousValues.add(d.getData(field));
+			previousValues.add(d.getData(field).trim());
 		}
-		return new ArrayList<>(previousValues);
+		ArrayList<String> out = new ArrayList<>(previousValues);
+		Collections.sort(out);
+		return out;
 	}
 	
 	public List<String> getPreviousGiftValues(String field) {
 		HashSet<String> previousValues = new HashSet<>();
 		for (Donor d : this.donors) {
 			for (Gift g : d.getGifts().values()) {
-				previousValues.add(g.getIc(field));
+				previousValues.add(g.getIc(field).trim());
 			}
 		}
-		return new ArrayList<>(previousValues);
+		ArrayList<String> out = new ArrayList<>(previousValues);
+		Collections.sort(out);
+		return out;
 	}
 
 	public void deleteDonor(int id) {

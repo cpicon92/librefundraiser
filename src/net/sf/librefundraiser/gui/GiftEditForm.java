@@ -6,6 +6,8 @@ import java.util.Date;
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
 
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -72,7 +74,9 @@ public class GiftEditForm extends Composite {
 
 		Combo comboSource = new Combo(compositeTop, SWT.NONE);
 		comboSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboSource.setItems(Main.getDonorDB().getPreviousGiftValues("source").toArray(new String[0]));
+		String[] previousSources = Main.getDonorDB().getPreviousGiftValues("source").toArray(new String[0]);
+		comboSource.setItems(previousSources);
+		new AutoCompleteField(comboSource, new ComboContentAdapter(), previousSources);
 
 		Label lblNote = new Label(this, SWT.NONE);
 		lblNote.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
