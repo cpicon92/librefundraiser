@@ -59,31 +59,25 @@ public class SQLite {
 		return output.toString();
 	}
 
-	public SQLite(String filename) throws NewerDbVersionException {
+	public SQLite(String filename) throws NewerDbVersionException, SQLException {
 		dbFile = new File(filename);
 		Connection conn = this.getConnection();
-		try {
-			Statement stmt = conn.createStatement();
+		Statement stmt = conn.createStatement();
 
-			String donorTableSQL = generateTableCreateSQL(donorFields, "ACCOUNT");
-			String giftTableSQL = generateTableCreateSQL(giftFields, "RECNUM");
-			String dbInfoTableSQL = generateTableCreateSQL(dbInfoFields, "KEY");
-			stmt.executeUpdate("create table if not exists donors (" + donorTableSQL + ");");
-			stmt.executeUpdate("create table if not exists gifts (" + giftTableSQL + ");");
-			stmt.executeUpdate("create table if not exists dbinfo (" + dbInfoTableSQL + ");");
-			stmt.close();
-			if (this.getDbVersion() != latestDbVersion) {
-				reconcileDbVersion();
-			}
-			conn = this.getConnection();
-			stmt = conn.createStatement();
-			stmt.executeUpdate("delete from dbinfo where KEY='version';");
-			stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('version','" + latestDbVersion + "');");
-		} catch (SQLException e) {
-			System.err.println("Unable to create new database. ");
-			e.printStackTrace();
+		String donorTableSQL = generateTableCreateSQL(donorFields, "ACCOUNT");
+		String giftTableSQL = generateTableCreateSQL(giftFields, "RECNUM");
+		String dbInfoTableSQL = generateTableCreateSQL(dbInfoFields, "KEY");
+		stmt.executeUpdate("create table if not exists donors (" + donorTableSQL + ");");
+		stmt.executeUpdate("create table if not exists gifts (" + giftTableSQL + ");");
+		stmt.executeUpdate("create table if not exists dbinfo (" + dbInfoTableSQL + ");");
+		stmt.close();
+		if (this.getDbVersion() != latestDbVersion) {
+			reconcileDbVersion();
 		}
-
+		conn = this.getConnection();
+		stmt = conn.createStatement();
+		stmt.executeUpdate("delete from dbinfo where KEY='version';");
+		stmt.executeUpdate("insert into dbinfo(KEY,VALUE) values ('version','" + latestDbVersion + "');");
 	}
 	
 	public FileLFD toFileLFD() {
