@@ -1,5 +1,7 @@
 package net.sf.librefundraiser.gui;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
@@ -63,8 +65,8 @@ public class GiftTable extends Composite {
 	}
 	
 	protected void fillTable() {
-		Gift[] gifts = donor.getGifts().values().toArray(new Gift[0]);
-		Arrays.sort(gifts);
+		List<Gift> gifts = new ArrayList<Gift>(donor.getGifts().values());
+		Collections.sort(gifts);
 		for (Gift gift : gifts) {
 			TableItem tableItem = new TableItem(tableGifts, SWT.NONE);
 			String[] itemData = new String[] { Main.toMoney(gift.getIc("amount")),

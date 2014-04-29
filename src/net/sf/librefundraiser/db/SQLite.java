@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -577,6 +578,24 @@ public class SQLite {
 		}
 		lock.unlock();
 		return results.isEmpty() ? null : results.getFirst();
+	}
+	
+	public Map<String, String> getDbInfo() {
+		lock.lock();
+		Connection conn = this.getConnection();
+		Map<String, String> dbInfo = new HashMap<>();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery("select * from dbinfo");
+			while (rs.next()) {
+				dbInfo.put(rs.getString("key"), rs.getString("value"));
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		lock.unlock();
+		return dbInfo;
 	}
 
 	public static String formatDate(String date) {

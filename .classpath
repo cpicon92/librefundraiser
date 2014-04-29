@@ -28,6 +28,7 @@
 			<attribute name="javadoc_location" value="http://jopendocument.org/docs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/gson-2.2.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
+import java.util.List;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
@@ -414,9 +415,9 @@ public class MainWindow {
 									int progress = p;
 									if (progress == -1) {
 										progress = 0;
-										Donor[] output = Main.getDonorDB().getDonors();
+										List<Donor> output = Main.getDonorDB().getDonors();
 //										Main.getDonorDB().saveDonors(output);
-										donorTable.donors = output;
+										donorTable.donors = output.toArray(new Donor[0]);
 										donorTable.refresh();
 									}
 									if (progress != 0) {

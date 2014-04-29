@@ -1,6 +1,7 @@
 package net.sf.librefundraiser.gui;
 import java.text.Format;
 import java.util.Date;
+import java.util.List;
 
 import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Donor.Gift;
@@ -476,8 +477,12 @@ public class DonorEditForm extends Composite {
 		grpWeb = new LinkEditForm(compositeOther, SWT.NONE, donor);
 		grpWeb.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		txtNotes = new Text(this, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
-		txtNotes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		Group grpNotes = new Group(this, SWT.NONE);
+		grpNotes.setText("Notes");
+		grpNotes.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		txtNotes = new Text(grpNotes, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL | SWT.MULTI);
+		grpNotes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		
 		compositeGifts = new Composite(DonorEditForm.this, SWT.NONE);
@@ -698,13 +703,13 @@ public class DonorEditForm extends Composite {
 				for (Object[] data : toFill) {
 					final Combo combo = (Combo) data[0];
 					String dbField = (String) data[1];
-					final String[] previousValues = Main.getDonorDB().getPreviousValues(dbField, "donors");
+					final List<String> previousValues = Main.getDonorDB().getPreviousDonorValues(dbField);
 					getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							//temporarily remove modifylistener to prevent tab from incorrectly being marked as unsaved
 							combo.removeModifyListener(modifyListener);
 							String prevText = combo.getText();
-							combo.setItems(previousValues);
+							combo.setItems(previousValues.toArray(new String[0]));
 							combo.setText(prevText);
 							combo.addModifyListener(modifyListener);
 						}

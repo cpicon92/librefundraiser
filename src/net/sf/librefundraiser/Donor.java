@@ -1,4 +1,5 @@
 package net.sf.librefundraiser;
+import java.lang.reflect.Type;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -6,6 +7,12 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 
 public class Donor {
@@ -47,6 +54,18 @@ public class Donor {
 			if (myDate == null) return -1;
 			if (otherDate == null ) return 1;
 			return myDate.compareTo(otherDate);
+		}
+		//TODO: fix this mess
+		public static class GiftDeserializer implements JsonDeserializer<Gift> {
+			@Override
+			public Gift deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
+				JsonObject jsonGift = json.getAsJsonObject();
+				Gift gift = new Gift(jsonGift.get("recnum").getAsInt());
+				for (java.util.Map.Entry<String, JsonElement> e : jsonGift.entrySet()) {
+					gift.put(e.getKey(), e.getValue().getAsString());
+				}
+				return gift;
+			}
 		}
 	}
 	private final HashMap<String,String> data;

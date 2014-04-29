@@ -14,8 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import net.sf.librefundraiser.db.FileDBASE;
-import net.sf.librefundraiser.db.NewerDbVersionException;
-import net.sf.librefundraiser.db.SQLite;
+import net.sf.librefundraiser.db.FileLFD;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
 
@@ -27,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 
 //TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
-	private static SQLite localDB = null;
+	private static FileLFD localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
@@ -58,15 +57,15 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	public static SQLite getDonorDB() {
-		if (localDB == null) localDB = new SQLite();
+	public static FileLFD getDonorDB() {
+		if (localDB == null) localDB = new FileLFD();
 		return localDB;
 	}
 	public static void resetLocalDB() {
 		try {
-			localDB = new SQLite(getSetting("lastDB"));
-		} catch (NewerDbVersionException e) {
-			// TODO Display gui error message about how the file is too new to be opened
+			localDB = new FileLFD(getSetting("lastDB"));
+		} catch (IOException e) {
+			// TODO Display gui error message about this
 			e.printStackTrace();
 		}
 	}

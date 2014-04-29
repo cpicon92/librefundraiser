@@ -28,7 +28,7 @@ public class FileDBASE {
 		final HashMap<Integer, Donor> importedDonors = new HashMap<Integer, Donor>();
 		final Table donorTable = database.getTable("Master.dbf");
 		final Table giftTable = database.getTable("Gifts.dbf");
-		final Format dateFormat = SQLite.dbDateFormat;
+		final Format dateFormat = FileLFD.dbDateFormat;
 		donorTable.open(IfNonExistent.ERROR);
 		final List<Field> fields = donorTable.getFields();
 		final Iterator<Record> recordIterator = donorTable.recordIterator();
