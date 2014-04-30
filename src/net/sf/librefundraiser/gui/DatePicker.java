@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import net.sf.librefundraiser.ResourceManager;
 
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -24,8 +25,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -44,7 +43,6 @@ import org.eclipse.swt.widgets.Text;
 public class DatePicker extends Composite {
 	private Text text;
 	private CalendarPopup calendarPopup = null;
-	private final DatePicker datePicker = this;
 	private final DateFormat dateFormat;
 
 	/**
@@ -82,8 +80,8 @@ public class DatePicker extends Composite {
 					incrementSelection(text, +1);
 					break;
 				case SWT.ESC:
-					if (calendarPopup != null && !calendarPopup.isDisposed()) {
-						calendarPopup.dispose();
+					if (calendarPopup != null) {
+						calendarPopup.close();
 					}
 					break;
 				}
@@ -99,6 +97,12 @@ public class DatePicker extends Composite {
 			@Override
 			public void focusGained(FocusEvent e) {
 				selectText(text);
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (!DatePicker.this.calendarPopup.isFocused()) {
+					DatePicker.this.calendarPopup.close();
+				}
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -116,9 +120,9 @@ public class DatePicker extends Composite {
 				if (initial == null) {
 					initial = new Date();
 				}
-				calendarPopup = new CalendarPopup(datePicker.getShell(), datePicker, initial);
-				calendarPopup.setVisible(true);
-				calendarPopup.setFocus();
+				text.setFocus();
+				calendarPopup = new CalendarPopup(DatePicker.this.getShell(), DatePicker.this, initial);
+				calendarPopup.open();
 			}
 		});
 		btnDropDown.addMouseTrackListener(new MouseTrackListener() {
@@ -214,7 +218,7 @@ public class DatePicker extends Composite {
 			@Override
 			public void run() {
 				try {
-					Integer[] indexes = getDateIndexes(datePicker.getDate(), dateFormat);
+					Integer[] indexes = getDateIndexes(DatePicker.this.getDate(), dateFormat);
 					int currentSelection = text.getSelection().x;
 					boolean selectedSomething = false;
 					for (int i = 1; i < indexes.length; i++) {
@@ -239,10 +243,6 @@ public class DatePicker extends Composite {
 		// Disable the check that prevents subclassing of SWT components
 	}
 
-	public void openCalendar() {
-
-	}
-
 	public Date getDate() {
 		try {
 			return dateFormat.parse(text.getText());
@@ -255,68 +255,74 @@ public class DatePicker extends Composite {
 		text.setText(dateFormat.format(date));
 	}
 
-	private class CalendarPopup extends Shell {
+	private static class CalendarPopup extends PopupDialog {
 		private DatePicker sibling;
-		private final CalendarPopup me = this;
 		DateTime calendar;
+		private final Date initial;
+		private boolean focused = false;
 		public CalendarPopup(Shell parent, DatePicker sibling, Date initial) {
-			super(parent, SWT.NO_TRIM);
+			super(parent, PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, false, null, null);
 			this.setSibling(sibling);
-			createContents();
-			this.setDate(initial);
+			this.initial = initial;
 		}
-		protected void createContents() {
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite composite = (Composite) super.createDialogArea(parent);
 			FillLayout layout = new FillLayout(SWT.HORIZONTAL);
 			layout.marginHeight = layout.marginWidth = 1;
-			setLayout(layout);
-			calendar = new DateTime(this, SWT.CALENDAR);
+			composite.setLayout(layout);
+			calendar = new DateTime(composite, SWT.CALENDAR);
 			calendar.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					sibling.setDate(me.getDate());
+					sibling.setDate(CalendarPopup.this.getDate());
 				}
 			});
-			this.addShellListener(new ShellListener() {
+			calendar.addMouseListener(new MouseAdapter() {
 				@Override
-				public void shellActivated(ShellEvent e) {
+				public void mouseUp(MouseEvent e) {
+					CalendarPopup.this.close();
 				}
 				@Override
-				public void shellClosed(ShellEvent e) {
-				}
-				@Override
-				public void shellDeactivated(ShellEvent e) {
-					me.dispose();
-				}
-				@Override
-				public void shellDeiconified(ShellEvent e) {
-				}
-				@Override
-				public void shellIconified(ShellEvent e) {
+				public void mouseDown(MouseEvent e) {
+					CalendarPopup.this.focused = true;
 				}
 			});
-			final Color colorBorder = this.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-//			this.addPaintListener(new PaintListener() {
-//				public void paintControl(PaintEvent e) {
-//					Rectangle gcSize = me.getClientArea();
-//					e.gc.setForeground(colorBorder);
-//					e.gc.drawRectangle(0, 0, gcSize.width - 1, gcSize.height - 1);
+			calendar.addFocusListener(new FocusAdapter() {
+				@Override
+				public void focusLost(FocusEvent e) {
+					CalendarPopup.this.focused = false;
+					CalendarPopup.this.close();
+				}
+				@Override
+				public void focusGained(FocusEvent e) {
+					CalendarPopup.this.focused = true;
+				}
+			});
+			this.setDate(initial);
+			final Color colorBorder = composite.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+			composite.setBackground(colorBorder);
+			composite.pack();
+			return composite;
+		}
+//		@Override
+//		public boolean close() {
+//			if (this.getShell() == null) return true;
+//			this.getShell().getDisplay().timerExec(100, new Runnable() {
+//				@Override
+//				public void run() {
+//					CalendarPopup.super.close();
 //				}
 //			});
-			this.setBackground(colorBorder);
-			this.pack();
-		}
+//			return false;
+//		}
 		@Override
-		protected void checkSubclass() {
-			// Disable the check that prevents subclassing of SWT components
-		}
-		@Override
-		public void setVisible(boolean visible) {
+		protected void adjustBounds() {
 			Point siblingPosition = this.getSibling().toDisplay(0, 0);
 			Rectangle siblingBounds = this.getSibling().getBounds();
-			this.setBounds(siblingPosition.x, siblingPosition.y + siblingBounds.height, 220, 180);
-			this.pack();
-			super.setVisible(visible);
+			this.getShell().setBounds(siblingPosition.x, siblingPosition.y + siblingBounds.height, 220, 180);
 		}
+
 		public DatePicker getSibling() {
 			return sibling;
 		}
@@ -334,6 +340,9 @@ public class DatePicker extends Composite {
 			calendar.setYear(cal.get(Calendar.YEAR));
 			calendar.setMonth(cal.get(Calendar.MONTH));
 			calendar.setDay(cal.get(Calendar.DAY_OF_MONTH));
+		}
+		public boolean isFocused() {
+			return focused;
 		}
 	}
 }
