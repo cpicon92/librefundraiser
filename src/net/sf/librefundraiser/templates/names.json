@@ -1,0 +1,65 @@
+{
+    "BUS_Salutation": [
+        "<First>",
+        "Mr. <Last>",
+        "Ms. <Last>",
+        "Mrs. <Last>",
+        "Dr. <Last>",
+        "Rev. <Last>",
+        "Rabbi <Last>"
+    ],
+    "BUS_Contact": [
+        "<first> <last>",
+        "Mr. <First> <Last>",
+        "Ms. <First> <Last>",
+        "Mrs. <First> <Last>",
+        "Dr. <First> <Last>",
+        "Rev. <First> <Last>",
+        "Rabbi <First> <Last>"
+    ],
+    "BUS_MailingName": [
+        "<Business>"
+    ],
+    "IND_Salutation": [
+        "<First>",
+        "<First> and <SpouseFirst>",
+        "Mr. <Last>",
+        "Ms. <Last>",
+        "Mrs. <Last>",
+        "Mr. and Mrs. <Last>",
+        "Mr. <Last> and Ms. <SpouseLast>",
+        "Ms. <Last> and Mr. <SpouseLast>",
+        "Mr. <Last> and Mrs. <SpouseLast>",
+        "Dr. <Last>",
+        "Rev. <Last>",
+        "Rabbi <Last>",
+        "Miss <Last>"
+    ],
+    "IND_Contact": [
+        "<First> <Last>",
+        "Mr. <First> <Last>",
+        "Ms. <First> <Last>",
+        "Mrs. <First> <Last>",
+        "Dr. <First> <Last>",
+        "Rev. <First> <Last>",
+        "Rabbi <First> <Last>"
+    ],
+    "IND_MailingName": [
+        "<First> <Last>",
+        "<First> <Last> and <SpouseFirst> <SpouseLast>",
+        "<First> and <SpouseFirst> <Last>",
+        "Mr. <First> <Last>",
+        "Ms. <First> <Last>",
+        "Mrs. <First> <Last>",
+        "Mr. and Mrs. <First> <Last>",
+        "Miss <First> <Last>",
+        "Mrs. <SpouseFirst> <SpouseLast>",
+        "Ms. <SpouseFirst> <SpouseLast>",
+        "Mr. <SpouseFirst> <SpouseLast>",
+        "Dr. <First> <Last>",
+        "Rev. <First> <Last>",
+        "Rabbi <First> <Last>",
+        "Rev. and Mrs. <First> <Last>",
+        "Rabbi and Mrs. <First> <Last>"
+    ]
+}
