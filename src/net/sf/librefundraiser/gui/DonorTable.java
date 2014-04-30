@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -462,25 +461,10 @@ public class DonorTable extends Composite {
 	}
 	
 	public DonorTab openDonorTab(Donor donor) {
-		this.resizeSash();
 		return new DonorTab(donor, DonorTable.this.tabFolder);
 	}	
 	
 	public DonorTab openDonorTab(int id) {
-		this.resizeSash();
 		return new DonorTab(id, DonorTable.this.tabFolder);
-	}
-	
-	public void resizeSash() {
-		if (this.getParent() instanceof SashForm) {
-			SashForm sash = (SashForm) this.getParent();
-			int[] weights = sash.getWeights();
-			for (int w : weights) {
-				if (w == 0) {
-					sash.setWeights(new int[] {1, 3});
-					return;
-				}
-			}
-		}
 	}
 }

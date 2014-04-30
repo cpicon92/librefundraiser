@@ -220,6 +220,31 @@ public class TabFolder extends Composite {
 		}
 	}
 	
+	protected void onNewTab(TabItem item) {
+		boolean doit = true;
+		for (TabFolderListener l : listeners) {
+			TabFolderEvent e = new TabFolderEvent(item);
+			l.open(e);
+			if (!e.doit) doit = false;
+		}
+		if (!doit) {
+			item.getControl().dispose();
+			item.dispose();
+			TabItem lastSelection = null;
+			while (!selectionOrder.isEmpty()) {
+				lastSelection = selectionOrder.pop();
+				if (lastSelection != item && !lastSelection.isDisposed()) break;
+			}
+			if (lastSelection != null) {
+				this.setSelection(lastSelection);
+			}
+			((GridLayout)compositeTabs.getLayout()).numColumns = compositeTabs.getChildren().length;
+			distributeTabs();
+			this.changed(new Control[]{compositeControlArea});
+			this.layout(true, true);
+		}
+	}
+	
 	public static Color changeColorBrightness(Display display, Color color, int increment) {
 		int r = color.getRed();
 		int g = color.getGreen();

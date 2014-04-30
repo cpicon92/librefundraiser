@@ -36,7 +36,6 @@ public class TabItem extends Composite {
 	private String text = "";
 	private Control control;
 	private TabFolder parent;
-	private final TabItem thisTabItem = this;
 	private boolean selected = false;
 	private Rectangle closeButtonArea = null;
 	private boolean closeHover = false;
@@ -50,11 +49,11 @@ public class TabItem extends Composite {
 				checkCloseButton(e);
 			}
 		});
-		final Color gradBottom = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		final Color gradBottom = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		final Color gradTop = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, 25);
-		final Color colorSelectedHighlight = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		final Color colorTabLines = TabFolder.changeColorBrightness(thisTabItem.getDisplay(), gradBottom, -50);		final Color colorTabLinesInactive = thisTabItem.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
-		final Color colorBlack = new Color(thisTabItem.getDisplay(), 0, 0, 0);
+		final Color colorSelectedHighlight = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		final Color colorTabLines = TabFolder.changeColorBrightness(TabItem.this.getDisplay(), gradBottom, -50);		final Color colorTabLinesInactive = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		final Color colorBlack = new Color(TabItem.this.getDisplay(), 0, 0, 0);
 		final Color colorShadow = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, -20);
 		final Color grayTab = TabFolder.changeColorBrightness(this.getDisplay(), colorShadow, 10);
 		final boolean[] repainting = new boolean[] {false};
@@ -63,14 +62,14 @@ public class TabItem extends Composite {
 			public void paintControl(PaintEvent e) {
 				if (repainting[0]) return;
 				repainting[0] = true;
-				Rectangle gcSize = thisTabItem.getClientArea();
+				Rectangle gcSize = TabItem.this.getClientArea();
 				e.gc.setForeground(gradBottom);
 				e.gc.setBackground(colorShadow);
 				e.gc.fillGradientRectangle(0, 0, gcSize.width, gcSize.height-1, true);
 				e.gc.setForeground(colorTabLines);
 				e.gc.setAntialias(SWT.ON);
 				if (selected) {
-					e.gc.setBackgroundPattern(new Pattern(thisTabItem.getDisplay(), 0, 0, 0, gcSize.height, gradTop, gradBottom));
+					e.gc.setBackgroundPattern(new Pattern(TabItem.this.getDisplay(), 0, 0, 0, gcSize.height, gradTop, gradBottom));
 				} else {
 					e.gc.setBackground(grayTab);
 					e.gc.drawLine(0, gcSize.height-1, gcSize.width, gcSize.height-1);
@@ -113,13 +112,13 @@ public class TabItem extends Composite {
 				checkCloseButton(e);
 				if (e.button == 3) return;
 				if (e.button == 2) {
-					thisTabItem.parent.closeTab(thisTabItem);
+					TabItem.this.parent.closeTab(TabItem.this);
 					return;
 				}
 				if (closeHover) {
-					thisTabItem.parent.closeTab(thisTabItem);
+					TabItem.this.parent.closeTab(TabItem.this);
 				} else {
-					parent.setSelection(thisTabItem);
+					parent.setSelection(TabItem.this);
 				}
 			}
 		};
@@ -136,13 +135,13 @@ public class TabItem extends Composite {
 		menu.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuShown(MenuEvent e) {
-				if (!thisTabItem.isClosable()) mntmCloseTab.setEnabled(false);
+				if (!TabItem.this.isClosable()) mntmCloseTab.setEnabled(false);
 			}
 		});
 		mntmCloseTab.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				thisTabItem.parent.closeTab(thisTabItem);
+				TabItem.this.parent.closeTab(TabItem.this);
 			}
 		});
 		mntmCloseTab.setText("Close tab");
@@ -151,7 +150,7 @@ public class TabItem extends Composite {
 		mntmCloseOtherTabs.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				thisTabItem.parent.closeAllTabs(new TabItem[] {thisTabItem});
+				TabItem.this.parent.closeAllTabs(new TabItem[] {TabItem.this});
 			}
 		});
 		mntmCloseOtherTabs.setText("Close other tabs");
@@ -160,10 +159,11 @@ public class TabItem extends Composite {
 		mntmCloseTabsTo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				thisTabItem.parent.closeToRight(thisTabItem);
+				TabItem.this.parent.closeToRight(TabItem.this);
 			}
 		});
 		mntmCloseTabsTo.setText("Close tabs to the right");
+		parent.onNewTab(this);
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class TabItem extends Composite {
 	public void setControl(Control control) {
 		this.control = control;
 		parent.suckUpChildren();
-		//		parent.setSelection(thisTabItem);
+		//		parent.setSelection(TabItem.this);
 	}
 
 	protected void setSelected(boolean selected) {

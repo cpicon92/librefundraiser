@@ -408,6 +408,18 @@ public class MainWindow {
 			public void close(TabFolderEvent e) {
 				if (tabFolder.getItems().length <= 1) mainPanel.setWeights(new int[] {1, 0});
 			}
+			@Override
+			public void open(TabFolderEvent e) {
+				if (tabFolder.getItems().length >= 1) {
+					int[] weights = mainPanel.getWeights();
+					for (int w : weights) {
+						if (w == 0) {
+							mainPanel.setWeights(new int[] {1, 3});
+							return;
+						}
+					}
+				}
+			}
 		});
 		mainPanel.setWeights(new int[] {1, 0});
 
