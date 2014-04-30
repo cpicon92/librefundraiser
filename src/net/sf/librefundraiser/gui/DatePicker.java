@@ -100,9 +100,14 @@ public class DatePicker extends Composite {
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
-				if (!DatePicker.this.calendarPopup.isFocused()) {
-					DatePicker.this.calendarPopup.close();
-				}
+				DatePicker.this.getDisplay().timerExec(10, new Runnable() {
+					@Override
+					public void run() {
+						if (DatePicker.this.calendarPopup != null &&!DatePicker.this.calendarPopup.isFocused()) {
+							DatePicker.this.calendarPopup.close();
+						}
+					}
+				});
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -121,6 +126,9 @@ public class DatePicker extends Composite {
 					initial = new Date();
 				}
 				text.setFocus();
+				if (calendarPopup != null) {
+					calendarPopup.close();
+				}
 				calendarPopup = new CalendarPopup(DatePicker.this.getShell(), DatePicker.this, initial);
 				calendarPopup.open();
 			}
