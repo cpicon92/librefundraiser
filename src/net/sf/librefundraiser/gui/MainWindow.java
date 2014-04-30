@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -334,11 +333,11 @@ public class MainWindow {
 		});
 		mntmAbout.setText("About...");
 
-		Composite compositeToolbar = new Composite(shell, SWT.NONE);
-		compositeToolbar.setLayout(new GridLayout(3, false));
-		compositeToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+//		Composite compositeToolbar = new Composite(shell, SWT.NONE);
+//		compositeToolbar.setLayout(new GridLayout(3, false));
+//		compositeToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		ToolBar toolBar = new ToolBar(compositeToolbar, SWT.FLAT | SWT.RIGHT);
+		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(0, 0, 80, 21);
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
@@ -375,9 +374,6 @@ public class MainWindow {
 		tltmDbProperties.setImage(ResourceManager.getIcon("db-properties.png"));
 
 		//TODO add advanced search with SQL queries
-
-		new Label(compositeToolbar, SWT.NONE);
-		new Label(compositeToolbar, SWT.NONE);
 		
 		final SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
 		mainPanel.setSashWidth(6);

@@ -246,25 +246,14 @@ public class TabFolder extends Composite {
 	}
 	
 	public static Color changeColorBrightness(Display display, Color color, int increment) {
-		int r = color.getRed();
-		int g = color.getGreen();
-		int b = color.getBlue();
-		return new Color(display, incrementValue(r, increment), incrementValue(g, increment), incrementValue(b, increment));
+		return new Color(
+			display,
+			incrementValue(color.getRed(), increment), 
+			incrementValue(color.getGreen(), increment), 
+			incrementValue(color.getBlue(), increment)
+		);
 	}
 	private static int incrementValue(int value, int increment) {
-		if (increment >= 0) {
-			if (increment + value > 255) {
-				value = 255;
-			} else {
-				value = increment + value;
-			}
-		} else {
-			if (increment + value < 0) {
-				value = 0;
-			} else {
-				value = increment + value;
-			}
-		}
-		return value;
+		return Math.max(Math.min((value + increment), 255), 0);
 	}
 }
