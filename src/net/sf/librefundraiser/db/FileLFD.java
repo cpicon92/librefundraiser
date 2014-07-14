@@ -24,6 +24,10 @@ import net.sf.librefundraiser.Donor.Gift.GiftDeserializer;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ProgressListener;
 
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZInputStream;
+import org.tukaani.xz.XZOutputStream;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
@@ -73,7 +77,7 @@ public class FileLFD {
 			Gson gson = new GsonBuilder()
 			.registerTypeAdapter(Gift.class, new GiftDeserializer())
 			.create();
-			JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(dbFile), "UTF-8"));
+			JsonReader reader = new JsonReader(new InputStreamReader(new XZInputStream(new FileInputStream(dbFile)), "UTF-8"));
 			List<Donor> donors = new ArrayList<>();
 			reader.beginObject();
 			while (reader.hasNext()) {
@@ -103,7 +107,7 @@ public class FileLFD {
 		try {
 			Gson gson = new Gson();
 			OutputStream os = new FileOutputStream(this.dbFile);
-			JsonWriter writer = new JsonWriter(new OutputStreamWriter(os, "UTF-8"));
+			JsonWriter writer = new JsonWriter(new OutputStreamWriter(new XZOutputStream(os, new LZMA2Options()), "UTF-8"));
 			writer.beginObject();
 			writer.name("info");
 			gson.toJson(this.info, Map.class, writer);
