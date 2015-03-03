@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mime-type xmlns="http://www.freedesktop.org/standards/shared-mime-info" type="application/x-librefundraiser">
-  <comment>LibreFundraiser database file</comment>
-  <acronym>LFD</acronym>
-  <expanded-acronym>LibreFundraiser Database</expanded-acronym>
-  <generic-icon name="x-office-document"/>
-  <glob pattern="*.lfd"/>
-  <magic priority="50">
-    <match type="string" value="\x89LFD" offset="0"/>
-  </magic>
-  <alias type="application/x-lfd"/>
-</mime-type>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+	<mime-type type="application/x-librefundraiser">
+	  <comment>LibreFundraiser database file</comment>
+	  <acronym>LFD</acronym>
+	  <expanded-acronym>LibreFundraiser Database</expanded-acronym>
+	  <glob pattern="*.lfd"/>
+	  <magic priority="50">
+		<match type="string" value="\x89LFD" offset="0"/>
+	  </magic>
+	  <alias type="application/x-lfd"/>
+	</mime-type>
+</mime-info>
