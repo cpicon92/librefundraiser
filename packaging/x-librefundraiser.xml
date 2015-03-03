@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mime-type xmlns="http://www.freedesktop.org/standards/shared-mime-info" type="application/x-librefundraiser">
-  <!--Created automatically by update-mime-database. DO NOT EDIT!-->
   <comment>LibreFundraiser database file</comment>
+  <acronym>LFD</acronym>
+  <expanded-acronym>LibreFundraiser Database</expanded-acronym>
+  <generic-icon name="x-office-document"/>
   <glob pattern="*.lfd"/>
+  <magic priority="50">
+    <match type="string" value="\x89LFD" offset="0"/>
+  </magic>
+  <alias type="application/x-lfd"/>
 </mime-type>

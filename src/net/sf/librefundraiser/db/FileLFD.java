@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.db;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,7 +79,15 @@ public class FileLFD {
 			Gson gson = new GsonBuilder()
 			.registerTypeAdapter(Gift.class, new GiftDeserializer())
 			.create();
-			JsonReader reader = new JsonReader(new InputStreamReader(new XZInputStream(new FileInputStream(dbFile)), "UTF-8"));
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dbFile));
+			bis.mark(4);
+			byte[] magic = new byte[4];
+			bis.read(magic);
+			if (!Arrays.equals(magic, new byte[] {(byte) 0x89, 'L','F','D'})) {
+				bis.reset();
+				System.err.println("LFD file missing magic number, may fail");
+			}
+			JsonReader reader = new JsonReader(new InputStreamReader(new XZInputStream(bis), "UTF-8"));
 			List<Donor> donors = new ArrayList<>();
 			reader.beginObject();
 			while (reader.hasNext()) {
@@ -107,6 +117,7 @@ public class FileLFD {
 		try {
 			Gson gson = new Gson();
 			OutputStream os = new FileOutputStream(this.dbFile);
+			os.write(new byte[] {(byte) 0x89, 'L','F','D'});
 			JsonWriter writer = new JsonWriter(new OutputStreamWriter(new XZOutputStream(os, new LZMA2Options()), "UTF-8"));
 			writer.beginObject();
 			writer.name("info");
@@ -269,6 +280,7 @@ public class FileLFD {
 	}
 
 	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
+		//TODO implement this
 		//		if (pl != null) pl.setProgress(1);
 		//		final Donor[] donors;
 		//		if (toUpdate == null) {
