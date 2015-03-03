@@ -3,7 +3,7 @@ package net.sf.librefundraiser.gui;
 import java.text.ParseException;
 import java.util.Date;
 
-import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.io.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 

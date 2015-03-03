@@ -17,11 +17,10 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.gui.DonorTable;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.Gift;
 
 public class SQLite {
 	private static final int latestDbVersion = 2;
@@ -231,7 +230,7 @@ public class SQLite {
 					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
 					ArrayList<Gift> gifts = new ArrayList<>();
 					while (rsGifts.next()) {
-						Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
+						Gift gift = new Gift(Integer.parseInt(rsGifts.getString("recnum")));
 						for (String column : giftColumns) {
 							String value = "";
 							try {
@@ -515,7 +514,7 @@ public class SQLite {
 			rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
 			donor.clearGifts();
 			while (rsGifts.next()) {
-				Donor.Gift gift = new Donor.Gift(Integer.parseInt(rsGifts.getString("recnum")));
+				Gift gift = new Gift(Integer.parseInt(rsGifts.getString("recnum")));
 				for (String column : giftColumns) {
 					String value = "";
 					try {
@@ -628,33 +627,6 @@ public class SQLite {
 		} catch (Exception e) {
 		}
 		return date;
-	}
-
-	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
-		//		if (pl != null) pl.setProgress(1);
-		//		final Donor[] donors;
-		//		if (toUpdate == null) {
-		//			donors = getDonors("", true);
-		//		} else {
-		//			StringBuilder queryString = new StringBuilder();
-		//			String sep = " where ";
-		//			for (Donor d : toUpdate) {
-		//				queryString.append(sep).append("ACCOUNT='" + d.getData("ACCOUNT") + "'");
-		//				sep = " or ";
-		//			}
-		//			System.out.println(queryString.toString());
-		//			donors = getDonors(queryString.toString(), true);
-		//		}
-		//		if (pl != null) pl.setMaxProgress(donors.length);
-		//		int progress = 0;
-		//		for (Donor d : donors) {
-		//			if (pl != null) pl.setProgress(++progress);
-		//			d.recalculateGiftStats();
-		//		}
-		//		
-		//		this.saveDonors(donors);
-		if (pl != null) pl.setProgress(-1);
-
 	}
 
 }

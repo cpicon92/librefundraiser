@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.Gift;
 import nl.knaw.dans.common.dbflib.CorruptedTableException;
 import nl.knaw.dans.common.dbflib.Database;
 import nl.knaw.dans.common.dbflib.Field;

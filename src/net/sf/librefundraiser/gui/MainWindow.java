@@ -2,11 +2,10 @@ package net.sf.librefundraiser.gui;
 import java.io.File;
 import java.util.List;
 
-import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ProgressListener;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
+import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabFolderEvent;
 import net.sf.librefundraiser.tabs.TabFolderListener;
@@ -449,46 +448,17 @@ public class MainWindow {
 			@Override
 			public void run() {
 				if (reload) {
-					Main.getDonorDB().updateAllStats(null, new ProgressListener() {
-						@Override
-						public void setProgress(final int p) {
-							getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									int progress = p;
-									if (progress == -1) {
-										progress = 0;
-										List<Donor> output = Main.getDonorDB().getDonors();
-//										Main.getDonorDB().saveDonors(output);
-										donorTable.donors = output.toArray(new Donor[0]);
-										donorTable.refresh();
-									}
-									if (progress != 0) {
-										if (waitCursor) setCursor(SWT.CURSOR_WAIT);
-									} else {
-										setCursor(SWT.CURSOR_ARROW);
-									}
-								}
-							});
-						}
-
-						@Override
-						public void setMaxProgress(final int maxProgress) {
-							getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-								}
-							});
-						}
-					});
-				} else {
-					display.asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							donorTable.refresh();
-						}
-					});
-				}
+					//TODO figure out what the hell "reload" means
+					List<Donor> output = Main.getDonorDB().getDonors();
+//					Main.getDonorDB().saveDonors(output);
+					donorTable.donors = output.toArray(new Donor[0]);
+				} 
+				display.asyncExec(new Runnable() {
+					@Override
+					public void run() {
+						donorTable.refresh();
+					}
+				});
 			}
 		}).start();
 	}

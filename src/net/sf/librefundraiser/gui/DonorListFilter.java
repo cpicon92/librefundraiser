@@ -1,6 +1,6 @@
 package net.sf.librefundraiser.gui;
 
-import net.sf.librefundraiser.Donor;
+import net.sf.librefundraiser.io.Donor;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;

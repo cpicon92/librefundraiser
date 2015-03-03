@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabItem;
 

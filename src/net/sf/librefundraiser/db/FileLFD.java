@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
-import net.sf.librefundraiser.Donor.Gift.GiftDeserializer;
 import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ProgressListener;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.Gift;
+import net.sf.librefundraiser.io.Gift.GiftDeserializer;
 
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
@@ -277,34 +276,6 @@ public class FileLFD {
 		} catch (Exception e) {
 		}
 		return date;
-	}
-
-	public void updateAllStats(Donor[] toUpdate, ProgressListener pl) {
-		//TODO implement this
-		//		if (pl != null) pl.setProgress(1);
-		//		final Donor[] donors;
-		//		if (toUpdate == null) {
-		//			donors = getDonors("", true);
-		//		} else {
-		//			StringBuilder queryString = new StringBuilder();
-		//			String sep = " where ";
-		//			for (Donor d : toUpdate) {
-		//				queryString.append(sep).append("ACCOUNT='" + d.getData("ACCOUNT") + "'");
-		//				sep = " or ";
-		//			}
-		//			System.out.println(queryString.toString());
-		//			donors = getDonors(queryString.toString(), true);
-		//		}
-		//		if (pl != null) pl.setMaxProgress(donors.length);
-		//		int progress = 0;
-		//		for (Donor d : donors) {
-		//			if (pl != null) pl.setProgress(++progress);
-		//			d.recalculateGiftStats();
-		//		}
-		//		
-		//		this.saveDonors(donors);
-		if (pl != null) pl.setProgress(-1);
-
 	}
 	
 	public static class DatabaseIOException extends RuntimeException {

@@ -18,6 +18,7 @@ import net.sf.librefundraiser.db.FileLFD;
 import net.sf.librefundraiser.db.SQLite;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
+import net.sf.librefundraiser.io.Donor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;

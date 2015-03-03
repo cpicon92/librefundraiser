@@ -5,8 +5,8 @@ import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.StringTokenizer;
 
-import net.sf.librefundraiser.Donor;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.io.Donor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;

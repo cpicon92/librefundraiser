@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.librefundraiser.Donor;
-import net.sf.librefundraiser.Donor.Gift;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.Gift;
 import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
