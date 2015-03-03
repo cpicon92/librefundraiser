@@ -1,12 +1,15 @@
 package net.sf.librefundraiser;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class ResourceManager {
-	public static HashMap<String, Image> icons = new HashMap<>();
+	private static final Map<String, Image> icons = new ConcurrentHashMap<>();
+	private static final Map<Integer, Color> colors = new ConcurrentHashMap<>();
 	
 	public static Image getIcon(String filename) {
 		Display display = Display.getCurrent();
@@ -37,5 +40,20 @@ public class ResourceManager {
 			if (sizes[i] == size) return getLogo()[i];
 		}
 		return null;
+	}
+	
+	public static Color getColor(int argb, boolean alpha) {
+		if (!alpha) {
+			argb |= 0xff000000;
+		}
+		Color c = colors.get(argb);
+		if (c == null) {
+			c = new Color(Display.getCurrent(), argb & 0xff, (argb >> 8) & 0xff, (argb >> 16) & 0xff);
+		}
+		return c;
+	}
+	
+	public static Color getColor(int rgb) {
+		return getColor(rgb, false);
 	}
 }

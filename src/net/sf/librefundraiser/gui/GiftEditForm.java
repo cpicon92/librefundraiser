@@ -5,6 +5,7 @@ import java.util.Date;
 
 import net.sf.librefundraiser.Donor.Gift;
 import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.wb.swt.SWTResourceManager;
 
 public class GiftEditForm extends Composite {
 	private Combo txtAmount;
@@ -37,7 +37,7 @@ public class GiftEditForm extends Composite {
 	public GiftEditForm(Composite parent, int style, Gift gift) {
 		super(parent, SWT.BORDER);
 		if (System.getProperty("os.name").indexOf("nux") >= 0) {
-			setBackground(SWTResourceManager.getColor(211, 211, 211));
+			setBackground(ResourceManager.getColor(0xd3d3d3));
 			setBackgroundMode(SWT.INHERIT_FORCE);
 		}
 		this.gift = gift;
