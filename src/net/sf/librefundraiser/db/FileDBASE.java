@@ -76,7 +76,7 @@ public class FileDBASE {
 					//e.printStackTrace();
 				}
 			}
-			donor.putData("email2", email2);
+			donor.data.setEmail2(email2);
 			importedDonors.put(donor.getId(), donor);
 		}
 		donorTable.close();

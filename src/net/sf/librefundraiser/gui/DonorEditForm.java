@@ -899,7 +899,7 @@ public class DonorEditForm extends Composite {
 			txtSpouseFirst.setText(txtContactFirst.getText());
 			txtSpouseLast.setText(txtContactLast.getText());
 		}
-		donor.putData("type", business ? "B" : "I");
+		donor.data.setType(business ? Type.B : Type.I);
 		Format dateFormat = Main.getDateFormat();
 		txtLastEdited.setText(dateFormat.format(new Date()));
 		for (Object field[] : fields) {

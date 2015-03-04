@@ -42,6 +42,7 @@ public class Donor {
 		return new GiftStats(this.gifts.values());
 	}
 
+	@Deprecated
 	public void putData(String key, String value) {
 		data.putData(key.toLowerCase(), value);
 	}
