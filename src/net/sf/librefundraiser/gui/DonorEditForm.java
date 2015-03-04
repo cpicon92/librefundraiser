@@ -8,6 +8,7 @@ import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.DonorData.Type;
 import net.sf.librefundraiser.io.Gift;
+import net.sf.librefundraiser.io.GiftStats;
 
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -853,9 +854,40 @@ public class DonorEditForm extends Composite {
 	}
 
 	private void fillForm() {
-		for (Object field[] : fields) {
-			fillField((Control) field[0], (String) field[1]);
-		}
+		txtFirstName.setText(donor.data.getFirstname());
+		txtLastName.setText(donor.data.getLastname()); 
+		txtBusinessName.setText(donor.data.getLastname());
+		txtSpouseFirst.setText(donor.data.getSpousefrst());
+		txtSpouseLast.setText(donor.data.getSpouselast());
+		txtContactLast.setText(donor.data.getSpouselast());
+		txtContactFirst.setText(donor.data.getSpousefrst());
+		txtHomePhone.setText(donor.data.getHomephone()); 
+		txtWorkPhone.setText(donor.data.getWorkphone());
+		txtFax.setText(donor.data.getFax()); 
+		txtOptional.setText(donor.data.getContact());
+		comboCity.setText(donor.data.getCity()); 
+		txtAddress1.setText(donor.data.getAddress1());
+		comboZip.setText(donor.data.getZip()); 
+		txtAddress2.setText(donor.data.getAddress2());
+		comboCountry.setText(donor.data.getCountry()); 
+		txtNotes.setText(donor.data.getNotes());
+		txtMain.setText(donor.data.getEmail());
+		txtOther.setText(donor.data.getEmail2()); 
+		txtLastEdited.setText(Main.getDateFormat().format(donor.data.getChangedate()));
+		comboSalutation.setText(donor.data.getSalutation());
+		comboCategory.setText(donor.data.getCategory1());
+		comboDonorSource.setText(donor.data.getCategory2());
+		comboMailingName.setText(donor.data.getMailname()); 
+		comboState.setText(donor.data.getState());
+		txtAccountID.setText(donor.getAccountNum());
+		
+		GiftStats gs = donor.getGiftStats();
+		txtTotalGiven.setText(String.valueOf(gs.getAllTime())); 
+		txtYearToDate.setText(String.valueOf(gs.getYearToDt()));
+		txtLargestGift.setText(String.valueOf(gs.getLargest()));
+		txtFirstGiftDate.setText(String.valueOf(gs.getFirstGift()));
+		txtLastGiftAmt.setText(String.valueOf(gs.getLastAmt()));
+		txtLastGiftDate.setText(String.valueOf(gs.getLastGiveDt()));
 	}
 
 	public void saveForm(boolean refresh) {
@@ -880,22 +912,6 @@ public class DonorEditForm extends Composite {
 			Main.getWindow().refresh(true, false);
 		this.fillForm();
 		this.setEdited(false);
-	}
-
-	private void fillField(Control field, String key) {
-		if (field instanceof Text) {
-			String value = donor.getData(key);
-			if (field.getData() != null && field.getData().equals("money"))
-				value = Main.toMoney(value);
-			((Text) field).setText(value);
-			((Text) field).addModifyListener(modifyListener);
-		} else if (field instanceof Combo) {
-			((Combo) field).setText(donor.getData(key));
-			((Combo) field).addModifyListener(modifyListener);
-		} else {
-			System.err.println("The field for \"" + key
-					+ "\" cannot contain text.");
-		}
 	}
 
 	private void saveField(Control field, String key) {
@@ -942,13 +958,13 @@ public class DonorEditForm extends Composite {
 
 	public void setEdited(boolean edited) {
 		this.edited = edited;
-		String lastname = donor.getData("lastname");
-		String firstname = donor.getData("firstname");
+		String lastname = donor.data.getLastname();
+		String firstname = donor.data.getFirstname();
 		String tabTitle = lastname
 				+ (!(lastname.equals("") || firstname.equals("")) ? ", " : "")
 				+ firstname;
 		if (tabTitle.equals(""))
-			tabTitle = donor.getData("account");
+			tabTitle = donor.getAccountNum();
 		donorTab.setText((edited ? "*" : "") + tabTitle);
 		donorTab.setImage(edited ? DonorTab.edited : DonorTab.unedited);
 		ToolItem saveButton = Main.getWindow().getSaveButton();

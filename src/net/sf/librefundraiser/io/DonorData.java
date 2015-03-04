@@ -7,8 +7,6 @@ import java.util.Date;
 
 public class DonorData {
 	private Type type = Type.I;
-//	public Date changedate;
-	//TODO fix Date deserialization
 	private Date changedate;
 	private String 	spousefrst, 
 	state, 

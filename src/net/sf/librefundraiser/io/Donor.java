@@ -66,6 +66,10 @@ public class Donor {
 		return id;
 	}
 	
+	public String getAccountNum() {
+		return String.format("%06d", id);
+	}
+	
 	public void clearGifts() {
 		gifts.clear();
 	}

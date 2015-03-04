@@ -96,6 +96,7 @@ public class DonorListSorter extends ViewerComparator {
 
 	@Override
 	public int compare(Viewer v, Object c1, Object c2) {
+		//TODO use actual types instead of strings for sorting
 		Assert.isTrue(v == this.viewer);
 		ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();
 		String column = DonorTable.columns[columnIndex][0];
@@ -104,6 +105,7 @@ public class DonorListSorter extends ViewerComparator {
 		int output = 0;
 		//compare address with street name first
 		if (column.toLowerCase().equals("address2")) {
+			//TODO add Address type and use real comparator
 			String addr1 = t1.replaceAll("^([0-9]*)(.*)","$2");
 			String addr2 = t2.replaceAll("^([0-9]*)(.*)","$2");
 			int num1 = 0;
@@ -116,7 +118,7 @@ public class DonorListSorter extends ViewerComparator {
 			t2 = addr2 + String.format(" %05d", num2);
 		}
 		//compare money fields as money
-		if (DonorTable.columns[columnIndex][1].matches(DonorTable.moneyColumns)) {
+		if (DonorTable.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime|lastentamt)")) {
 			Double d1 = Main.fromMoney(t1);
 			Double d2 = Main.fromMoney(t2);
 			output = d1.compareTo(d2);

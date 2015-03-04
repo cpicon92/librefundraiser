@@ -1,11 +1,10 @@
 package net.sf.librefundraiser.gui;
 
-import java.text.ParseException;
 import java.util.Date;
 
-import net.sf.librefundraiser.io.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.io.Gift;
 
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -28,6 +27,8 @@ public class GiftEditForm extends Composite {
 	private final Gift gift;
 	private final Object[][] fields;
 	public boolean canceled = true;
+	private Button chkLetter;
+	private Combo comboSource;
 
 	/**
 	 * Create the composite.
@@ -72,7 +73,7 @@ public class GiftEditForm extends Composite {
 		lblSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblSource.setText("Source");
 
-		Combo comboSource = new Combo(compositeTop, SWT.NONE);
+		comboSource = new Combo(compositeTop, SWT.NONE);
 		comboSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		String[] previousSources = Main.getDonorDB().getPreviousGiftValues("source").toArray(new String[0]);
 		comboSource.setItems(previousSources);
@@ -93,7 +94,7 @@ public class GiftEditForm extends Composite {
 		txtNote = new Text(compositeBottom, SWT.BORDER);
 		txtNote.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		final Button chkLetter = new Button(compositeBottom, SWT.CHECK);
+		chkLetter = new Button(compositeBottom, SWT.CHECK);
 		chkLetter.setText("Send a thank you letter or receipt");
 		GridData gd_chkLetter = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_chkLetter.verticalIndent = 1;
@@ -133,9 +134,11 @@ public class GiftEditForm extends Composite {
 	}
 
 	private void fillForm() {
-		for (Object field[] : fields) {
-			fillField((Control)field[0],(String)field[1]);
-		}
+		txtAmount.setText(String.valueOf(gift.getAmount()));
+		dtDateGiven.setDate(gift.getDategiven());
+		chkLetter.setSelection(gift.isLetter());
+		comboSource.setText(gift.getSource());
+		txtNote.setText(gift.getNote());
 	}
 	
 	private void saveForm() {
@@ -144,27 +147,6 @@ public class GiftEditForm extends Composite {
 		}
 		gift.putIc("dt_entry",Main.getDateFormat().format(new Date()));
 		gift.putIc("recnum", String.format("%d",gift.recnum));
-	}
-	
-	private void fillField(Control field, String key) {
-		String value = gift.getIc(key)!=null?gift.getIc(key):"";
-		if (field.getClass().equals(Text.class)) {
-			((Text)field).setText(value);
-		} else if (field.getClass().equals(Combo.class)) {
-			((Combo)field).setText(value);
-		} else if (field.getClass().equals(DatePicker.class)) {
-			try {
-				((DatePicker)field).setDate(Main.getDateFormat().parse(value));
-			} catch (ParseException e) {}
-		} else if (field.getClass().equals(Button.class)) {
-			Button b = ((Button)field);
-			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
-				b.setSelection(value.toLowerCase().equals("true"));
-				System.out.println(value);
-			}
-		} else {
-			System.err.println("The field for \""+key+"\" cannot contain text.");
-		}
 	}
 	
 	private void saveField(Control field, String key) {

@@ -55,7 +55,7 @@ public class LinkEditForm extends Group {
 		super(parent, style);
 		this.donor = donor;
 		links = new ArrayDeque<>();
-		StringTokenizer token = new StringTokenizer(donor.getData("web"),"\n");
+		StringTokenizer token = new StringTokenizer(donor.data.getWeb(),"\n");
 		while (token.hasMoreElements()) {
 			links.add((String)token.nextElement());
 		}

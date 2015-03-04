@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +22,7 @@ import java.util.Map;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.Gift;
-import net.sf.librefundraiser.io.Gift.GiftDeserializer;
+import net.sf.librefundraiser.io.Money;
 
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
@@ -31,14 +30,16 @@ import org.tukaani.xz.XZOutputStream;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 public class FileLFD {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
-	//TODO encapsulate this and a string version of the same
-	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private List<Donor> donors = new ArrayList<>();
 	private Map<String, String> info = new HashMap<>();
 
@@ -77,9 +78,19 @@ public class FileLFD {
 	private void readAll() {
 		try {
 			Gson gson = new GsonBuilder()
-			.registerTypeAdapter(Gift.class, new GiftDeserializer())
-			//TODO replace String literal date format
-			.setDateFormat("yyyy-MM-dd")
+//			.registerTypeAdapter(Gift.class, new GiftDeserializer())
+			.registerTypeAdapter(Money.class, new JsonDeserializer<Money>() {
+				@Override
+				public Money deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
+					//needed due to old file format storing money as string
+					if (json.isJsonObject()) {
+						return ctx.deserialize(json, Money.class);
+					} else {
+						return new Money(json.getAsString());
+					}
+				}
+			})
+			.setDateFormat(Main.getDateFormatString())
 			.create();
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dbFile));
 			bis.mark(4);
@@ -118,8 +129,7 @@ public class FileLFD {
 	private void writeAll() {
 		try {
 			Gson gson = new GsonBuilder()
-			//TODO replace String literal date format
-			.setDateFormat("yyyy-MM-dd")
+			.setDateFormat(Main.getDateFormatString())
 			.create();
 			OutputStream os = new FileOutputStream(this.dbFile);
 			os.write(new byte[] {(byte) 0x89, 'L','F','D'});
@@ -270,7 +280,7 @@ public class FileLFD {
 
 	public static String formatDate(String date) {
 		try {
-			return Main.getDateFormat().format(dbDateFormat.parse(date));
+			return Main.getDateFormat().format(Main.getDateFormat().parse(date));
 		} catch (Exception e) {
 		}
 		return date;
@@ -278,7 +288,7 @@ public class FileLFD {
 
 	public static String unFormatDate(String date) {
 		try {
-			return dbDateFormat.format(Main.getDateFormat().parse(date));
+			return Main.getDateFormat().format(Main.getDateFormat().parse(date));
 		} catch (Exception e) {
 		}
 		return date;

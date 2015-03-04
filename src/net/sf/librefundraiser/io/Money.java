@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.io;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Currency;
 import java.util.Locale;
@@ -69,14 +70,21 @@ public class Money implements Comparable<Money> {
 
 	@Override
 	public String toString() {
-
 		StringBuilder sb = new StringBuilder(getSymbol(this.currency));
-		sb.append(amount / (int) Math.pow(10, fractionDigits));
+		sb.append(getCharacteristic());
 		if (fractionDigits > 0) {
 			sb.append(".");
-			sb.append(String.format("%0" + fractionDigits + "d", amount % (int) Math.pow(10, fractionDigits)));
+			sb.append(String.format("%0" + fractionDigits + "d", getMantissa()));
 		}
 		return sb.toString();
+	}
+	
+	private int getCharacteristic() {
+		return amount / (int) Math.pow(10, fractionDigits);
+	}
+	
+	private int getMantissa() {
+		return amount % (int) Math.pow(10, fractionDigits);
 	}
 
 	public static String getSymbol(String currencyCode) {
@@ -91,6 +99,15 @@ public class Money implements Comparable<Money> {
 	@Override
 	public int compareTo(Money o) {
 		return Integer.compare(this.amount, o.amount);
+	}
+	
+	public Money add(Money o) {
+		BigDecimal total = this.toBigDecimal().add(o.toBigDecimal());
+		return new Money(total.scaleByPowerOfTen(total.scale()).intValue(), this.currency.getCurrencyCode(), total.scale());
+	}
+	
+	public BigDecimal toBigDecimal() {
+		return new BigDecimal(this.amount).scaleByPowerOfTen(-1 * this.fractionDigits);
 	}
 
 }

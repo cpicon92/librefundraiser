@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.Gift;
 import nl.knaw.dans.common.dbflib.CorruptedTableException;
@@ -28,7 +29,7 @@ public class FileDBASE {
 		final HashMap<Integer, Donor> importedDonors = new HashMap<>();
 		final Table donorTable = database.getTable("Master.dbf");
 		final Table giftTable = database.getTable("Gifts.dbf");
-		final Format dateFormat = FileLFD.dbDateFormat;
+		final Format dateFormat = Main.getDateFormat();
 		donorTable.open(IfNonExistent.ERROR);
 		final List<Field> fields = donorTable.getFields();
 		final Iterator<Record> recordIterator = donorTable.recordIterator();

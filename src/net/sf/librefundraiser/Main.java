@@ -32,7 +32,8 @@ public class Main {
 	private static NumberFormat currency = null;
 	private static MainWindow window;
 	private final static Properties settings = new Properties();
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private static final String dateFormatString = "yyyy-MM-dd";
+	private static final DateFormat dateFormat = new SimpleDateFormat(getDateFormatString());
 //	private static final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
 	public static final String version = "(Development Snapshot)";
 
@@ -147,6 +148,9 @@ public class Main {
 	}
 	public static DateFormat getDateFormat() {
 		return dateFormat;
+	}
+	public static String getDateFormatString() {
+		return dateFormatString;
 	}
 	public static boolean fileExists (String path) {
 		boolean realFile = false;

@@ -1,38 +1,47 @@
 package net.sf.librefundraiser.io;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.HashMap;
 
 import net.sf.librefundraiser.Main;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
-public class Gift extends HashMap<String,String> implements Comparable<Gift> {
+public class Gift implements Comparable<Gift> {
 	private static final long serialVersionUID = -9169351258332556336L;
 	public final int recnum;
+	private String source, account, note;
+	private boolean letter;
+	private Date dt_entry, dategiven;
+	private Money amount;
+	
 	public Gift(int recnum) {
 		this.recnum = recnum;
 	}
+	
+	@Deprecated
 	public void putIc(String key, String val) {
-		this.put(key.toLowerCase(),val);
+//		this.put(key.toLowerCase(),val);
 	}
+	
+	@Deprecated
 	public String getIc(String key) {
 		return this.get(key.toLowerCase());
 	}
-	public double getIcAsDouble(String key) {
-		double output = 0;
-		try {
-			output = Double.parseDouble(this.getIc(key));
-		} catch (Exception e) {
-			System.err.printf("Attempt to fetch value \"%s\" from gift %d in donor %s as double failed.\n", key, recnum, this.getIc("account"));
+	
+	private String get(String key) {
+		for (Method m : this.getClass().getMethods()) {
+			if (m.getName().toLowerCase().equals("get" + key.toLowerCase())) {
+				try {
+					return String.valueOf(m.invoke(this));
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		return output;
+		return null;
 	}
+
+	@Deprecated
 	public Date getIcAsDate(String key) {
 		Date output = null;
 		try {
@@ -44,23 +53,58 @@ public class Gift extends HashMap<String,String> implements Comparable<Gift> {
 	}
 	@Override
 	public int compareTo(Gift o) {
-		String myDate = this.getIc("DATEGIVEN");
-		String otherDate = o.getIc("DATEGIVEN");
-		if (myDate == null && otherDate == null) return 0;
-		if (myDate == null) return -1;
-		if (otherDate == null ) return 1;
-		return myDate.compareTo(otherDate);
+		if (this.dategiven == null && o.dategiven == null) return 0;
+		if (this.dategiven == null) return -1;
+		if (o.dategiven == null ) return 1;
+		return this.dategiven.compareTo(o.dategiven);
 	}
-	//TODO: fix this mess
-	public static class GiftDeserializer implements JsonDeserializer<Gift> {
-		@Override
-		public Gift deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
-			JsonObject jsonGift = json.getAsJsonObject();
-			Gift gift = new Gift(jsonGift.get("recnum").getAsInt());
-			for (java.util.Map.Entry<String, JsonElement> e : jsonGift.entrySet()) {
-				gift.put(e.getKey(), e.getValue().getAsString());
-			}
-			return gift;
-		}
+
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public Date getDategiven() {
+		return dategiven;
+	}
+	public void setDategiven(Date dategiven) {
+		this.dategiven = dategiven;
+	}
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+	public boolean isLetter() {
+		return letter;
+	}
+	public void setLetter(boolean letter) {
+		this.letter = letter;
+	}
+	public Date getDt_entry() {
+		return dt_entry;
+	}
+	public void setDt_entry(Date dt_entry) {
+		this.dt_entry = dt_entry;
+	}
+	public Money getAmount() {
+		return amount;
+	}
+	public void setAmount(Money amount) {
+		this.amount = amount;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	public String getRecNum() {
+		return String.format("%06d", recnum);
 	}
 }

@@ -3,9 +3,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.Gift;
-import net.sf.librefundraiser.Main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -69,10 +69,15 @@ public class GiftTable extends Composite {
 		Collections.sort(gifts);
 		for (Gift gift : gifts) {
 			TableItem tableItem = new TableItem(tableGifts, SWT.NONE);
-			String[] itemData = new String[] { Main.toMoney(gift.getIc("amount")),
-					gift.getIc("dategiven"), gift.getIc("letter"),
-					gift.getIc("dt_entry"), gift.getIc("source"),
-					gift.getIc("note"), gift.getIc("recnum") };
+			String[] itemData = {
+				String.valueOf(gift.getAmount()),
+				Main.getDateFormat().format(gift.getDategiven()), 
+				String.valueOf(gift.isLetter()),
+				Main.getDateFormat().format(gift.getDt_entry()), 
+				gift.getSource(),
+				gift.getNote(), 
+				gift.getRecNum() 
+			};
 			tableItem.setText(itemData);
 		}
 		for (TableColumn c : tableGifts.getColumns()) {

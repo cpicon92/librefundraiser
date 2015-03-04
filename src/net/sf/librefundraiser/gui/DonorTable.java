@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -12,6 +13,7 @@ import javax.swing.table.TableModel;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.GiftStats;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabItem;
 
@@ -72,7 +74,7 @@ public class DonorTable extends Composite {
 		{ "Last Gift Date", "lastgivedt" }, { "Last Gift", "lastamt" },
 		{ "Total Gifts", "alltime" }, { "Year-to-date", "yeartodt" },
 		{ "First Gift", "firstgift" }, { "Largest Gift", "largest" } , { "Last Entry Date", "lastentdt" }, { "Last Entry Amount", "lastentamt" } };
-	final static public String moneyColumns = "(yeartodt|lastamt|largest|alltime|lastentamt)";
+
 	public Donor[] donors = null;
 
 	private TableViewer tableViewer;
@@ -88,16 +90,116 @@ public class DonorTable extends Composite {
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			Donor donor = (Donor) element;
-			if (columns[columnIndex][1].matches(moneyColumns)) {
-				return Main.toMoney(donor.getData(columns[columnIndex][1]));
+			GiftStats stats = donor.getGiftStats();
+			Object txt;
+			switch (columnIndex) {
+			case 0:
+				txt = donor.getAccountNum();
+				break;
+			case 1:
+				txt = donor.data.getType();
+				break;
+			case 2:
+				txt = donor.data.getLastname();
+				break;
+			case 3:
+				txt = donor.data.getFirstname();
+				break;
+			case 4:
+				txt = donor.data.getSpouselast();
+				break;
+			case 5:
+				txt = donor.data.getSpousefrst();
+				break;
+			case 6:
+				txt = donor.data.getSalutation();
+				break;
+			case 7:
+				txt = donor.data.getHomephone();
+				break;
+			case 8:
+				txt = donor.data.getWorkphone();
+				break;
+			case 9:
+				txt = donor.data.getFax();
+				break;
+			case 10:
+				txt = donor.data.getCategory1();
+				break;
+			case 11:
+				txt = donor.data.getCategory2();
+				break;
+			case 12:
+				txt = donor.data.getMailname();
+				break;
+			case 13:
+				txt = donor.data.getAddress1();
+				break;
+			case 14:
+				txt = donor.data.getAddress2();
+				break;
+			case 15:
+				txt = donor.data.getCity();
+				break;
+			case 16:
+				txt = donor.data.getState();
+				break;
+			case 17:
+				txt = donor.data.getZip();
+				break;
+			case 18:
+				txt = donor.data.getCountry();
+				break;
+			case 19:
+				txt = donor.data.getEmail();
+				break;
+			case 20:
+				txt = donor.data.getEmail2();
+				break;
+			case 21:
+				String url = donor.data.getWeb();
+				// display web urls on one line in table
+				url = url.replace("\n", "; ");
+				// remove trailing semi-colon
+				if (url.length() > 2) {
+					url = url.substring(0, url.length() - 2);
+				}
+				txt = url;
+				break;
+			case 22:
+				txt = donor.data.getChangedate();
+				break;
+			case 23:
+				txt = stats.getLastGiveDt();
+				break;
+			case 24:
+				txt = stats.getLastAmt();
+				break;
+			case 25:
+				txt = stats.getAllTime();
+				break;
+			case 26:
+				txt = stats.getYearToDt();
+				break;
+			case 27:
+				txt = stats.getFirstGift();
+				break;
+			case 28:
+				txt = stats.getLargest();
+				break;
+			case 29:
+				txt = stats.getLastEntDt();
+				break;
+			case 30:
+				txt = stats.getLastEntAmt();
+				break;
+			default:
+				txt = "Missing Data";
 			}
-			if (columns[columnIndex][1].matches("web")) {
-				String urls = donor.getData(columns[columnIndex][1]);
-				urls = urls.replace("\n", "; ");
-				if (urls.length() > 2) urls = urls.substring(0, urls.length()-2);
-				return urls;
+			if (txt instanceof Date) {
+				txt = Main.getDateFormat().format((Date) txt);
 			}
-			return donor.getData(columns[columnIndex][1]);
+			return String.valueOf(txt);
 		}
 	}
 	private static class ContentProvider implements IStructuredContentProvider {
@@ -276,6 +378,7 @@ public class DonorTable extends Composite {
 		}
 	}
 
+	@Deprecated
 	private static int columnSearch(String columnName) {
 		for (int i = 0; i < columns.length; i++) {
 			if (columns[i][1].equals(columnName)) return i;
