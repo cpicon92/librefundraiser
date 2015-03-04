@@ -9,26 +9,18 @@ import java.util.Map;
 public class Donor {
 	public final DonorData data = new DonorData();
 	private final Map<Integer,Gift> gifts = new HashMap<>();
-	private final int id;
+	public final int id;
 	
 	public Donor(int id) {
 		this.id = id;
 	}
 	
+	@Deprecated
 	public String getData(String key) {
 		key = key.toLowerCase();
 		if (key.equals("account")) {
 			return String.format("%06d",id);
 		}
-		/*double allTime = 0;
-		double yearToDt = 0;
-		double largest = 0;
-		Date lastGiveDt = null;
-		Date firstGift = null;
-		double lastAmt = 0;
-		Date lastEntDt = null;
-		double lastEntAmt = 0;
-		 */
 		
 		for (Method m : GiftStats.class.getMethods()) {
 			if (m.getName().toLowerCase().equals("get" + key)) {

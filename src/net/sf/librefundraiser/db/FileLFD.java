@@ -37,6 +37,7 @@ import com.google.gson.stream.JsonWriter;
 public class FileLFD {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
+	//TODO encapsulate this and a string version of the same
 	public static final DateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private List<Donor> donors = new ArrayList<>();
 	private Map<String, String> info = new HashMap<>();

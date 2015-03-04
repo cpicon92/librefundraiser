@@ -3,10 +3,11 @@ package net.sf.librefundraiser.gui;
 import java.text.Format;
 import java.util.Date;
 
-import net.sf.librefundraiser.io.Donor;
-import net.sf.librefundraiser.io.Gift;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.DonorData.Type;
+import net.sf.librefundraiser.io.Gift;
 
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -591,7 +592,7 @@ public class DonorEditForm extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
-				gift.putIc("account", donor.getData("account"));
+				gift.putIc("account", String.format("%06d", donor.id));
 				editGift(gift);
 			}
 		});
@@ -842,7 +843,7 @@ public class DonorEditForm extends Composite {
 			}
 		}).start();
 		this.fillForm();
-		this.setBusiness(!donor.getData("type").equals("I"));
+		this.setBusiness(donor.data.getType() != Type.I);
 		this.setEdited(false);
 	}
 

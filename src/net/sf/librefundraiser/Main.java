@@ -81,6 +81,8 @@ public class Main {
 		if (currency == null) currency = NumberFormat.getCurrencyInstance();
 		return currency.format(amount);
 	}
+	
+	@Deprecated
 	public static String toMoney(String amount) {
 		if (amount.trim().equals("")) amount = "0.00";
 		try {
@@ -90,6 +92,8 @@ public class Main {
 			return amount;
 		}
 	}
+	
+	@Deprecated
 	public static double fromMoney(String amount) {
 		if (currency == null) currency = NumberFormat.getCurrencyInstance();
 		try {
