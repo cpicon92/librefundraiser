@@ -609,7 +609,7 @@ public class DonorEditForm extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem selectedItem = giftTable.getTable().getSelection()[0];
 				int id = Integer.parseInt(selectedItem.getText(6));
-				editGift(donor.getGifts().get(id));
+				editGift(donor.getGift(id));
 			}
 		});
 		tltmEdit.setImage(ResourceManager.getIcon("edit-gift.png"));

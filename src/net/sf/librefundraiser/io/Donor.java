@@ -2,8 +2,10 @@ package net.sf.librefundraiser.io;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Donor {
@@ -37,7 +39,7 @@ public class Donor {
 	}
 	
 	public GiftStats getGiftStats() {
-		return new GiftStats(this.getGifts());
+		return new GiftStats(this.gifts.values());
 	}
 
 	public void putData(String key, String value) {
@@ -54,12 +56,12 @@ public class Donor {
 		}
 	}
 	
-	public Map<Integer, Gift> getGifts() {
-		return gifts;
+	public List<Gift> getGifts() {
+		return new ArrayList<>(gifts.values());
 	}
 	
-	public String[] getKeys() {
-		return this.data.getKeys();
+	public Gift getGift(int recnum) {
+		return this.gifts.get(recnum);
 	}
 	
 	public int getId() {
@@ -81,8 +83,20 @@ public class Donor {
 	 * @return true if any field contains the filter, false otherwise
 	 */
 	public boolean match(String filter) {
-		//TODO get rid of this and other methods that are just references
-		return this.data.match(filter);
+		//TODO find some way to make this much faster
+		filter = filter.toLowerCase();
+		for (Method m : DonorData.class.getMethods()) {
+			if (m.getName().startsWith("get")) {
+				try {
+					if (String.valueOf(m.invoke(this.data)).toLowerCase().contains(filter)) {
+						return true;
+					}
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return false;
 	}
 
 

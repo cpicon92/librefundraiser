@@ -193,7 +193,7 @@ public class FileLFD {
 	int previousMaxRecnum = 0;
 	public int getUniqueRecNum() {
 		for (Donor d : donors) {
-			for (Gift g : d.getGifts().values()) {
+			for (Gift g : d.getGifts()) {
 				if (g.recnum > previousMaxRecnum) previousMaxRecnum = g.recnum;
 			}
 		}
@@ -222,7 +222,7 @@ public class FileLFD {
 			return new ArrayList<>();
 		}
 		for (Donor d : this.donors) {
-			for (Gift g : d.getGifts().values()) {
+			for (Gift g : d.getGifts()) {
 				try {
 					previousValues.add(String.valueOf(getter.invoke(g)).trim());
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -250,7 +250,7 @@ public class FileLFD {
 
 	public void deleteGift(int recnum) {
 		for (Donor donor : this.donors) {
-			for (Iterator<Gift> iter = donor.getGifts().values().iterator(); iter.hasNext();) {
+			for (Iterator<Gift> iter = donor.getGifts().iterator(); iter.hasNext();) {
 				Gift gift = iter.next();
 				if (gift.recnum == recnum) iter.remove();
 			}

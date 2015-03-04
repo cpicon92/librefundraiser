@@ -1,19 +1,19 @@
 package net.sf.librefundraiser.io;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Map;
 
 public class GiftStats {
 	private Money allTime, yearToDt, largest, lastAmt, lastEntAmt;
 	private Date lastGiveDt, firstGift, lastEntDt;
 
-	protected GiftStats(Map<Integer, Gift> gifts) {
-		Money allTime = new Money(0), 
-		yearToDt = new Money(0), 
-		largest = new Money(0), 
-		lastEntAmt = new Money(0), 
+	protected GiftStats(Collection<Gift> gifts) {
+		allTime = new Money(0);
+		yearToDt = new Money(0); 
+		largest = new Money(0); 
+		lastEntAmt = new Money(0);
 		lastAmt = new Money(0);
 		
 		// needed for ytd
@@ -22,12 +22,11 @@ public class GiftStats {
 		cal.set(Calendar.MONTH, Calendar.JANUARY);
 		Date newYear = cal.getTime();
 
-		for (Gift g : gifts.values()) {
+		for (Gift g : gifts) {
 			Money amount = g.getAmount();
 			Date dateGiven = g.getDategiven();
 			Date dtEntry = g.getDt_entry();
 			
-			//TODO add += method to Money class
 			allTime = allTime.add(amount);
 			if (dateGiven.compareTo(newYear) > 0) yearToDt = yearToDt.add(amount);
 			if (amount.compareTo(largest) > 0) largest = amount;
@@ -41,13 +40,6 @@ public class GiftStats {
 				lastEntAmt = amount;
 			}
 		}
-		
-		this.allTime = allTime;
-		this.yearToDt = yearToDt;
-		this.largest = largest;
-		this.lastEntAmt = lastEntAmt;
-		this.lastAmt = lastAmt;
-
 	}
 
 	public Date getLastGiveDt() {

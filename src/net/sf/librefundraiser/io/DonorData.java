@@ -64,20 +64,6 @@ public class DonorData {
 
 	}
 
-	public String[] getKeys() {
-		Field[] fields = this.getClass().getFields();
-		String[] out = new String[fields.length];
-		for (int i = 0; i < out.length; i++) {
-			out[i] = fields[i].getName();
-		}
-		return out;
-	}
-
-	public boolean match(String filter) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public Type getType() {
 		return type;
 	}
