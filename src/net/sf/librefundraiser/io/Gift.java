@@ -4,23 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 
-import net.sf.librefundraiser.Main;
-
 public class Gift implements Comparable<Gift> {
 	private static final long serialVersionUID = -9169351258332556336L;
 	public final int recnum;
-	private String source, account, note;
+	private String source, note;
+	private int account;
 	private boolean letter;
 	private Date dt_entry, dategiven;
 	private Money amount;
 	
 	public Gift(int recnum) {
 		this.recnum = recnum;
-	}
-	
-	@Deprecated
-	public void putIc(String key, String val) {
-//		this.put(key.toLowerCase(),val);
 	}
 	
 	@Deprecated
@@ -41,16 +35,6 @@ public class Gift implements Comparable<Gift> {
 		return null;
 	}
 
-	@Deprecated
-	public Date getIcAsDate(String key) {
-		Date output = null;
-		try {
-			output = Main.getDateFormat().parse(this.getIc(key));
-		} catch (Exception e) {
-			System.err.printf("Attempt to fetch value \"%s\" from gift %d in donor %s as double failed.\n", key, recnum, this.getIc("account"));
-		}
-		return output;
-	}
 	@Override
 	public int compareTo(Gift o) {
 		if (this.dategiven == null && o.dategiven == null) return 0;
@@ -71,10 +55,10 @@ public class Gift implements Comparable<Gift> {
 	public void setDategiven(Date dategiven) {
 		this.dategiven = dategiven;
 	}
-	public String getAccount() {
+	public int getAccount() {
 		return account;
 	}
-	public void setAccount(String account) {
+	public void setAccount(int account) {
 		this.account = account;
 	}
 	public String getNote() {

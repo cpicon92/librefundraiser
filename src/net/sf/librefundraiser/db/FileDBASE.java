@@ -18,6 +18,10 @@ import nl.knaw.dans.common.dbflib.Table;
 import nl.knaw.dans.common.dbflib.Type;
 import nl.knaw.dans.common.dbflib.Version;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 public class FileDBASE {
 	final Database database;
 
@@ -26,6 +30,7 @@ public class FileDBASE {
 	}
 
 	public Donor[] importFRBW() throws CorruptedTableException, IOException {
+		Gson gson = new Gson();
 		final HashMap<Integer, Donor> importedDonors = new HashMap<>();
 		final Table donorTable = database.getTable("Master.dbf");
 		final Table giftTable = database.getTable("Gifts.dbf");
@@ -80,7 +85,8 @@ public class FileDBASE {
 		final Iterator<Record> giftRecordIterator = giftTable.recordIterator();
 		for (int recNum = 1; giftRecordIterator.hasNext(); recNum++) {
 			final Record record = giftRecordIterator.next();
-			Gift gift = new Gift(recNum);
+			JsonObject gift = new JsonObject();
+			gift.add("recnum", new JsonPrimitive(recNum));
 			for (final Field field : giftFields) { 
 				try {
 					String fieldName = field.getName();
@@ -89,13 +95,14 @@ public class FileDBASE {
 					String rawValue = (value != null ? value.toString() : "").trim();
 					boolean valid = !rawValue.contains(new String(new char[]{(char)0}));
 					String fieldData = valid ? rawValue : "";
-					gift.putIc(fieldName, fieldData);
+					gift.add(fieldName, new JsonPrimitive(fieldData));
 				} catch (Exception e) {
 					//e.printStackTrace();
 				}
 			}
-			gift.putIc("recnum", "" + gift.recnum);
-			importedDonors.get(Integer.parseInt(gift.getIc("account"))).addGift(gift);
+			//use gson to avoid having to use reflection to instantiate gift
+			Gift g = gson.fromJson(gift, Gift.class);
+			importedDonors.get(g.getAccount()).addGift(g);
 		}
 		giftTable.close();
 		return importedDonors.values().toArray(new Donor[]{});

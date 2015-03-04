@@ -103,8 +103,7 @@ public class DonorEditForm extends Composite {
 				if (newValue != null) {
 					for (Object field[] : fields) {
 						if (field[0] == source) {
-							String originalValue = donor
-									.getData((String) field[1]);
+							String originalValue = donor.getData((String) field[1]);
 							edited = !originalValue.equals(newValue);
 							break;
 						}
@@ -593,7 +592,7 @@ public class DonorEditForm extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
-				gift.putIc("account", String.format("%06d", donor.id));
+				gift.setAccount(donor.id);
 				editGift(gift);
 			}
 		});
@@ -885,9 +884,9 @@ public class DonorEditForm extends Composite {
 		txtTotalGiven.setText(String.valueOf(gs.getAllTime())); 
 		txtYearToDate.setText(String.valueOf(gs.getYearToDt()));
 		txtLargestGift.setText(String.valueOf(gs.getLargest()));
-		txtFirstGiftDate.setText(String.valueOf(gs.getFirstGift()));
+		txtFirstGiftDate.setText(Main.getDateFormat().format(gs.getFirstGift()));
 		txtLastGiftAmt.setText(String.valueOf(gs.getLastAmt()));
-		txtLastGiftDate.setText(String.valueOf(gs.getLastGiveDt()));
+		txtLastGiftDate.setText(Main.getDateFormat().format(gs.getLastGiveDt()));
 	}
 
 	public void saveForm(boolean refresh) {

@@ -22,6 +22,10 @@ import net.sf.librefundraiser.gui.DonorTable;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.Gift;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 public class SQLite {
 	private static final int latestDbVersion = 2;
 	private final File dbFile;
@@ -195,6 +199,7 @@ public class SQLite {
 
 	public Donor[] getDonors(String query) {
 		lock.lock();
+		Gson gson = new Gson();
 		Connection conn = this.getConnection();
 		ArrayDeque<String> columns = new ArrayDeque<>();
 		Donor[] output = null;
@@ -230,16 +235,17 @@ public class SQLite {
 					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
 					ArrayList<Gift> gifts = new ArrayList<>();
 					while (rsGifts.next()) {
-						Gift gift = new Gift(Integer.parseInt(rsGifts.getString("recnum")));
+						JsonObject gift = new JsonObject();
 						for (String column : giftColumns) {
 							String value = "";
 							try {
 								value = formatDate(rsGifts.getString(column));
 							} catch (SQLException e1) {
 							}
-							gift.putIc(column, value != null ? value : "");
+							gift.add(column, new JsonPrimitive(value != null ? value : ""));
 						}
-						gifts.add(gift);
+						//using gson allows us to avoid using reflection ourselves
+						gifts.add(gson.fromJson(gift, Gift.class));
 					}
 					rsGifts.close();
 					donor.addGifts(gifts);
@@ -501,41 +507,6 @@ public class SQLite {
 		lock.unlock();
 	}
 
-	public void refreshGifts(Donor donor) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		try {
-			Statement stmt = conn.createStatement();
-			ArrayDeque<String> giftColumns = new ArrayDeque<>();
-			ResultSet rsGifts = stmt.executeQuery("PRAGMA table_info(`gifts`)");
-			while (rsGifts.next()) {
-				giftColumns.add(rsGifts.getString("name"));
-			}
-			rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\"");
-			donor.clearGifts();
-			while (rsGifts.next()) {
-				Gift gift = new Gift(Integer.parseInt(rsGifts.getString("recnum")));
-				for (String column : giftColumns) {
-					String value = "";
-					try {
-						value = formatDate(rsGifts.getString(column));
-					} catch (SQLException e1) {
-					}
-					gift.putIc(column, value != null ? value : "");
-				}
-				donor.addGift(gift);
-			}
-			rsGifts.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-	}
 
 	public String getDbName() {
 		String name = getDbInfo("name");

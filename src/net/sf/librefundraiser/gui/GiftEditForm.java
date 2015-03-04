@@ -5,6 +5,7 @@ import java.util.Date;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.io.Gift;
+import net.sf.librefundraiser.io.Money;
 
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -16,7 +17,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -25,7 +25,6 @@ public class GiftEditForm extends Composite {
 	private DatePicker dtDateGiven;
 	private Text txtNote;
 	private final Gift gift;
-	private final Object[][] fields;
 	public boolean canceled = true;
 	private Button chkLetter;
 	private Combo comboSource;
@@ -121,10 +120,6 @@ public class GiftEditForm extends Composite {
 		btnSave.setSize(36, 23);
 		btnSave.setText("Add");
 
-		Object[][] fields = { { txtAmount, "amount" },
-				{ dtDateGiven, "dategiven" }, { chkLetter, "letter" },
-				{ comboSource, "source" }, { txtNote, "note" } };
-		this.fields = fields;
 		fillForm();
 	}
 	
@@ -142,33 +137,12 @@ public class GiftEditForm extends Composite {
 	}
 	
 	private void saveForm() {
-		for (Object field[] : fields) {
-			saveField((Control)field[0],(String)field[1]);
-		}
-		gift.putIc("dt_entry",Main.getDateFormat().format(new Date()));
-		gift.putIc("recnum", String.format("%d",gift.recnum));
-	}
-	
-	private void saveField(Control field, String key) {
-		if (field.getClass().equals(Text.class)) {
-			String value = ((Text)field).getText();
-			if (field.equals(txtAmount)) {
-				value = value.replace(",", "");
-			}
-			gift.putIc(key, value);
-		} else if (field.getClass().equals(Combo.class)) {
-			gift.putIc(key,((Combo)field).getText());
-		} else if (field.getClass().equals(DatePicker.class)) {
-			Date date = ((DatePicker)field).getDate();
-			gift.putIc(key, Main.getDateFormat().format(date));
-		} else if (field.getClass().equals(Button.class)) {
-			Button b = ((Button)field);
-			if (SWT.CHECK == (b.getStyle() & SWT.CHECK)) {
-				gift.putIc(key, ""+b.getSelection());
-			}
-		} else {
-			System.err.println("The field for \""+key+"\" cannot contain text.");
-		}
+		gift.setAmount(new Money(txtAmount.getText()));
+		gift.setDategiven(dtDateGiven.getDate());
+		gift.setLetter(chkLetter.getSelection());
+		gift.setSource(comboSource.getText());
+		gift.setNote(txtNote.getText());
+		gift.setDt_entry(new Date());
 	}
 
 	public Gift getGift() {
