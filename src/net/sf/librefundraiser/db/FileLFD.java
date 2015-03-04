@@ -77,6 +77,8 @@ public class FileLFD {
 		try {
 			Gson gson = new GsonBuilder()
 			.registerTypeAdapter(Gift.class, new GiftDeserializer())
+			//TODO replace String literal date format
+			.setDateFormat("yyyy-MM-dd")
 			.create();
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(dbFile));
 			bis.mark(4);
@@ -114,7 +116,10 @@ public class FileLFD {
 
 	private void writeAll() {
 		try {
-			Gson gson = new Gson();
+			Gson gson = new GsonBuilder()
+			//TODO replace String literal date format
+			.setDateFormat("yyyy-MM-dd")
+			.create();
 			OutputStream os = new FileOutputStream(this.dbFile);
 			os.write(new byte[] {(byte) 0x89, 'L','F','D'});
 			JsonWriter writer = new JsonWriter(new OutputStreamWriter(new XZOutputStream(os, new LZMA2Options()), "UTF-8"));
