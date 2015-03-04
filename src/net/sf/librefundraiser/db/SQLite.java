@@ -232,7 +232,7 @@ public class SQLite {
 					while (rsGifts.next()) {
 						giftColumns.add(rsGifts.getString("name"));
 					}
-					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getData("account") + "\" order by DATEGIVEN desc");
+					rsGifts = stmt.executeQuery("select * from gifts where ACCOUNT=\"" + donor.getAccountNum() + "\" order by DATEGIVEN desc");
 					ArrayList<Gift> gifts = new ArrayList<>();
 					while (rsGifts.next()) {
 						JsonObject gift = new JsonObject();
@@ -266,102 +266,10 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		lock.unlock();
-		final Donor[] toSave = output;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				saveDonors(toSave);
-				System.out.println("saved");
-			}
-		}).start();
 		return output;
 	}
 
-	public void saveDonor(Donor donor) {
-		saveDonors(new Donor[] { donor });
-	}
 
-	public void saveDonors(Donor[] donors) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		try {
-			ArrayDeque<String> columns = new ArrayDeque<>();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`donors`)");
-			while (rs.next()) {
-				String str = rs.getString("name");
-				columns.add(str);
-			}
-			rs.close();
-			String fieldNames = "";
-			String fieldValues = "";
-			for (String f : columns) {
-				fieldNames += f + ", ";
-				fieldValues += "?, ";
-			}
-			fieldNames = fieldNames.substring(0, fieldNames.length() - 2);
-			fieldValues = fieldValues.substring(0, fieldValues.length() - 2);
-
-			conn.setAutoCommit(false);
-			PreparedStatement prep = conn.prepareStatement("replace into donors values (" + fieldValues + ");");
-			for (Donor donor : donors) {
-				int currentField = 1;
-				for (final String field : columns) {
-					prep.setString(currentField, unFormatDate(donor.getData(field)));
-					currentField++;
-				}
-				prep.addBatch();
-			}
-			prep.executeBatch();
-			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		try {
-			ArrayDeque<String> columns = new ArrayDeque<>();
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery("PRAGMA table_info(`gifts`)");
-			while (rs.next()) {
-				String str = rs.getString("name");
-				columns.add(str);
-			}
-			rs.close();
-			String fieldNames = "";
-			String fieldValues = "";
-			for (String f : columns) {
-				fieldNames += f + ", ";
-				fieldValues += "?, ";
-			}
-			fieldNames = fieldNames.substring(0, fieldNames.length() - 2);
-			fieldValues = fieldValues.substring(0, fieldValues.length() - 2);
-			conn.setAutoCommit(false);
-			PreparedStatement prep = conn.prepareStatement("replace into gifts values (" + fieldValues + ");");
-			for (Donor donor : donors) {
-				for (Gift g : donor.getGifts().values()) {
-					int currentField = 1;
-					for (final String field : columns) {
-						if (!field.equalsIgnoreCase("recnum")) {
-							prep.setString(currentField, unFormatDate(g.getIc(field)));
-						} else {
-							prep.setInt(currentField, Integer.parseInt(g.getIc(field)));
-						}
-						currentField++;
-					}
-					prep.addBatch();
-				}
-			}
-			prep.executeBatch();
-			conn.setAutoCommit(true);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-	}
 
 	public Donor[] getDonors() {
 		return getDonors("");

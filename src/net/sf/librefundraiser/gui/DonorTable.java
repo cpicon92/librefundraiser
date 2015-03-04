@@ -82,79 +82,87 @@ public class DonorTable extends Composite {
 	private TabFolder tabFolder;
 
 
-	private class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class DonorLabelProvider extends LabelProvider implements ITableLabelProvider {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
+
 		@Override
-		public String getColumnText(Object element, int columnIndex) {
-			Donor donor = (Donor) element;
+		public String getColumnText(Object donor, int columnIndex) {
+			Object txt  = this.getColumnData((Donor) donor, columnIndex);
+			if (txt instanceof Date) {
+				txt = Main.getDateFormat().format((Date) txt);
+			}
+			return String.valueOf(txt);
+		}
+		
+		public Object getColumnData(Donor donor, int columnIndex) {
 			GiftStats stats = donor.getGiftStats();
-			Object txt;
+			Object data;
 			switch (columnIndex) {
 			case 0:
-				txt = donor.getAccountNum();
+				data = donor.getAccountNum();
 				break;
 			case 1:
-				txt = donor.data.getType();
+				data = donor.data.getType();
 				break;
 			case 2:
-				txt = donor.data.getLastname();
+				data = donor.data.getLastname();
 				break;
 			case 3:
-				txt = donor.data.getFirstname();
+				data = donor.data.getFirstname();
 				break;
 			case 4:
-				txt = donor.data.getSpouselast();
+				data = donor.data.getSpouselast();
 				break;
 			case 5:
-				txt = donor.data.getSpousefrst();
+				data = donor.data.getSpousefrst();
 				break;
 			case 6:
-				txt = donor.data.getSalutation();
+				data = donor.data.getSalutation();
 				break;
 			case 7:
-				txt = donor.data.getHomephone();
+				data = donor.data.getHomephone();
 				break;
 			case 8:
-				txt = donor.data.getWorkphone();
+				data = donor.data.getWorkphone();
 				break;
 			case 9:
-				txt = donor.data.getFax();
+				data = donor.data.getFax();
 				break;
 			case 10:
-				txt = donor.data.getCategory1();
+				data = donor.data.getCategory1();
 				break;
 			case 11:
-				txt = donor.data.getCategory2();
+				data = donor.data.getCategory2();
 				break;
 			case 12:
-				txt = donor.data.getMailname();
+				data = donor.data.getMailname();
 				break;
 			case 13:
-				txt = donor.data.getAddress1();
+				data = donor.data.getAddress1();
 				break;
 			case 14:
-				txt = donor.data.getAddress2();
+				data = donor.data.getAddress2();
 				break;
 			case 15:
-				txt = donor.data.getCity();
+				data = donor.data.getCity();
 				break;
 			case 16:
-				txt = donor.data.getState();
+				data = donor.data.getState();
 				break;
 			case 17:
-				txt = donor.data.getZip();
+				data = donor.data.getZip();
 				break;
 			case 18:
-				txt = donor.data.getCountry();
+				data = donor.data.getCountry();
 				break;
 			case 19:
-				txt = donor.data.getEmail();
+				data = donor.data.getEmail();
 				break;
 			case 20:
-				txt = donor.data.getEmail2();
+				data = donor.data.getEmail2();
 				break;
 			case 21:
 				String url = donor.data.getWeb();
@@ -164,42 +172,39 @@ public class DonorTable extends Composite {
 				if (url.length() > 2) {
 					url = url.substring(0, url.length() - 2);
 				}
-				txt = url;
+				data = url;
 				break;
 			case 22:
-				txt = donor.data.getChangedate();
+				data = donor.data.getChangedate();
 				break;
 			case 23:
-				txt = stats.getLastGiveDt();
+				data = stats.getLastGiveDt();
 				break;
 			case 24:
-				txt = stats.getLastAmt();
+				data = stats.getLastAmt();
 				break;
 			case 25:
-				txt = stats.getAllTime();
+				data = stats.getAllTime();
 				break;
 			case 26:
-				txt = stats.getYearToDt();
+				data = stats.getYearToDt();
 				break;
 			case 27:
-				txt = stats.getFirstGift();
+				data = stats.getFirstGift();
 				break;
 			case 28:
-				txt = stats.getLargest();
+				data = stats.getLargest();
 				break;
 			case 29:
-				txt = stats.getLastEntDt();
+				data = stats.getLastEntDt();
 				break;
 			case 30:
-				txt = stats.getLastEntAmt();
+				data = stats.getLastEntAmt();
 				break;
 			default:
-				txt = "Missing Data";
+				data = "Missing Data";
 			}
-			if (txt instanceof Date) {
-				txt = Main.getDateFormat().format((Date) txt);
-			}
-			return String.valueOf(txt);
+			return data;
 		}
 	}
 	private static class ContentProvider implements IStructuredContentProvider {
@@ -282,7 +287,7 @@ public class DonorTable extends Composite {
 			tableColumn.setText(c[0]);
 		}
 
-		tableViewer.setLabelProvider(new TableLabelProvider());
+		tableViewer.setLabelProvider(new DonorLabelProvider());
 		tableViewer.setContentProvider(new ContentProvider());
 		tableViewer.setInput(donors);
 		new DonorListSorter(tableViewer);

@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -210,9 +212,21 @@ public class FileLFD {
 	
 	public List<String> getPreviousGiftValues(String field) {
 		HashSet<String> previousValues = new HashSet<>();
+		Method getter = null;
+		for (Method m : Gift.class.getMethods()) {
+			if (m.getName().equalsIgnoreCase("get" + field)) {
+				getter = m;
+			}
+		}
+		if (getter == null) {
+			return new ArrayList<>();
+		}
 		for (Donor d : this.donors) {
 			for (Gift g : d.getGifts().values()) {
-				previousValues.add(g.getIc(field).trim());
+				try {
+					previousValues.add(String.valueOf(getter.invoke(g)).trim());
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				}
 			}
 		}
 		ArrayList<String> out = new ArrayList<>(previousValues);

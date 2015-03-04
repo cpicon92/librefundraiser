@@ -1,8 +1,8 @@
 package net.sf.librefundraiser.gui;
-import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.gui.DonorTable.DonorLabelProvider;
+import net.sf.librefundraiser.io.Donor;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -94,39 +94,33 @@ public class DonorListSorter extends ViewerComparator {
 		viewer.refresh();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public int compare(Viewer v, Object c1, Object c2) {
-		//TODO use actual types instead of strings for sorting
+		Donor d1 = (Donor) c1, d2 = (Donor) c2;
 		Assert.isTrue(v == this.viewer);
-		ITableLabelProvider labelProvider = (ITableLabelProvider) viewer.getLabelProvider();
+		DonorLabelProvider labelProvider = (DonorLabelProvider) viewer.getLabelProvider();
 		String column = DonorTable.columns[columnIndex][0];
-		String t1 = labelProvider.getColumnText(c1,columnIndex);
-		String t2 = labelProvider.getColumnText(c2,columnIndex);
+		Object t1 = labelProvider.getColumnData(d1, columnIndex),
+		t2 = labelProvider.getColumnData(d2, columnIndex);
 		int output = 0;
 		//compare address with street name first
 		if (column.toLowerCase().equals("address2")) {
 			//TODO add Address type and use real comparator
-			String addr1 = t1.replaceAll("^([0-9]*)(.*)","$2");
-			String addr2 = t2.replaceAll("^([0-9]*)(.*)","$2");
+			String addr1 = String.valueOf(t1).replaceAll("^([0-9]*)(.*)","$2");
+			String addr2 = String.valueOf(t2).replaceAll("^([0-9]*)(.*)","$2");
 			int num1 = 0;
 			int num2 = 0;
 			try {
-				num1 = Integer.parseInt(t1.replaceAll("^([0-9]*)(.*)","$1"));
-				num2 = Integer.parseInt(t2.replaceAll("^([0-9]*)(.*)","$1"));
+				num1 = Integer.parseInt(String.valueOf(t1).replaceAll("^([0-9]*)(.*)","$1"));
+				num2 = Integer.parseInt(String.valueOf(t2).replaceAll("^([0-9]*)(.*)","$1"));
 			} catch (Exception e) {}
 			t1 = addr1 + String.format(" %05d", num1);
 			t2 = addr2 + String.format(" %05d", num2);
 		}
-		//compare money fields as money
-		if (DonorTable.columns[columnIndex][1].matches("(yeartodt|lastamt|largest|alltime|lastentamt)")) {
-			Double d1 = Main.fromMoney(t1);
-			Double d2 = Main.fromMoney(t2);
-			output = d1.compareTo(d2);
+		if (t1 instanceof Comparable && t2 instanceof Comparable) {
+			output = ((Comparable) t1).compareTo((Comparable) t2);
 		}
-		//if either field is null, change it to empty string
-		if (t1 == null) t1 = "";
-		if (t2 == null) t2 = "";
-		output = t1.compareTo(t2);
 		return direction * output;
 	}
 }

@@ -1,11 +1,8 @@
 package net.sf.librefundraiser.io;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Date;
 
 public class Gift implements Comparable<Gift> {
-	private static final long serialVersionUID = -9169351258332556336L;
 	public final int recnum;
 	private String source, note;
 	private int account;
@@ -15,24 +12,6 @@ public class Gift implements Comparable<Gift> {
 	
 	public Gift(int recnum) {
 		this.recnum = recnum;
-	}
-	
-	@Deprecated
-	public String getIc(String key) {
-		return this.get(key.toLowerCase());
-	}
-	
-	private String get(String key) {
-		for (Method m : this.getClass().getMethods()) {
-			if (m.getName().toLowerCase().equals("get" + key.toLowerCase())) {
-				try {
-					return String.valueOf(m.invoke(this));
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -84,9 +63,6 @@ public class Gift implements Comparable<Gift> {
 	}
 	public void setAmount(Money amount) {
 		this.amount = amount;
-	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 	public String getRecNum() {
 		return String.format("%06d", recnum);
