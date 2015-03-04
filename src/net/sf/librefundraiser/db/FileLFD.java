@@ -35,6 +35,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -80,13 +81,17 @@ public class FileLFD {
 	private void readAll() {
 		try {
 			Gson gson = new GsonBuilder()
-//			.registerTypeAdapter(Gift.class, new GiftDeserializer())
 			.registerTypeAdapter(Money.class, new JsonDeserializer<Money>() {
 				@Override
 				public Money deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
 					//needed due to old file format storing money as string
 					if (json.isJsonObject()) {
-						return ctx.deserialize(json, Money.class);
+						JsonObject m = json.getAsJsonObject();
+						return new Money(
+							m.get("amount").getAsInt(), 
+							m.get("currency").getAsJsonObject().get("currencyCode").getAsString(), 
+							m.get("fractionDigits").getAsInt()
+						);
 					} else {
 						return new Money(json.getAsString());
 					}
@@ -200,6 +205,7 @@ public class FileLFD {
 		return ++previousMaxRecnum;
 	}
 
+	//TODO make sure that previous values are cached
 	public List<String> getPreviousDonorValues(String field) {
 		HashSet<String> previousValues = new HashSet<>();
 		for (Donor d : this.donors) {

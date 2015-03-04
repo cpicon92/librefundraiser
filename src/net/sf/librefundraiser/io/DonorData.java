@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class DonorData {
 	private Type type = Type.I;
+	//TODO make sure this actually gets updated for any change
 	private Date changedate;
 	private String 	spousefrst, 
 	state, 

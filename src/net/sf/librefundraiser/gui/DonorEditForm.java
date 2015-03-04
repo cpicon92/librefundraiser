@@ -17,10 +17,10 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -82,38 +82,11 @@ public class DonorEditForm extends Composite {
 	private Composite compositeOptional;
 	private DonorTab donorTab;
 	private boolean edited = false;
-	private Object[][] fields;
-	private ModifyListener modifyListener = new ModifyListener() {
+	//ModifyListener sends false positives when comboboxes are dropped
+	private VerifyListener verifyListener = new VerifyListener() {
 		@Override
-		public void modifyText(ModifyEvent e) {
-			boolean edited = true;
-			// for some reason dropping a combobox causes this listener to get
-			// called even if no change is made
-			// this routine is required to prevent the donor from being
-			// incorrectly flagged as edited
-			try {
-				Object source = e.getSource();
-				Class<? extends Object> sourceClass = source.getClass();
-				String newValue = null;
-				if (sourceClass.equals(Text.class)) {
-					newValue = ((Text) source).getText();
-				} else if (sourceClass.equals(Combo.class)) {
-					newValue = ((Combo) source).getText();
-				}
-				if (newValue != null) {
-					for (Object field[] : fields) {
-						if (field[0] == source) {
-							String originalValue = donor.getData((String) field[1]);
-							edited = !originalValue.equals(newValue);
-							break;
-						}
-					}
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
-			if (edited)
-				setEdited(true);
+		public void verifyText(VerifyEvent e) {
+			DonorEditForm.this.setEdited(true);
 		}
 	};
 	private Text txtAccountID;
@@ -215,6 +188,7 @@ public class DonorEditForm extends Composite {
 		txtFirstName = new Text(compositeIndvNames, SWT.BORDER);
 		txtFirstName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
+		txtFirstName.addVerifyListener(verifyListener);
 
 		Label lblLastName = new Label(compositeIndvNames, SWT.NONE);
 		lblLastName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
@@ -787,31 +761,6 @@ public class DonorEditForm extends Composite {
 		txtCategory_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				false, 1, 1));
 
-		Object[][] fields = { { txtFirstName, "firstname" },
-				{ txtLastName, "lastname" }, { txtBusinessName, "lastname" },
-				{ txtSpouseFirst, "spousefrst" },
-				{ txtSpouseLast, "spouselast" },
-				{ txtContactLast, "spouselast" },
-				{ txtContactFirst, "spousefrst" },
-				{ txtHomePhone, "homephone" }, { txtWorkPhone, "workphone" },
-				{ txtFax, "fax" }, { txtOptional, "contact" },
-				{ comboCity, "city" }, { txtAddress1, "address1" },
-				{ comboZip, "zip" }, { txtAddress2, "address2" },
-				{ comboCountry, "country" }, { txtNotes, "notes" },
-				{ txtTotalGiven, "alltime" }, { txtMain, "email" },
-				{ txtOther, "email2" }, { txtYearToDate, "yeartodt" },
-				{ txtLargestGift, "largest" },
-				{ txtFirstGiftDate, "firstgift" },
-				{ txtLastGiftAmt, "lastamt" },
-				{ txtLastGiftDate, "lastgivedt" },
-				{ txtLastEdited, "changedate" },
-				{ comboSalutation, "salutation" },
-				{ comboCategory, "category1" },
-				{ comboDonorSource, "category2" },
-				{ comboMailingName, "mailname" }, { comboState, "state" },
-				{ txtAccountID, "account" } };
-		this.fields = fields;
-
 		// load previous values in another thread
 		new Thread(new Runnable() {
 			@Override
@@ -831,18 +780,19 @@ public class DonorEditForm extends Composite {
 						public void run() {
 							// temporarily remove modifylistener to prevent tab
 							// from incorrectly being marked as unsaved
-							combo.removeModifyListener(modifyListener);
+							combo.removeVerifyListener(verifyListener);
 							String prevText = combo.getText();
 							combo.setItems(previousValues);
 							new AutoCompleteField(combo, new ComboContentAdapter(), previousValues);
 							combo.setText(prevText);
-							combo.addModifyListener(modifyListener);
+							combo.addVerifyListener(verifyListener);
 						}
 					});
 				}
 			}
 		}).start();
 		this.fillForm();
+		this.attachModifyListeners();
 		this.setBusiness(donor.data.getType() != Type.I);
 		this.setEdited(false);
 	}
@@ -850,6 +800,33 @@ public class DonorEditForm extends Composite {
 	@Override
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
+	}
+	
+	private void attachModifyListeners() {
+		txtFirstName.addVerifyListener(verifyListener);
+		txtLastName.addVerifyListener(verifyListener); 
+		txtBusinessName.addVerifyListener(verifyListener);
+		txtSpouseFirst.addVerifyListener(verifyListener);
+		txtSpouseLast.addVerifyListener(verifyListener);
+		txtContactLast.addVerifyListener(verifyListener);
+		txtContactFirst.addVerifyListener(verifyListener);
+		txtHomePhone.addVerifyListener(verifyListener); 
+		txtWorkPhone.addVerifyListener(verifyListener);
+		txtFax.addVerifyListener(verifyListener); 
+		txtOptional.addVerifyListener(verifyListener);
+		comboCity.addVerifyListener(verifyListener); 
+		txtAddress1.addVerifyListener(verifyListener);
+		comboZip.addVerifyListener(verifyListener); 
+		txtAddress2.addVerifyListener(verifyListener);
+		comboCountry.addVerifyListener(verifyListener); 
+		txtNotes.addVerifyListener(verifyListener);
+		txtMain.addVerifyListener(verifyListener);
+		txtOther.addVerifyListener(verifyListener); 
+		comboSalutation.addVerifyListener(verifyListener);
+		comboCategory.addVerifyListener(verifyListener);
+		comboDonorSource.addVerifyListener(verifyListener);
+		comboMailingName.addVerifyListener(verifyListener); 
+		comboState.addVerifyListener(verifyListener);
 	}
 
 	private void fillForm() {
@@ -901,27 +878,37 @@ public class DonorEditForm extends Composite {
 		}
 		donor.data.setType(business ? Type.B : Type.I);
 		Format dateFormat = Main.getDateFormat();
+		//TODO actually update the changeDate field
 		txtLastEdited.setText(dateFormat.format(new Date()));
-		for (Object field[] : fields) {
-			saveField((Control) field[0], (String) field[1]);
-		}
+		
+		donor.data.setFirstname(txtFirstName.getText());
+		donor.data.setLastname(txtLastName.getText()); 
+		donor.data.setSpousefrst(txtSpouseFirst.getText());
+		donor.data.setSpouselast(txtSpouseLast.getText());
+		donor.data.setHomephone(txtHomePhone.getText()); 
+		donor.data.setWorkphone(txtWorkPhone.getText());
+		donor.data.setFax(txtFax.getText()); 
+		donor.data.setContact(txtOptional.getText());
+		donor.data.setCity(comboCity.getText()); 
+		donor.data.setAddress1(txtAddress1.getText());
+		donor.data.setZip(comboZip.getText()); 
+		donor.data.setAddress2(txtAddress2.getText());
+		donor.data.setCountry(comboCountry.getText()); 
+		donor.data.setNotes(txtNotes.getText());
+		donor.data.setEmail(txtMain.getText());
+		donor.data.setEmail2(txtOther.getText()); 
+		donor.data.setSalutation(comboSalutation.getText());
+		donor.data.setCategory1(comboCategory.getText());
+		donor.data.setCategory2(comboDonorSource.getText());
+		donor.data.setMailname(comboMailingName.getText()); 
+		donor.data.setState(comboState.getText());
+		
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
 		if (refresh)
 			Main.getWindow().refresh(true, false);
 		this.fillForm();
 		this.setEdited(false);
-	}
-
-	private void saveField(Control field, String key) {
-		if (field.getClass().equals(Text.class)) {
-			donor.putData(key, ((Text) field).getText());
-		} else if (field.getClass().equals(Combo.class)) {
-			donor.putData(key, ((Combo) field).getText());
-		} else {
-			System.err.println("The field for \"" + key
-					+ "\" cannot contain text.");
-		}
 	}
 
 	protected void setBusiness(boolean business) {

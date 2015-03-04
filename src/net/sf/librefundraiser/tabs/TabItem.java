@@ -251,6 +251,7 @@ public class TabItem extends Composite {
 							e.printStackTrace();
 						}
 						try {
+							//TODO fix bug that causes app to crash when tabs are closed (seems to be starting here)
 							getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {

@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+//TODO clean this up (maybe use actual list for links, instead of \n?)
 public class LinkEditForm extends Group {
 	private ArrayDeque<String> links;
 	private Composite compositeLinks;
