@@ -1,10 +1,10 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.table.DefaultTableModel;
@@ -17,6 +17,8 @@ import net.sf.librefundraiser.io.GiftStats;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabItem;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -51,8 +53,6 @@ import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Column;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 
 
@@ -454,35 +454,51 @@ public class DonorTable extends Composite {
 		return true;
 	}
 
-	public void writeCSV(File f) {
-		ArrayList<String[]> l = new ArrayList<>();
-		String[] columnTitles = new String[columns.length+1];
-		columnTitles[columns.length] = "Notes";
-		for (int i = 0; i < columnTitles.length-1; i++) {
-			columnTitles[i] = columns[i][0];
-		}
-		l.add(columnTitles);
-		for (Donor d : donors) {
-			String[] row = new String[columns.length+1];
-			for (int i = 0; i < row.length-1; i++) {
-				row[i] = d.getData(columns[i][1]);
+	public void writeCSV(File file) {
+		//TODO move this method into different class
+		//TODO make this universal somehow
+		final String[] headers = { "Account", "Type", "Last Name/Business",
+				"First Name", "Spouse/Contact Last", "Spouse/Contact First",
+				"Salutation", "Home Phone", "Work Phone", "Fax", "Category",
+				"Donor Source", "Mail Name", "Address 1", "Address 2", "City",
+				"State", "Zip", "Country", "Email", "Other Email", "Web",
+				"Last Change", "Last Gift Date", "Last Gift", "Total Gifts",
+				"Year-to-date", "First Gift", "Largest Gift",
+				"Last Entry Date", "Last Entry Amount", "Notes" };
+		try (CSVPrinter csv = CSVFormat.EXCEL.withHeader(headers).print(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
+			for (Donor d : donors) {
+				GiftStats stats = d.getGiftStats();
+				csv.printRecord(
+					d.getAccountNum(),
+					d.data.getType().toString(), d.data.getLastname(),
+					d.data.getFirstname(), d.data.getSpouselast(),
+					d.data.getSpousefrst(), d.data.getSalutation(),
+					d.data.getHomephone(), d.data.getWorkphone(),
+					d.data.getFax(), d.data.getCategory1(),
+					d.data.getCategory2(), d.data.getMailname(),
+					d.data.getAddress1(), d.data.getAddress2(),
+					d.data.getCity(), d.data.getState(), d.data.getZip(),
+					d.data.getCountry(), d.data.getEmail(),
+					d.data.getEmail2(), d.data.getWeb(),
+					csvDate(d.data.getChangedate()),
+					csvDate(stats.getLastGiveDt()),
+					stats.getLastAmt(),
+					stats.getAllTime(),
+					stats.getYearToDt(),
+					csvDate(stats.getFirstGift()),
+					stats.getLargest(),
+					csvDate(stats.getLastEntDt()),
+					stats.getLastEntAmt(), 
+					d.data.getNotes() 
+				);
 			}
-			String notes = d.getData("notes");
-			boolean valid = false;
-			try {
-				valid = !notes.contains(new String(new char[]{(char)0}));
-			} catch (Exception e) {
-			}
-			row[columns.length] = valid?d.getData("notes"):"";
-			l.add(row);
-		}
-		try {
-			CSVWriter writer = new CSVWriter(new FileWriter(f));
-			writer.writeAll(l);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String csvDate(Date d) {
+		return d != null ? Main.getDateFormat().format(d) : "Never";
 	}
 
 	public void writeODS(final File f, final boolean openFile) {

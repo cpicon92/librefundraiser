@@ -250,7 +250,8 @@ public class DonorData {
 	}
 
 	public String getNotes() {
-		return notes;
+		//dbase import sometimes is full of NUL bytes...
+		return notes.replace("\u0000", "");
 	}
 
 	public void setNotes(String notes) {
