@@ -482,13 +482,13 @@ public class DonorTable extends Composite {
 					d.data.getEmail2(), d.data.getWeb(),
 					csvDate(d.data.getChangedate()),
 					csvDate(stats.getLastGiveDt()),
-					stats.getLastAmt(),
-					stats.getAllTime(),
-					stats.getYearToDt(),
+					stats.getLastAmt().toString(""),
+					stats.getAllTime().toString(""),
+					stats.getYearToDt().toString(""),
 					csvDate(stats.getFirstGift()),
-					stats.getLargest(),
+					stats.getLargest().toString(""),
 					csvDate(stats.getLastEntDt()),
-					stats.getLastEntAmt(), 
+					stats.getLastEntAmt().toString(""), 
 					d.data.getNotes() 
 				);
 			}
@@ -516,7 +516,7 @@ public class DonorTable extends Composite {
 					for (int i = 0; i < row.length-1; i++) {
 						row[i] = d.getData(columns[i][1]);
 					}
-					String notes = d.getData("notes");
+					String notes = d.data.getNotes();
 					boolean valid = false;
 					try {
 						valid = !notes.contains(new String(new char[]{(char)0}));
@@ -530,8 +530,13 @@ public class DonorTable extends Composite {
 				String[][] sheetDataWithTitles = l.toArray(new String[][]{});
 				TableModel model = new DefaultTableModel(sheetData, columnTitles); 
 				try {
-					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(model);
+//					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(model);
+					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(new DefaultTableModel(columnTitles, donors.length));
 					Sheet donorSheet = outputSpreadSheet.getSheet(0);
+					for (int i = 0; i < donors.length; i++) {
+						donorSheet.getCellAt(0, i).setValue(donors[i].getAccountNum());
+						
+					}
 					donorSheet.setName("Donors");
 					final Display display = Display.getDefault();
 					final double[] pixelsPerMm = new double[1];

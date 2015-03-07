@@ -70,7 +70,11 @@ public class Money implements Comparable<Money> {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(getSymbol(this.currency));
+		return this.toString(getSymbol(this.currency));
+	}
+	
+	public String toString(String symbol) {
+		StringBuilder sb = new StringBuilder(symbol);
 		sb.append(getCharacteristic());
 		if (fractionDigits > 0) {
 			sb.append(".");
