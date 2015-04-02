@@ -1,7 +1,7 @@
 package net.sf.librefundraiser.gui.flextable;
 
-import org.eclipse.swt.events.SelectionListener;
 
-public interface FlexTableSelectionListener<T> extends SelectionListener {
+public interface FlexTableSelectionListener<T> {
 	void widgetSelected(FlexTableSelectionEvent<T> e);
+	void widgetDefaultSelected(FlexTableSelectionEvent<T> e);
 }

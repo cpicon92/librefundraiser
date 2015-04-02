@@ -11,7 +11,6 @@ import net.sf.librefundraiser.db.FileLFD;
 import net.sf.librefundraiser.gui.flextable.FlexTable;
 import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
 import net.sf.librefundraiser.io.Donor;
-import net.sf.librefundraiser.io.DonorData;
 import net.sf.librefundraiser.io.GiftStats;
 
 import org.eclipse.swt.SWT;
@@ -210,6 +209,11 @@ public class Tester extends Shell {
 			@Override
 			public int columnCount() {
 				return headers.length;
+			}
+
+			@Override
+			public void refresh() {
+				
 			}
 		});
 

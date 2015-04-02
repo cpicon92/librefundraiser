@@ -1,10 +1,16 @@
 package net.sf.librefundraiser.gui;
 
 import java.text.Format;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.gui.flextable.FlexTable;
+import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.DonorData.Type;
 import net.sf.librefundraiser.io.Gift;
@@ -33,7 +39,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -95,7 +100,7 @@ public class DonorEditForm extends Composite {
 	private ToolItem tltmAdd;
 	private ToolItem tltmEdit;
 	private ToolItem tltmDelete;
-	private GiftTable giftTable;
+	private FlexTable<Gift> giftTable;
 	private Composite compositeGifts;
 	private LinkEditForm grpWeb;
 	private TabFolder tabFolder;
@@ -581,9 +586,7 @@ public class DonorEditForm extends Composite {
 		tltmEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TableItem selectedItem = giftTable.getTable().getSelection()[0];
-				int id = Integer.parseInt(selectedItem.getText(6));
-				editGift(donor.getGift(id));
+				editGift(giftTable.getSelection());
 			}
 		});
 		tltmEdit.setImage(ResourceManager.getIcon("edit-gift.png"));
@@ -593,10 +596,7 @@ public class DonorEditForm extends Composite {
 		tltmDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (TableItem i : giftTable.getTable().getSelection()) {
-					int id = Integer.parseInt(i.getText(6));
-					Main.getDonorDB().deleteGift(id);
-				}
+				Main.getDonorDB().deleteGift(giftTable.getSelection().recnum);
 				Main.getDonorDB().refreshGifts(donor);
 				giftTable.refresh();
 				tltmDelete.setEnabled(false);
@@ -613,19 +613,102 @@ public class DonorEditForm extends Composite {
 		gd_compositeEditForm.exclude = true;
 		compositeEditForm.setLayoutData(gd_compositeEditForm);
 		compositeEditForm.setLayout(new FillLayout(SWT.HORIZONTAL));
-		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
-		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-				1));
-		giftTable.getTable().addSelectionListener(new SelectionAdapter() {
+		//TODO:Add sorting functionality
+		giftTable = new FlexTable<>(compositeGifts, SWT.BORDER);
+		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,1));
+		giftTable.setHighlightColumn(1);
+		giftTable.addSelectionListener(new FlexTableSelectionAdapter<Gift>() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				TableItem[] selection = giftTable.getTable().getSelection();
-				if (selection.length == 1)
+			public void widgetSelected(FlexTableSelectionEvent<Gift> e) {
+				if (e.target != null) {
 					tltmEdit.setEnabled(true);
-				if (selection.length > 0)
 					tltmDelete.setEnabled(true);
+				} else {
+					tltmEdit.setEnabled(false);
+					tltmDelete.setEnabled(false);
+				}
 			}
 		});
+		giftTable.setDataProvider(new FlexTableDataProvider<Gift>() {
+			final String[] headers = {"Amount", "Date Given", "Letter", "Entry Date", "Gift Source", "Note", "Record Number"};
+			List<Gift> gifts = donor.getGifts();
+			{
+				Collections.sort(gifts);
+			}
+			@Override
+			public int size() {
+				return gifts.size();
+			}
+			
+			@Override
+			public String[] getHeaders() {
+				return headers;
+			}
+			
+			@Override
+			public String get(int i, int field) {
+				Gift gift = this.get(i);
+				Object data;
+				switch (field) {
+				case 0:
+					data = gift.getAmount();
+					break;
+				case 1:
+					data = gift.getDategiven();
+					break;
+				case 2:
+					data = gift.isLetter();
+					break;
+				case 3:
+					data = gift.getDt_entry();
+					break;
+				case 4:
+					data = gift.getSource();
+					break;
+				case 5:
+					data = gift.getNote();
+					break;
+				case 6:
+					data = gift.getRecNum();
+					break;
+				default:
+					data = "Missing Data";
+				}
+				if (data instanceof Date) {
+					data = data != null ? Main.getDateFormat().format((Date) data) : "Never";
+				}
+				return String.valueOf(data);
+			}
+			
+			@Override
+			public Gift get(int i) {
+				return gifts.get(i);
+			}
+			
+			@Override
+			public int columnCount() {
+				return headers.length;
+			}
+			
+			@Override
+			public void refresh() {
+				gifts = donor.getGifts();
+				Collections.sort(gifts);
+			}
+		});
+//		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
+//		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
+//				1));
+//		giftTable.getTable().addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				TableItem[] selection = giftTable.getTable().getSelection();
+//				if (selection.length == 1)
+//					tltmEdit.setEnabled(true);
+//				if (selection.length > 0)
+//					tltmDelete.setEnabled(true);
+//			}
+//		});
 
 		compositeDetails = new Composite(DonorEditForm.this, SWT.NONE);
 		GridLayout gl_compositeDetails = new GridLayout(2, false);

@@ -6,4 +6,5 @@ public interface FlexTableDataProvider<T> {
 	String[] getHeaders();
 	int size();
 	int columnCount();
+	void refresh();
 }
