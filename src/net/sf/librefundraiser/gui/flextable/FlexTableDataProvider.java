@@ -7,4 +7,5 @@ public interface FlexTableDataProvider<T> {
 	int size();
 	int columnCount();
 	void refresh();
+	boolean sort(int field);
 }

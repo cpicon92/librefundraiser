@@ -631,6 +631,7 @@ public class DonorEditForm extends Composite {
 		});
 		giftTable.setDataProvider(new FlexTableDataProvider<Gift>() {
 			final String[] headers = {"Amount", "Date Given", "Letter", "Entry Date", "Gift Source", "Note", "Record Number"};
+			final int AMOUNT = 0, DATE_GIVEN = 1, LETTER = 2, ENTRY_DATE = 3, GIFT_SOURCE = 4, NOTE = 5, RECORD_NUMBER = 6;
 			List<Gift> gifts = donor.getGifts();
 			{
 				Collections.sort(gifts);
@@ -650,25 +651,25 @@ public class DonorEditForm extends Composite {
 				Gift gift = this.get(i);
 				Object data;
 				switch (field) {
-				case 0:
+				case AMOUNT:
 					data = gift.getAmount();
 					break;
-				case 1:
+				case DATE_GIVEN:
 					data = gift.getDategiven();
 					break;
-				case 2:
+				case LETTER:
 					data = gift.isLetter();
 					break;
-				case 3:
+				case ENTRY_DATE:
 					data = gift.getDt_entry();
 					break;
-				case 4:
+				case GIFT_SOURCE:
 					data = gift.getSource();
 					break;
-				case 5:
+				case NOTE:
 					data = gift.getNote();
 					break;
-				case 6:
+				case RECORD_NUMBER:
 					data = gift.getRecNum();
 					break;
 				default:
@@ -695,6 +696,13 @@ public class DonorEditForm extends Composite {
 				gifts = donor.getGifts();
 				Collections.sort(gifts);
 			}
+
+			@Override
+			public boolean sort(int field) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
 		});
 //		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
 //		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,

@@ -86,6 +86,14 @@ public class Tester extends Shell {
 			@Override
 			public String get(int i, int field) {
 				Donor donor = this.get(i);
+				Object data = this.getData(donor, field);
+				if (data instanceof Date) {
+					data = formatDate((Date) data);
+				}
+				return String.valueOf(data);
+			}
+			
+			private Object getData(Donor donor, int field) {
 				GiftStats stats = donor.getGiftStats();
 				Object data;
 				switch (field) {
@@ -195,10 +203,7 @@ public class Tester extends Shell {
 				default:
 					data = "Missing Data";
 				}
-				if (data instanceof Date) {
-					data = formatDate((Date) data);
-				}
-				return String.valueOf(data);
+				return data;
 			}
 			
 			@Override
@@ -214,6 +219,27 @@ public class Tester extends Shell {
 			@Override
 			public void refresh() {
 				
+			}
+
+			@Override
+			public boolean sort(final int field) {
+				Collections.sort(donors, new Comparator<Donor>() {
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					@Override
+					public int compare(Donor d0, Donor d1) {
+						Object data0 = getData(d0, field), 
+						data1 = getData(d1, field);
+						if (data0 instanceof Comparable && data1 instanceof Comparable) {
+							try {
+								return ((Comparable) data0).compareTo(data1);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						return String.valueOf(data0).compareTo(String.valueOf(data1));
+					}
+				});
+				return true;
 			}
 		});
 

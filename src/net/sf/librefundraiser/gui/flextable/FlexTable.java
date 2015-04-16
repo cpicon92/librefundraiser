@@ -66,21 +66,36 @@ public class FlexTable<T> extends Composite {
 			}
 			@Override
 			public void mouseUp(MouseEvent e) {
-				FlexTableSelectionEvent<T> event = new FlexTableSelectionEvent<>();
-				for (int i = 0; i < positions.length; i++) {
-					if (positions[i] != null && positions[i].contains(e.x + scrollX, e.y + scrollY)) {
-						event.row = i / dataProvider.columnCount();
-						event.column = i % dataProvider.columnCount();
-						break;
+				if (e.y < rowHeight + pad) {
+					//header has been clicked, sort by column
+					for (int i = 0, x = 0; i < columnWidths.length; i++) {
+						x += columnWidths[i];
+						if (x > e.x + scrollX) {
+							if (FlexTable.this.dataProvider.sort(i)) {
+								setHighlightColumn(i);
+								redraw();
+							}
+							break;
+						}
 					}
-				}
-				event.target = event.row >= 0 && event.row < dataProvider.size() ? dataProvider.get(event.row) : null;
-				for (FlexTableSelectionListener<T> l : selectionListeners) {
-					l.widgetSelected(event);
-				}
-				if (event.doit) {
-					selectedRow = event.row;
-					redraw();
+				} else {
+					//row has been clicked, alert selection listeners
+					FlexTableSelectionEvent<T> event = new FlexTableSelectionEvent<>();
+					for (int i = 0; i < positions.length; i++) {
+						if (positions[i] != null && positions[i].contains(e.x + scrollX, e.y + scrollY)) {
+							event.row = i / dataProvider.columnCount();
+							event.column = i % dataProvider.columnCount();
+							break;
+						}
+					}
+					event.target = event.row >= 0 && event.row < dataProvider.size() ? dataProvider.get(event.row) : null;
+					for (FlexTableSelectionListener<T> l : selectionListeners) {
+						l.widgetSelected(event);
+					}
+					if (event.doit) {
+						selectedRow = event.row;
+						redraw();
+					}
 				}
 			}
 		});
@@ -129,31 +144,31 @@ public class FlexTable<T> extends Composite {
 				int x = pad, y = 0;
 				for (int i = 0; i < dataProvider.size(); i++) {
 					for (int col = 0; col < dataProvider.columnCount(); col++) {
-					if (col == 0) {
-						x = pad;
-						y += rowHeight + pad;
-						if (i == selectedRow) {
-							g.setForeground(colorSelectedText);
-							g.setBackground(colorSelectedRow);
-						} else {
-							g.setBackground(i % 2 == 0 ? colorOddRows : colorEvenRows);
-							g.setForeground(colorText);
+						if (col == 0) {
+							x = pad;
+							y += rowHeight + pad;
+							if (i == selectedRow) {
+								g.setForeground(colorSelectedText);
+								g.setBackground(colorSelectedRow);
+							} else {
+								g.setBackground(i % 2 == 0 ? colorOddRows : colorEvenRows);
+								g.setForeground(colorText);
+							}
+							g.fillRectangle(0, y - scrollY, caW, rowHeight + pad);
+							g.setBackground(colorLines);
+							g.fillRectangle(0, y + rowHeight + pad - 1 - scrollY, caW, 1);
 						}
-						g.fillRectangle(0, y - scrollY, caW, rowHeight + pad);
-						g.setBackground(colorLines);
-						g.fillRectangle(0, y + rowHeight + pad - 1 - scrollY, caW, 1);
+						if (col == highlightColumn) {
+							g.setFont(arialBold);
+						} else {
+							g.setFont(arial);
+						}
+						positions[i * dataProvider.columnCount() + col] = new Rectangle(x, y, columnWidths[col], rowHeight + pad);
+						if (y - scrollY > caH) break;
+						if (x - scrollX > caW) continue;
+						g.drawString(String.valueOf(dataProvider.get(i, col)), x - scrollX, y + rowHeight / 2 + 1 - scrollY, true);
+						x += columnWidths[col];
 					}
-					if (col == highlightColumn) {
-						g.setFont(arialBold);
-					} else {
-						g.setFont(arial);
-					}
-					positions[i * dataProvider.columnCount() + col] = new Rectangle(x, y, columnWidths[col], rowHeight + pad);
-					if (y - scrollY > caH) break;
-					if (x - scrollX > caW) continue;
-					g.drawString(String.valueOf(dataProvider.get(i, col)), x - scrollX, y + rowHeight / 2 + 1 - scrollY, true);
-					x += columnWidths[col];
-				}
 				}
 				x = pad;
 				y = 0;

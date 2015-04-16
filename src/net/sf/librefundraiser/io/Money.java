@@ -102,7 +102,7 @@ public class Money implements Comparable<Money> {
 
 	@Override
 	public int compareTo(Money o) {
-		return Integer.compare(this.amount, o.amount);
+		return this.toBigDecimal().compareTo(o.toBigDecimal());
 	}
 	
 	public Money add(Money o) {
