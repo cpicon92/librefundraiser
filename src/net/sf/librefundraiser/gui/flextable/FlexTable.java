@@ -257,6 +257,13 @@ public class FlexTable<T> extends Composite {
 								g.setAlpha(60);
 								g.fillRectangle(x - scrollX - pad / 2, 0, columnWidths[i], rowHeight + pad);
 								g.setAlpha(255);
+								g.setBackground(colorHeaderText);
+								int b = rowHeight + pad - 2, t = b - 6, center = columnWidths[i] / 2 - pad / 2 - scrollX;
+								if (dataProvider.getSortAsc()) {
+									g.fillPolygon(new int[] {center + x, t, center + x + 6, b, center + x - 6, b});
+								} else {
+									g.fillPolygon(new int[] {center + x - 6, t + 8, center + x + 6, t + 8, center + x, b + 8});
+								}
 							}
 							g.drawString(String.valueOf(tableHeaders[i]), x - scrollX, rowHeight / 2 + 1, true);
 							x += columnWidths[i];
@@ -271,7 +278,8 @@ public class FlexTable<T> extends Composite {
 		int w, h;
 		if (!summaryMode) {
 			w = 0;
-			h = dataProvider.size() * (rowHeight + pad);
+			//leave room for header
+			h = (dataProvider.size() + 1) * (rowHeight + pad);
 			for (int cw : columnWidths) {
 				w += cw;
 			}
@@ -423,7 +431,18 @@ public class FlexTable<T> extends Composite {
 			if (this.dataProvider != null) {
 				this.dataProvider.setSummaryMode(summaryMode);
 			}
+			//make sure that table stays centered on same entry
+			int oldScroll = this.getVerticalBar().getSelection();
 			this.summaryMode = summaryMode;
+			calibrateScrollBars();
+			if (summaryMode) {
+				int i = oldScroll / (rowHeight + pad);
+				this.getVerticalBar().setSelection(i * summaryRowHeight);
+			} else {
+				int i = oldScroll / summaryRowHeight;
+				this.getVerticalBar().setSelection(i * (rowHeight + pad));
+			}
+			this.scrollY = this.getVerticalBar().getSelection();
 		}
 	}
 

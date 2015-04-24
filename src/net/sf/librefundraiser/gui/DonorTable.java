@@ -316,7 +316,7 @@ public class DonorTable extends Composite {
 				this.refilter();
 			}
 
-			private int currentField;
+			private int currentField = -1;
 			private boolean desc;
 			@Override
 			public boolean sort(final int field) {
@@ -394,6 +394,11 @@ public class DonorTable extends Composite {
 						iter.remove();
 					}
 				}
+			}
+
+			@Override
+			public boolean getSortAsc() {
+				return !desc;
 			}
 
 		});

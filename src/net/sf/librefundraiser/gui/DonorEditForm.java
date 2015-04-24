@@ -724,6 +724,12 @@ public class DonorEditForm extends Composite {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public boolean getSortAsc() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 			
 		});
 //		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);

@@ -77,7 +77,6 @@ public class Tester extends Shell {
 				"Last Entry Date", "Last Entry Amount", "Notes" };
 		FlexTable<Donor> dt = new FlexTable<>(this, SWT.BORDER);
 		dt.setMultiple(true);
-		dt.setSummaryMode(true);
 		dt.setDataProvider(new FlexTableDataProvider<Donor>() {
 			boolean summaryMode;
 
@@ -323,6 +322,11 @@ public class Tester extends Shell {
 						iter.remove();
 					}
 				}
+			}
+
+			@Override
+			public boolean getSortAsc() {
+				return !desc;
 			}
 		});
 

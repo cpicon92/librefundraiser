@@ -11,6 +11,7 @@ public interface FlexTableDataProvider<T> {
 	boolean sort(int field);
 	void setSummaryMode(boolean summaryMode);
 	int getSortField();
+	boolean getSortAsc();
 	String getFilter();
 	void setFilter(String filter);
 }
