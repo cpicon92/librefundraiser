@@ -216,7 +216,7 @@ public class Main {
 					error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
 				}
 				Main.getDonorDB().saveDonors(importedDonors);
-				Main.getWindow().refresh(true, true);				
+				Main.getWindow().refresh();				
 			}
 		}).start();
 	}

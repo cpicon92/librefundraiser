@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,7 +17,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.gui.DonorTable;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.Gift;
 
@@ -134,67 +132,6 @@ public class SQLite {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public HashMap<String, String> quickSearch(String query) {
-		lock.lock();
-		Connection conn = this.getConnection();
-		final String[] fields = new String[] { "account", "firstname", "lastname", "spousefrst", "spouselast" };
-		HashMap<String, String> output = new HashMap<>();
-		try {
-			StringBuilder statement = new StringBuilder("select * from donors where ");
-			String sep = "";
-			for (String f : fields) {
-				statement.append(sep).append(f + " like ?");
-				sep = " or ";
-			}
-			System.out.println(statement);
-			PreparedStatement prep = conn.prepareStatement(statement.toString());
-			for (int i = 1; i <= fields.length; i++) {
-				prep.setString(i, "%" + query + "%");
-			}
-			ResultSet rs = prep.executeQuery();
-			while (rs.next()) {
-				String matchingFieldName = "";
-				String matchingField = "";
-				fieldSearch:for (String field : fields) {
-					String result = rs.getString(field);
-					if (result.toLowerCase().contains(query.toLowerCase())) {
-						for (String[] c : DonorTable.columns) {
-							if (field.equals(c[1])) {
-								matchingFieldName = c[0];
-								matchingField = c[1];
-								break fieldSearch;
-							}
-						}
-					}
-				}
-				String firstname = rs.getString("firstname");
-				String lastname = rs.getString("lastname");
-				if (matchingField.equals("spousefrst") || matchingField.equals("spouselast")) {
-					firstname = rs.getString("spousefrst");
-					lastname = rs.getString("spouselast");
-				}
-				String account = rs.getString("account");
-				String listEntry = lastname + (!(lastname.equals("") || firstname.equals("")) ? ", " : "") + firstname;
-				if (listEntry.equals(""))
-					listEntry = account;
-				output.put(account, listEntry + " (" + matchingFieldName + ")");
-			}
-			rs.close();
-		} catch (SQLException e) {
-			if (e.getMessage().equals("query does not return ResultSet")) {
-				System.err.println("Unable to query donor list.");
-			} else
-				e.printStackTrace();
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		lock.unlock();
-		return output;
 	}
 
 	public Donor[] getDonors(String query) {

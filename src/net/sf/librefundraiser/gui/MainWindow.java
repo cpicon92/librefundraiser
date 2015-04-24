@@ -1,11 +1,9 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
-import java.util.List;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.ODB;
-import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabFolderEvent;
 import net.sf.librefundraiser.tabs.TabFolderListener;
@@ -62,7 +60,7 @@ public class MainWindow {
 		if (importDb != null) {
 			Main.importFromFRBW(Display.getDefault(), shell, this, importDb);
 		}
-		refresh(true, true);
+		refresh();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -113,7 +111,7 @@ public class MainWindow {
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
-					refresh(true, false);
+					refresh();
 				}
 			}
 		});
@@ -130,7 +128,7 @@ public class MainWindow {
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
-					refresh(true, false);
+					refresh();
 				}
 			}
 		});
@@ -443,24 +441,8 @@ public class MainWindow {
 	}
 
 
-	public void refresh(final boolean reload, final boolean waitCursor) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				if (reload) {
-					//TODO figure out what the hell "reload" means
-					List<Donor> output = Main.getDonorDB().getDonors();
-//					Main.getDonorDB().saveDonors(output);
-					donorTable.donors = output.toArray(new Donor[0]);
-				} 
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						donorTable.refresh();
-					}
-				});
-			}
-		}).start();
+	public void refresh() {
+		donorTable.refresh();
 	}
 
 	public void newDonor() {

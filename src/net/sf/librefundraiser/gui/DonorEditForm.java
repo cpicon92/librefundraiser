@@ -586,7 +586,7 @@ public class DonorEditForm extends Composite {
 		tltmEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				editGift(giftTable.getSelection());
+				editGift(giftTable.getFirstSelection());
 			}
 		});
 		tltmEdit.setImage(ResourceManager.getIcon("edit-gift.png"));
@@ -596,7 +596,7 @@ public class DonorEditForm extends Composite {
 		tltmDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.getDonorDB().deleteGift(giftTable.getSelection().recnum);
+				Main.getDonorDB().deleteGift(giftTable.getFirstSelection().recnum);
 				Main.getDonorDB().refreshGifts(donor);
 				giftTable.refresh();
 				tltmDelete.setEnabled(false);
@@ -616,7 +616,6 @@ public class DonorEditForm extends Composite {
 		//TODO:Add sorting functionality
 		giftTable = new FlexTable<>(compositeGifts, SWT.BORDER);
 		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,1));
-		giftTable.setHighlightColumn(1);
 		giftTable.addSelectionListener(new FlexTableSelectionAdapter<Gift>() {
 			@Override
 			public void widgetSelected(FlexTableSelectionEvent<Gift> e) {
@@ -701,6 +700,29 @@ public class DonorEditForm extends Composite {
 			public boolean sort(int field) {
 				// TODO Auto-generated method stub
 				return false;
+			}
+
+			@Override
+			public void setSummaryMode(boolean summaryMode) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public int getSortField() {
+				return 1;
+			}
+
+			@Override
+			public String getFilter() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public void setFilter(String filter) {
+				// TODO Auto-generated method stub
+				
 			}
 			
 		});
@@ -997,7 +1019,7 @@ public class DonorEditForm extends Composite {
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
 		if (refresh)
-			Main.getWindow().refresh(true, false);
+			Main.getWindow().refresh();
 		this.fillForm();
 		this.setEdited(false);
 	}

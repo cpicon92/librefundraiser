@@ -1,9 +1,12 @@
 package net.sf.librefundraiser.gui;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import net.sf.librefundraiser.Main;
@@ -11,6 +14,7 @@ import net.sf.librefundraiser.db.FileLFD;
 import net.sf.librefundraiser.gui.flextable.FlexTable;
 import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
 import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.DonorData.Type;
 import net.sf.librefundraiser.io.GiftStats;
 
 import org.eclipse.swt.SWT;
@@ -72,7 +76,11 @@ public class Tester extends Shell {
 				"Year-to-date", "First Gift", "Largest Gift",
 				"Last Entry Date", "Last Entry Amount", "Notes" };
 		FlexTable<Donor> dt = new FlexTable<>(this, SWT.BORDER);
+		dt.setMultiple(true);
+		dt.setSummaryMode(true);
 		dt.setDataProvider(new FlexTableDataProvider<Donor>() {
+			boolean summaryMode;
+
 			@Override
 			public int size() {
 				return donors.size();
@@ -86,15 +94,30 @@ public class Tester extends Shell {
 			@Override
 			public String get(int i, int field) {
 				Donor donor = this.get(i);
-				Object data = this.getData(donor, field);
-				if (data instanceof Date) {
-					data = formatDate((Date) data);
+				GiftStats stats = donor.getGiftStats();
+				if (summaryMode) {
+					switch (field) {
+					case 0:
+						return donor.getAccountNum();
+					case 1:
+						return donor.data.getType() == Type.B ? "Business" : "Individual";
+					case 2:
+						return String.format("%s, %s", donor.data.getFirstname(), donor.data.getLastname());
+					case 3:
+						return stats.getLastGiveDt() != null ? new SimpleDateFormat("MMM. yyyy").format(stats.getLastGiveDt()) : "Never";
+					default:
+						return "";
+					}
+				} else {
+					Object data = this.getData(donor, field, stats);
+					if (data instanceof Date) {
+						data = formatDate((Date) data);
+					}
+					return String.valueOf(data);
 				}
-				return String.valueOf(data);
 			}
 			
-			private Object getData(Donor donor, int field) {
-				GiftStats stats = donor.getGiftStats();
+			private Object getData(Donor donor, int field, GiftStats stats) {
 				Object data;
 				switch (field) {
 				case 0:
@@ -221,14 +244,27 @@ public class Tester extends Shell {
 				
 			}
 
+			private int currentField;
+			private boolean desc;
 			@Override
 			public boolean sort(final int field) {
+				if (field == currentField) {
+					desc = !desc;
+				} else {
+					currentField = field;
+					desc = false;
+				}
 				Collections.sort(donors, new Comparator<Donor>() {
 					@SuppressWarnings({ "unchecked", "rawtypes" })
 					@Override
 					public int compare(Donor d0, Donor d1) {
-						Object data0 = getData(d0, field), 
-						data1 = getData(d1, field);
+						if (desc) {
+							Donor temp = d0;
+							d0 = d1;
+							d1 = temp;
+						}
+						Object data0 = getData(d0, field, field > 22 ? d0.getGiftStats() : null), 
+						data1 = getData(d1, field, field > 22 ? d1.getGiftStats() : null);
 						if (data0 instanceof Comparable && data1 instanceof Comparable) {
 							try {
 								return ((Comparable) data0).compareTo(data1);
@@ -240,6 +276,53 @@ public class Tester extends Shell {
 					}
 				});
 				return true;
+			}
+
+			@Override
+			public void setSummaryMode(boolean summaryMode) {
+				this.summaryMode = summaryMode;
+			}
+			
+			@Override
+			public int getSortField() {
+				if (summaryMode && currentField == 3) {
+					return 2;
+				}
+				if (summaryMode && currentField == 4) {
+					return -1;
+				}
+				if (summaryMode && currentField == 23) {
+					return 3;
+				}
+				return currentField;
+			}
+			
+			String filter = "";
+			List<Donor> filteredDonors = new ArrayList<>();
+			@Override
+			public String getFilter() {
+				return filter;
+			}
+
+			@Override
+			public void setFilter(String filter) {
+				if (!this.filter.equals(filter)) {
+					this.filter = filter;
+					this.refilter();
+				}
+			}
+			
+			private void refilter() {
+				filteredDonors = new ArrayList<>(donors);
+				if (filter == null || filter.isEmpty()) {
+					return;
+				}
+				for (Iterator<Donor> iter = filteredDonors.iterator(); iter.hasNext();) {
+					Donor d = iter.next();
+					if (!d.match(filter)) {
+						iter.remove();
+					}
+				}
 			}
 		});
 

@@ -87,7 +87,7 @@ public class Donor {
 		//TODO find some way to make this much faster
 		filter = filter.toLowerCase();
 		for (Method m : DonorData.class.getMethods()) {
-			if (m.getName().startsWith("get")) {
+			if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
 				try {
 					if (String.valueOf(m.invoke(this.data)).toLowerCase().contains(filter)) {
 						return true;

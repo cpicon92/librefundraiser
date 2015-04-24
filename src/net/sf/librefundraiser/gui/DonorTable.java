@@ -4,31 +4,37 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.gui.flextable.FlexTable;
+import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
 import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.DonorData.Type;
 import net.sf.librefundraiser.io.GiftStats;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabItem;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -45,9 +51,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Column;
@@ -57,169 +60,21 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 
 public class DonorTable extends Composite {
-	private Table table;
+	private FlexTable<Donor> table;
 
-	final static public String[][] columns = { { "Account", "account" },
-		{ "Type", "type" }, { "Last Name/Business", "lastname" },
-		{ "First Name", "firstname" },
-		{ "Spouse/Contact Last", "spouselast" },
-		{ "Spouse/Contact First", "spousefrst" },
-		{ "Salutation", "salutation" }, { "Home Phone", "homephone" },
-		{ "Work Phone", "workphone" }, { "Fax", "fax" },
-		{ "Category", "category1" }, { "Donor Source", "category2" },
-		{ "Mail Name", "mailname" }, { "Address 1", "address1" },
-		{ "Address 2", "address2" }, { "City", "city" },
-		{ "State", "state" }, { "Zip", "zip" }, { "Country", "country" },
-		{ "Email", "email" }, { "Other Email", "email2" }, { "Web", "web" }, { "Last Change", "changedate" },
-		{ "Last Gift Date", "lastgivedt" }, { "Last Gift", "lastamt" },
-		{ "Total Gifts", "alltime" }, { "Year-to-date", "yeartodt" },
-		{ "First Gift", "firstgift" }, { "Largest Gift", "largest" } , { "Last Entry Date", "lastentdt" }, { "Last Entry Amount", "lastentamt" } };
+	final String[] headers = { "Account", "Type", "Last Name/Business",
+			"First Name", "Spouse/Contact Last", "Spouse/Contact First",
+			"Salutation", "Home Phone", "Work Phone", "Fax", "Category",
+			"Donor Source", "Mail Name", "Address 1", "Address 2", "City",
+			"State", "Zip", "Country", "Email", "Other Email", "Web",
+			"Last Change", "Last Gift Date", "Last Gift", "Total Gifts",
+			"Year-to-date", "First Gift", "Largest Gift",
+			"Last Entry Date", "Last Entry Amount", "Notes" };
 
-	public Donor[] donors = null;
-
-	private TableViewer tableViewer;
-
+	public List<Donor> donors = new ArrayList<>();
 	private TabFolder tabFolder;
 
-
-	public static class DonorLabelProvider extends LabelProvider implements ITableLabelProvider {
-		@Override
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		@Override
-		public String getColumnText(Object donor, int columnIndex) {
-			Object txt  = this.getColumnData((Donor) donor, columnIndex);
-			if (txt instanceof Date) {
-				txt = Main.getDateFormat().format((Date) txt);
-			}
-			return String.valueOf(txt);
-		}
-		
-		public Object getColumnData(Donor donor, int columnIndex) {
-			GiftStats stats = donor.getGiftStats();
-			Object data;
-			switch (columnIndex) {
-			case 0:
-				data = donor.getAccountNum();
-				break;
-			case 1:
-				data = donor.data.getType();
-				break;
-			case 2:
-				data = donor.data.getLastname();
-				break;
-			case 3:
-				data = donor.data.getFirstname();
-				break;
-			case 4:
-				data = donor.data.getSpouselast();
-				break;
-			case 5:
-				data = donor.data.getSpousefrst();
-				break;
-			case 6:
-				data = donor.data.getSalutation();
-				break;
-			case 7:
-				data = donor.data.getHomephone();
-				break;
-			case 8:
-				data = donor.data.getWorkphone();
-				break;
-			case 9:
-				data = donor.data.getFax();
-				break;
-			case 10:
-				data = donor.data.getCategory1();
-				break;
-			case 11:
-				data = donor.data.getCategory2();
-				break;
-			case 12:
-				data = donor.data.getMailname();
-				break;
-			case 13:
-				data = donor.data.getAddress1();
-				break;
-			case 14:
-				data = donor.data.getAddress2();
-				break;
-			case 15:
-				data = donor.data.getCity();
-				break;
-			case 16:
-				data = donor.data.getState();
-				break;
-			case 17:
-				data = donor.data.getZip();
-				break;
-			case 18:
-				data = donor.data.getCountry();
-				break;
-			case 19:
-				data = donor.data.getEmail();
-				break;
-			case 20:
-				data = donor.data.getEmail2();
-				break;
-			case 21:
-				String url = donor.data.getWeb();
-				// display web urls on one line in table
-				url = url.replace("\n", "; ");
-				// remove trailing semi-colon
-				if (url.length() > 2) {
-					url = url.substring(0, url.length() - 2);
-				}
-				data = url;
-				break;
-			case 22:
-				data = donor.data.getChangedate();
-				break;
-			case 23:
-				data = stats.getLastGiveDt();
-				break;
-			case 24:
-				data = stats.getLastAmt();
-				break;
-			case 25:
-				data = stats.getAllTime();
-				break;
-			case 26:
-				data = stats.getYearToDt();
-				break;
-			case 27:
-				data = stats.getFirstGift();
-				break;
-			case 28:
-				data = stats.getLargest();
-				break;
-			case 29:
-				data = stats.getLastEntDt();
-				break;
-			case 30:
-				data = stats.getLastEntAmt();
-				break;
-			default:
-				data = "Missing Data";
-			}
-			return data;
-		}
-	}
-	private static class ContentProvider implements IStructuredContentProvider {
-		@Override
-		public Object[] getElements(Object inputElement) {
-			return (Object[])inputElement;
-		}
-		@Override
-		public void dispose() {
-		}
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-	}
-
+	
 	/**
 	 * Create the composite.
 	 * @param parent
@@ -227,7 +82,6 @@ public class DonorTable extends Composite {
 	 */
 	public DonorTable(Composite parent, int style) {
 		super(parent, style);
-		if (donors == null) donors = new Donor[] {};
 		this.setLayout(new FillLayout(SWT.HORIZONTAL));
 
 
@@ -243,9 +97,7 @@ public class DonorTable extends Composite {
 		gd_lblFilter.widthHint = 20;
 		lblFilter.setLayoutData(gd_lblFilter);
 		lblFilter.setImage(ResourceManager.getIcon("filter.png"));
-		
-		final DonorListFilter tableFilter = new DonorListFilter();
-		
+				
 		final Text txtFilter = new Text(compositeTable, SWT.BORDER);
 		txtFilter.addModifyListener(new ModifyListener() {
 			private long recentId;
@@ -257,40 +109,294 @@ public class DonorTable extends Composite {
 					@Override
 					public void run() {
 						if (id != recentId) return;
-						tableFilter.setFilter(txtFilter.getText());
-						tableViewer.refresh();
+						table.setFilter(txtFilter.getText());
+						table.refresh();
 					}
 				});
 			}
 		});
 		txtFilter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		
-		tableViewer = new TableViewer(compositeTable, SWT.FULL_SELECTION | SWT.MULTI);
-		tableViewer.setFilters(new ViewerFilter[] {tableFilter});
-		table = tableViewer.getTable();
+		table = new FlexTable<>(compositeTable, SWT.NONE);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		table.addSelectionListener(new SelectionAdapter() {
+		table.addSelectionListener(new FlexTableSelectionAdapter<Donor>() {
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				TableItem selectedItem = table.getSelection()[0];
-				int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
+			public void widgetDefaultSelected(FlexTableSelectionEvent<Donor> e) {
+				Donor selectedItem = table.getFirstSelection();
+				int id = selectedItem.id;
 				DonorTab newTab = DonorTable.this.openDonorTab(id);
 				DonorTable.this.tabFolder.setSelection(newTab);
 			}
 		});
 		table.setHeaderVisible(true);
+		table.setMultiple(true);
+		table.addPaintListener(new PaintListener() {
+			@Override
+			public void paintControl(PaintEvent e) {
+				if (table.getClientArea().width < 700) {
+					table.setSummaryMode(true);
+				} else {
+					table.setSummaryMode(false);
+				}
+			}
+		});
+		table.setDataProvider(new FlexTableDataProvider<Donor>() {
+			boolean summaryMode;
+			List<Donor> filteredDonors = new ArrayList<>();
+			
+			@Override
+			public int size() {
+				return filteredDonors.size();
+			}
+			
+			@Override
+			public String[] getHeaders() {
+				return headers;
+			}
+			
+			@Override
+			public String get(int i, int field) {
+				Donor donor = this.get(i);
+				if (summaryMode) {
+					GiftStats stats = donor.getGiftStats();
+					switch (field) {
+					case 0:
+						return donor.getAccountNum();
+					case 1:
+						return donor.data.getType() == Type.B ? "Business" : "Individual";
+					case 2:
+						if (donor.data.getFirstname().isEmpty() || donor.data.getType() == Type.B) {
+							return donor.data.getLastname();
+						}
+						return String.format("%s, %s", donor.data.getLastname(), donor.data.getFirstname());
+					case 3:
+						return stats.getLastGiveDt() != null ? new SimpleDateFormat("MMM. yyyy").format(stats.getLastGiveDt()) : "Never";
+					default:
+						return "";
+					}
+				} else {
+					Object data = this.getData(donor, field);
+					if (data instanceof Date) {
+						data = formatDate((Date) data);
+					}
+					return String.valueOf(data);
+				}
+			}
+			
+			private String formatDate(Date d) {
+				return d != null ? Main.getDateFormat().format(d) : "Never";
+			}
+			
+			public Object getData(Donor donor, int field) {
+				GiftStats stats = donor.getGiftStats();
+				Object data;
+				switch (field) {
+				case 0:
+					data = donor.getAccountNum();
+					break;
+				case 1:
+					data = donor.data.getType();
+					break;
+				case 2:
+					data = donor.data.getLastname();
+					break;
+				case 3:
+					data = donor.data.getFirstname();
+					break;
+				case 4:
+					data = donor.data.getSpouselast();
+					break;
+				case 5:
+					data = donor.data.getSpousefrst();
+					break;
+				case 6:
+					data = donor.data.getSalutation();
+					break;
+				case 7:
+					data = donor.data.getHomephone();
+					break;
+				case 8:
+					data = donor.data.getWorkphone();
+					break;
+				case 9:
+					data = donor.data.getFax();
+					break;
+				case 10:
+					data = donor.data.getCategory1();
+					break;
+				case 11:
+					data = donor.data.getCategory2();
+					break;
+				case 12:
+					data = donor.data.getMailname();
+					break;
+				case 13:
+					data = donor.data.getAddress1();
+					break;
+				case 14:
+					data = donor.data.getAddress2();
+					break;
+				case 15:
+					data = donor.data.getCity();
+					break;
+				case 16:
+					data = donor.data.getState();
+					break;
+				case 17:
+					data = donor.data.getZip();
+					break;
+				case 18:
+					data = donor.data.getCountry();
+					break;
+				case 19:
+					data = donor.data.getEmail();
+					break;
+				case 20:
+					data = donor.data.getEmail2();
+					break;
+				case 21:
+					String url = donor.data.getWeb();
+					// display web urls on one line in table
+					url = url.replace("\n", "; ");
+					// remove trailing semi-colon
+					if (url.length() > 2) {
+						url = url.substring(0, url.length() - 2);
+					}
+					data = url;
+					break;
+				case 22:
+					data = donor.data.getChangedate();
+					break;
+				case 23:
+					data = stats.getLastGiveDt();
+					break;
+				case 24:
+					data = stats.getLastAmt();
+					break;
+				case 25:
+					data = stats.getAllTime();
+					break;
+				case 26:
+					data = stats.getYearToDt();
+					break;
+				case 27:
+					data = stats.getFirstGift();
+					break;
+				case 28:
+					data = stats.getLargest();
+					break;
+				case 29:
+					data = stats.getLastEntDt();
+					break;
+				case 30:
+					data = stats.getLastEntAmt();
+					break;
+				case 31:
+					data = donor.data.getNotes();
+					break;
+				default:
+					data = "Missing Data";
+				}
+				return data;
+			}
+			
+			@Override
+			public Donor get(int i) {
+				return filteredDonors.get(i);
+			}
+			
+			@Override
+			public int columnCount() {
+				return headers.length;
+			}
 
-		for (String[] c : columns) {
-			TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
-			TableColumn tableColumn = tableViewerColumn.getColumn();
-			tableColumn.setWidth(100);
-			tableColumn.setText(c[0]);
-		}
+			@Override
+			public void refresh() {
+				donors = Main.getDonorDB().getDonors();
+				this.refilter();
+			}
 
-		tableViewer.setLabelProvider(new DonorLabelProvider());
-		tableViewer.setContentProvider(new ContentProvider());
-		tableViewer.setInput(donors);
-		new DonorListSorter(tableViewer);
+			private int currentField;
+			private boolean desc;
+			@Override
+			public boolean sort(final int field) {
+				if (field == currentField) {
+					desc = !desc;
+				} else {
+					currentField = field;
+					desc = false;
+				}
+				Collections.sort(filteredDonors, new Comparator<Donor>() {
+					@SuppressWarnings({ "unchecked", "rawtypes" })
+					@Override
+					public int compare(Donor d0, Donor d1) {
+						if (desc) {
+							Donor temp = d0;
+							d0 = d1;
+							d1 = temp;
+						}
+						Object data0 = getData(d0, field), 
+						data1 = getData(d1, field);
+						if (data0 instanceof Comparable && data1 instanceof Comparable) {
+							try {
+								return ((Comparable) data0).compareTo(data1);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						return String.valueOf(data0).compareTo(String.valueOf(data1));
+					}
+				});
+				return true;
+			}
+
+			@Override
+			public void setSummaryMode(boolean summaryMode) {
+				this.summaryMode = summaryMode;
+			}
+
+			@Override
+			public int getSortField() {
+				if (summaryMode && currentField == 3) {
+					return 2;
+				}
+				if (summaryMode && currentField == 4) {
+					return -1;
+				}
+				if (summaryMode && currentField == 23) {
+					return 3;
+				}
+				return currentField;
+			}
+
+			String filter = "";
+			@Override
+			public String getFilter() {
+				return filter;
+			}
+
+			@Override
+			public void setFilter(String filter) {
+				if (!this.filter.equals(filter)) {
+					this.filter = filter;
+					this.refilter();
+				}
+			}
+			
+			private void refilter() {
+				filteredDonors = new ArrayList<>(donors);
+				if (filter == null || filter.isEmpty()) {
+					return;
+				}
+				for (Iterator<Donor> iter = filteredDonors.iterator(); iter.hasNext();) {
+					Donor d = iter.next();
+					if (!d.match(filter)) {
+						iter.remove();
+					}
+				}
+			}
+
+		});
 
 		Menu menuDonorList = new Menu(table);
 		table.setMenu(menuDonorList);
@@ -299,29 +405,13 @@ public class DonorTable extends Composite {
 		mntmOpenDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				final TableItem[] items = table.getSelection();
-				final int[] i = {0};
-				for (TableItem selectedItem : items) {
-					final int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							final Donor[] donor = {Main.getDonorDB().getDonor(id)};
-							if (donor[0] == null) {
-								donor[0] = new Donor(id);
-							}
-							getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									DonorTab dt = DonorTable.this.openDonorTab(donor[0]);
-									if (i[0] == items.length - 1) {
-										DonorTable.this.tabFolder.setSelection(dt);
-									}
-									i[0]++;
-								}
-							});
-						}
-					}).start();
+				final List<Donor> items = table.getSelection();
+				int i = 0;
+				for (Donor selectedItem : items) {
+					DonorTab dt = DonorTable.this.openDonorTab(selectedItem);
+					if (i++ == items.size() - 1) {
+						DonorTable.this.tabFolder.setSelection(dt);
+					}
 				}
 			}
 		});
@@ -331,23 +421,8 @@ public class DonorTable extends Composite {
 		mntmOpenBackground.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				for (TableItem selectedItem : table.getSelection()) {
-					final int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							final Donor[] donor = new Donor[] {Main.getDonorDB().getDonor(id)};
-							if (donor[0] == null) {
-								donor[0] = new Donor(id);
-							}
-							getDisplay().asyncExec(new Runnable() {
-								@Override
-								public void run() {
-									DonorTable.this.openDonorTab(donor[0]);
-								}
-							});
-						}
-					}).start();
+				for (Donor selectedItem : table.getSelection()) {
+					DonorTable.this.openDonorTab(selectedItem);
 				}
 			}
 		});
@@ -363,32 +438,14 @@ public class DonorTable extends Composite {
 			}
 		});
 		mntmDeleteDonor.setText("Delete Donor(s)");
-		packColumns();
 	}
 
 	public void refresh() {
 		setVisible(false);
 		final long beforetime = System.currentTimeMillis();
-		tableViewer.setInput(donors);
-//		tableViewer.refresh();
-		packColumns();
+		table.refresh();
 		System.out.printf("List refresh took: %ds\n", (System.currentTimeMillis()-beforetime)/1000);
 		setVisible(true);
-	}
-
-
-	public void packColumns() {
-		for (TableColumn tc : table.getColumns()) {
-			tc.pack();
-		}
-	}
-
-	@Deprecated
-	private static int columnSearch(String columnName) {
-		for (int i = 0; i < columns.length; i++) {
-			if (columns[i][1].equals(columnName)) return i;
-		}
-		return -1;
 	}
 
 	@Override
@@ -421,7 +478,7 @@ public class DonorTable extends Composite {
 		} else {
 			((DonorTab)t).alterSaveButton();
 		}
-		Main.getWindow().refresh(true, false);
+		refresh();
 	}
 
 	public void deleteDonors() {
@@ -431,13 +488,11 @@ public class DonorTable extends Composite {
 		if (warning.open() == SWT.NO) return;
 		int[] ids = new int[table.getSelectionCount()];
 		int i = 0;
-		for (TableItem selectedItem : table.getSelection()) {
-			int id = Integer.parseInt(selectedItem.getText(columnSearch("account")));
-			ids[i] = id;
-			i++;
+		for (Donor selectedItem : table.getSelection()) {
+			ids[i++] = selectedItem.id;
 		}
 		Main.getDonorDB().deleteDonors(ids);
-		Main.getWindow().refresh(true, false);
+		refresh();
 	}
 
 	public boolean closeAllTabs() {
@@ -506,15 +561,11 @@ public class DonorTable extends Composite {
 			@Override
 			public void run() {
 				ArrayDeque<String[]> l = new ArrayDeque<>();
-				String[] columnTitles = new String[columns.length+1];
-				columnTitles[columns.length] = "Notes";
-				for (int i = 0; i < columnTitles.length-1; i++) {
-					columnTitles[i] = columns[i][0];
-				}
 				for (Donor d : donors) {
-					String[] row = new String[columns.length+1];
+					String[] row = new String[headers.length+1];
 					for (int i = 0; i < row.length-1; i++) {
-						row[i] = d.getData(columns[i][1]);
+						//TODO fix this
+//						row[i] = d.getData(headers[i][1]);
 					}
 					String notes = d.data.getNotes();
 					boolean valid = false;
@@ -522,20 +573,20 @@ public class DonorTable extends Composite {
 						valid = !notes.contains(new String(new char[]{(char)0}));
 					} catch (Exception e) {
 					}
-					row[columns.length] = valid?d.getData("notes"):"";
+					row[headers.length] = valid?d.getData("notes"):"";
 					l.add(row);
 				}
 				String[][] sheetData = l.toArray(new String[][]{});
-				l.addFirst(columnTitles);
+				l.addFirst(headers);
 				String[][] sheetDataWithTitles = l.toArray(new String[][]{});
-				TableModel model = new DefaultTableModel(sheetData, columnTitles); 
+				TableModel model = new DefaultTableModel(sheetData, headers); 
 				try {
 //					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(model);
-					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(new DefaultTableModel(columnTitles, donors.length));
+					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(new DefaultTableModel(headers, donors.size()));
 					Sheet donorSheet = outputSpreadSheet.getSheet(0);
-					for (int i = 0; i < donors.length; i++) {
-						donorSheet.getCellAt(0, i).setValue(donors[i].getAccountNum());
-						
+					int r = 0;
+					for (Donor d : donors) {
+						donorSheet.getCellAt(0, r++).setValue(d.getAccountNum());
 					}
 					donorSheet.setName("Donors");
 					final Display display = Display.getDefault();
@@ -552,7 +603,7 @@ public class DonorTable extends Composite {
 						}
 					});
 					final GC gc = gcA[0];
-					//stupid hack to optimise column width since jopendocument makes it impossibly hard to do this otherwise
+					//stupid hack to optimize column width since jopendocument makes it impossibly hard to do this otherwise
 					for (int i = 0; i < donorSheet.getColumnCount(); i++) {
 						Column<SpreadSheet> c = donorSheet.getColumn(i);
 						double maxWidth = 0;

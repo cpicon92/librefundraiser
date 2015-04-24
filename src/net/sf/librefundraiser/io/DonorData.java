@@ -38,7 +38,7 @@ public class DonorData {
 	
 	public String getData(String key) {
 		for (Method m : this.getClass().getMethods()) {
-			if (m.getName().toLowerCase().equals("get" + key.toLowerCase())) {
+			if (m.getName().equalsIgnoreCase("get" + key) && m.getParameterTypes().length == 0) {
 				try {
 					return String.valueOf(m.invoke(this));
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

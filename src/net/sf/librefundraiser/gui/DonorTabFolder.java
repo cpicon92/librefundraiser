@@ -84,7 +84,7 @@ public class DonorTabFolder extends Composite {
 		} else {
 			((DonorTab)t).alterSaveButton();
 		}
-		Main.getWindow().refresh(true, false);
+		Main.getWindow().refresh();
 	}
 
 	public boolean closeAllTabs() {
