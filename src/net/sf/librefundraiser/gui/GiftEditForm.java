@@ -57,7 +57,7 @@ public class GiftEditForm extends Composite {
 		txtAmount = new Combo(compositeTop, SWT.BORDER);
 		txtAmount.setItems(new String[] {"15", "25", "50", "100", "150", "200", "250", "500"});
 		GridData gd_txtAmount = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_txtAmount.widthHint = 30;
+		gd_txtAmount.widthHint = 120;
 		txtAmount.setLayoutData(gd_txtAmount);
 
 		Label lblDateGiven = new Label(compositeTop, SWT.NONE);
@@ -65,7 +65,9 @@ public class GiftEditForm extends Composite {
 		lblDateGiven.setText("Date Given");
 
 		dtDateGiven = new DatePicker(Main.getDateFormat(), compositeTop, SWT.NONE);
-		dtDateGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_dtDateGiven = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_dtDateGiven.widthHint = 160;
+		dtDateGiven.setLayoutData(gd_dtDateGiven);
 		dtDateGiven.setDate(new Date());
 
 		Label lblSource = new Label(compositeTop, SWT.NONE);

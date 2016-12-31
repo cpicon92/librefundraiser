@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class Gift implements Comparable<Gift> {
 	public final int recnum;
-	private String source, note;
+	private String source = "", note = "";
 	private int account;
 	private boolean letter;
-	private Date dt_entry, dategiven;
-	private Money amount;
+	private Date dt_entry = new Date(), dategiven = new Date();
+	private Money amount = new Money(0);
 	
 	public Gift(int recnum) {
 		this.recnum = recnum;
