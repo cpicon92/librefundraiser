@@ -977,12 +977,12 @@ public class DonorEditForm extends Composite {
 		txtAccountID.setText(donor.getAccountNum());
 		
 		GiftStats gs = donor.getGiftStats();
-		txtTotalGiven.setText(String.valueOf(gs.getAllTime())); 
-		txtYearToDate.setText(String.valueOf(gs.getYearToDt()));
-		txtLargestGift.setText(String.valueOf(gs.getLargest()));
-		txtFirstGiftDate.setText(Main.getDateFormat().format(gs.getFirstGift()));
-		txtLastGiftAmt.setText(String.valueOf(gs.getLastAmt()));
-		txtLastGiftDate.setText(Main.getDateFormat().format(gs.getLastGiveDt()));
+		txtTotalGiven.setText(gs.getAllTime() != null ? String.valueOf(gs.getAllTime()) : "N/A"); 
+		txtYearToDate.setText(gs.getYearToDt() != null ? String.valueOf(gs.getYearToDt()) : "N/A");
+		txtLargestGift.setText(gs.getLargest() != null ? String.valueOf(gs.getLargest()) : "N/A");
+		txtFirstGiftDate.setText(gs.getFirstGift() != null ? Main.getDateFormat().format(gs.getFirstGift()) : "Never");
+		txtLastGiftAmt.setText(gs.getLastAmt() != null ? String.valueOf(gs.getLastAmt()) : "N/A");
+		txtLastGiftDate.setText(gs.getLastGiveDt() != null ? Main.getDateFormat().format(gs.getLastGiveDt()) : "Never");
 	}
 
 	public void saveForm(boolean refresh) {

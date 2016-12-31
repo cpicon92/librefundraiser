@@ -8,29 +8,29 @@ import java.util.Date;
 public class DonorData {
 	private Type type = Type.I;
 	//TODO make sure this actually gets updated for any change
-	private Date changedate;
-	private String 	spousefrst, 
-	state, 
-	lastname, 
-	address1,
-	address2, 
-	contact, 
-	city, 
-	homephone,
-	workphone, 
-	zip, 
-	fax, 
-	spouselast, 
-	web, 
-	category1, 
-	firstname, 
-	category2, 
-	mailname, 
-	email2, 
-	country,	
-	email, 
-	salutation, 
-	notes;
+	private Date changedate = new Date();
+	private String 	spousefrst = "", 
+	state = "", 
+	lastname = "", 
+	address1 = "",
+	address2 = "", 
+	contact = "", 
+	city = "", 
+	homephone = "",
+	workphone = "", 
+	zip = "", 
+	fax = "", 
+	spouselast = "", 
+	web = "", 
+	category1 = "", 
+	firstname = "", 
+	category2 = "", 
+	mailname = "", 
+	email2 = "", 
+	country = "",	
+	email = "", 
+	salutation = "", 
+	notes = "";
 
 	public static enum Type {
 		I, B;

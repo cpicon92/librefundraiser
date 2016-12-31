@@ -55,7 +55,7 @@ public class GiftEditForm extends Composite {
 		compositeTop.setLayout(gl_compositeTop);
 
 		txtAmount = new Combo(compositeTop, SWT.BORDER);
-		txtAmount.setItems(new String[] {"15", "25", "50", "100", "150", "200", "250", "500"});
+		txtAmount.setItems(new String[] {"15", "25", "40", "50", "100", "150", "200", "250", "500"});
 		GridData gd_txtAmount = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtAmount.widthHint = 120;
 		txtAmount.setLayoutData(gd_txtAmount);
