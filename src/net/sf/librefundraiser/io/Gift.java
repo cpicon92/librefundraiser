@@ -17,9 +17,9 @@ public class Gift implements Comparable<Gift> {
 	@Override
 	public int compareTo(Gift o) {
 		if (this.dategiven == null && o.dategiven == null) return 0;
-		if (this.dategiven == null) return -1;
-		if (o.dategiven == null ) return 1;
-		return this.dategiven.compareTo(o.dategiven);
+		if (this.dategiven == null) return 1;
+		if (o.dategiven == null ) return -1;
+		return -1 * this.dategiven.compareTo(o.dategiven);
 	}
 
 	public String getSource() {

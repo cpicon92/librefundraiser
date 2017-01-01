@@ -14,12 +14,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.io.Donor;
@@ -207,12 +209,23 @@ public class FileLFD {
 
 	//TODO make sure that previous values are cached
 	public List<String> getPreviousDonorValues(String field) {
-		HashSet<String> previousValues = new HashSet<>();
+		Map<String, Integer> previousValues = new HashMap<>();
 		for (Donor d : this.donors) {
-			previousValues.add(d.getData(field).trim());
+			String k = d.getData(field).trim();
+			if (field.equalsIgnoreCase("zip")) k = k.length() > 5 ? k.substring(0, 5) : k;
+			previousValues.put(k, previousValues.containsKey(k) ? previousValues.get(k) + 1 : 1);
 		}
-		ArrayList<String> out = new ArrayList<>(previousValues);
-		Collections.sort(out);
+		List<Entry<String, Integer>> quantities = new ArrayList<>(previousValues.entrySet());
+		Collections.sort(quantities, new Comparator<Entry<String, Integer>>() {
+			@Override
+			public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
+				return -1 * e1.getValue().compareTo(e2.getValue());
+			}
+		});
+		List<String> out = new ArrayList<>(quantities.size());
+		for (Entry<String, Integer> e : quantities) {
+			if (!e.getKey().trim().isEmpty()) out.add(e.getKey());
+		}
 		return out;
 	}
 	

@@ -79,6 +79,7 @@ public class DatePicker extends Composite {
 				case SWT.ARROW_UP:
 					incrementSelection(text, +1);
 					break;
+				case SWT.TAB:
 				case SWT.ESC:
 					if (calendarPopup != null) {
 						calendarPopup.close();
@@ -289,7 +290,7 @@ public class DatePicker extends Composite {
 			calendar.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					CalendarPopup.this.close();
+//					CalendarPopup.this.close();
 				}
 				@Override
 				public void mouseDown(MouseEvent e) {
