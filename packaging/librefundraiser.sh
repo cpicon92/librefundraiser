@@ -1,2 +1,2 @@
 #!/bin/bash
-java -jar /usr/share/librefundraiser/librefundraiser.jar "$@"
+SWT_GTK3=0 java -jar /usr/share/librefundraiser/librefundraiser.jar "$@"
