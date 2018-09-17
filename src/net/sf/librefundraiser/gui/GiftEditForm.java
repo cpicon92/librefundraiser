@@ -120,7 +120,7 @@ public class GiftEditForm extends Composite {
 			}
 		});
 		btnSave.setSize(36, 23);
-		btnSave.setText("Add");
+		btnSave.setText("Confirm");
 
 		fillForm();
 	}
