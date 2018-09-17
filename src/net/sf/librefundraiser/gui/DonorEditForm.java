@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+//TODO offer setting to change states to two-letter codes
 public class DonorEditForm extends Composite {
 	private Text txtFirstName;
 	private Text txtLastName;
