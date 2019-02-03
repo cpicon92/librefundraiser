@@ -1,0 +1,58 @@
+group 'net.sf.librefundraiser'
+version '0.0.1'
+
+apply plugin: 'java'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {url "http://maven-eclipse.github.io/maven"}
+}
+
+dependencies {
+	//compile "org.eclipse.swt:org.eclipse.swt.win32.win32.x86_64:4.6.1"
+	//compile "org.eclipse.swt:org.eclipse.swt.gtk.linux.x86_64:4.6.1"
+	compile("org.eclipse.platform:org.eclipse.swt.gtk.linux.x86_64:3.109.0"){
+		exclude group: "org.eclipse.platform", module: "org.eclipse.swt"
+	}
+	//compile "org.eclipse.swt:org.eclipse.swt.cocoa.macosx.x86_64:4.6.1"
+	compile("org.eclipse.platform:org.eclipse.swt:3.109.0"){
+		exclude group: "org.eclipse.platform"
+	}
+	compile ("org.eclipse.platform:org.eclipse.jface:3.15.0"){
+		exclude group: "org.eclipse.platform", module: "org.eclipse.swt"
+	}
+	compile fileTree(dir: 'lib', include: '*.jar')
+}
+
+jar.baseName = 'librefundraiser'
+
+task copyRunner(type: Copy) {
+    into "$buildDir/libs"
+    from "windows"
+}
+
+task copyLibs(type: Copy) {
+    into "$buildDir/libs/ctfscreen-data"
+    from configurations.runtime
+}
+
+task windowsJar(type: Jar) {
+	from sourceSets.main.output
+	destinationDir = file("$buildDir/libs/ctfscreen-data")
+	baseName = 'ctfscreen'
+}
+
+task windows(type: GradleBuild) {
+    tasks = ['windowsJar', 'copyRunner', 'copyLibs']
+    group 'build'
+}
+
+task msi(type: Exec) {
+	dependsOn "windows"
+    workingDir "$buildDir/libs"
+    environment "PRODUCTVERSION", version
+    commandLine "cmd","/c","wix.bat"
+    group 'build'
+}
