@@ -211,9 +211,14 @@ public class Main {
 					importedDonors = db.importFRBW();
 				} catch (Exception e) {
 					e.printStackTrace();
-					MessageBox error = new MessageBox(parent,SWT.ICON_ERROR);
-					error.setText("LibreFundraiser Error");
-					error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
+					display.asyncExec(new Runnable() {
+						public void run() {
+							MessageBox error = new MessageBox(parent,SWT.ICON_ERROR);
+							error.setText("LibreFundraiser Error");
+							error.setMessage("Could not load donors. This probably isn't a FundRaiser basic installation folder...");
+							error.open();
+						}
+					});
 				}
 				Main.getDonorDB().saveDonors(importedDonors);
 				Main.getWindow().refresh();				

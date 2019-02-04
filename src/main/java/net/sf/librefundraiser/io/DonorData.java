@@ -51,14 +51,15 @@ public class DonorData {
 
 	public void putData(String key, String value) {
 		try {
-			Field f = this.getClass().getField(key);
+			Field f = this.getClass().getDeclaredField(key);
+			f.setAccessible(true);
 			if (f.getType().equals(String.class)) {
 				f.set(this, value);
 			} else {
 				System.err.println("Field " + key + " is not a string");
 			}
 		} catch (NoSuchFieldException e) {
-//			System.err.println("No donor field " + key);
+			System.err.println("No donor field " + key);
 		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}

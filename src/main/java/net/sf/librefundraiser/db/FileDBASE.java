@@ -80,6 +80,7 @@ public class FileDBASE {
 			importedDonors.put(donor.getId(), donor);
 		}
 		donorTable.close();
+		System.out.println(importedDonors);
 		giftTable.open(IfNonExistent.ERROR);
 		final List<Field> giftFields = giftTable.getFields();
 		final Iterator<Record> giftRecordIterator = giftTable.recordIterator();
@@ -95,14 +96,24 @@ public class FileDBASE {
 					String rawValue = (value != null ? value.toString() : "").trim();
 					boolean valid = !rawValue.contains(new String(new char[]{(char)0}));
 					String fieldData = valid ? rawValue : "";
-					gift.add(fieldName, new JsonPrimitive(fieldData));
+					gift.add(fieldName.toLowerCase(), new JsonPrimitive(fieldData));
 				} catch (Exception e) {
 					//e.printStackTrace();
 				}
 			}
+			System.out.println(gift.toString());
 			//use gson to avoid having to use reflection to instantiate gift
-			Gift g = gson.fromJson(gift, Gift.class);
-			importedDonors.get(g.getAccount()).addGift(g);
+			Gift g;
+			try {
+				g = gson.fromJson(gift, Gift.class);
+			} catch (Exception e) {
+				System.err.println("Error importing " + gift);
+				e.printStackTrace();
+				continue;
+			}
+			Donor account = importedDonors.get(g.getAccount());
+			if (account != null) account.addGift(g);
+			else System.err.println("Orphaned gift! " + g.getAccount());
 		}
 		giftTable.close();
 		return importedDonors.values().toArray(new Donor[]{});
