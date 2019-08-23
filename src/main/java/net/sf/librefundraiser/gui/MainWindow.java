@@ -126,6 +126,7 @@ public class MainWindow {
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
+					refreshTitle();
 					refresh();
 				}
 			}
