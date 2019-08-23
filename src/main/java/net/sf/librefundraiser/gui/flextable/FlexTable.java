@@ -418,7 +418,8 @@ public class FlexTable<T> extends Composite {
 	}
 
 	public int getSelectionCount() {
-		return lastSelectedRow - firstSelectedRow;
+		if (firstSelectedRow < 0 || lastSelectedRow < 0) return 0;
+		return lastSelectedRow - firstSelectedRow + 1;
 	}
 
 	public boolean isSummaryMode() {
