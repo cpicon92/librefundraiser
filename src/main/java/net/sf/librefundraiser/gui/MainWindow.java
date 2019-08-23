@@ -1,13 +1,6 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
 
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ResourceManager;
-import net.sf.librefundraiser.db.ODB;
-import net.sf.librefundraiser.tabs.TabFolder;
-import net.sf.librefundraiser.tabs.TabFolderEvent;
-import net.sf.librefundraiser.tabs.TabFolderListener;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MenuAdapter;
@@ -23,7 +16,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -35,9 +27,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.db.ODB;
+import net.sf.librefundraiser.tabs.TabFolder;
+import net.sf.librefundraiser.tabs.TabFolderEvent;
+import net.sf.librefundraiser.tabs.TabFolderListener;
 
 
 public class MainWindow {
@@ -227,6 +225,7 @@ public class MainWindow {
 		});
 		mntmExit.setText("Exit");
 
+		/*
 		MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
 		mntmEdit.setText("Edit");
 
@@ -274,14 +273,15 @@ public class MainWindow {
 				}
 			}
 		});
+		*/
 
-		MenuItem mntmDonor = new MenuItem(menu, SWT.CASCADE);
-		mntmDonor.setText("Donor");
+		MenuItem mntmDatabase = new MenuItem(menu, SWT.CASCADE);
+		mntmDatabase.setText("Database");
 
-		Menu menuDonor = new Menu(mntmDonor);
-		mntmDonor.setMenu(menuDonor);
+		Menu menuDatabase = new Menu(mntmDatabase);
+		mntmDatabase.setMenu(menuDatabase);
 
-		MenuItem mntmNewDonor = new MenuItem(menuDonor, SWT.NONE);
+		MenuItem mntmNewDonor = new MenuItem(menuDatabase, SWT.NONE);
 		mntmNewDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -290,7 +290,7 @@ public class MainWindow {
 		});
 		mntmNewDonor.setText("New Donor");
 
-		final MenuItem mntmSaveCurrentDonor = new MenuItem(menuDonor, SWT.NONE);
+		final MenuItem mntmSaveCurrentDonor = new MenuItem(menuDatabase, SWT.NONE);
 		mntmSaveCurrentDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -298,7 +298,7 @@ public class MainWindow {
 				saveCurrent.run();
 			}
 		});
-		menuDonor.addMenuListener(new MenuAdapter() {
+		menuDatabase.addMenuListener(new MenuAdapter() {
 			@Override
 			public void menuShown(MenuEvent e) {
 				mntmSaveCurrentDonor.setEnabled(tltmSave.getEnabled());
@@ -306,7 +306,7 @@ public class MainWindow {
 		});
 		mntmSaveCurrentDonor.setText("Save Current Donor");
 
-		MenuItem mntmSaveAllDonors = new MenuItem(menuDonor, SWT.NONE);
+		MenuItem mntmSaveAllDonors = new MenuItem(menuDatabase, SWT.NONE);
 		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -314,6 +314,17 @@ public class MainWindow {
 			}
 		});
 		mntmSaveAllDonors.setText("Save All Donors");
+		
+		new MenuItem(menuDatabase, SWT.SEPARATOR);
+		
+		MenuItem mntmDbProperties = new MenuItem(menuDatabase, SWT.NONE);
+		mntmDbProperties.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				new DatabasePropertiesDialog(shell, SWT.DIALOG_TRIM).open();
+			}
+		});
+		mntmDbProperties.setText("Properties...");
 
 		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
 		mntmHelp.setText("Help");
