@@ -36,6 +36,7 @@ task copyRunner(type: Copy) {
 task copyLibs(type: Copy) {
     into "$buildDir/libs/ctfscreen-data"
     from configurations.runtime
+    group 'build'
 }
 
 task windowsJar(type: Jar) {
