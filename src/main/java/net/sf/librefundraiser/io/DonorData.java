@@ -6,8 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 public class DonorData {
-	private Type type = Type.I;
-	//TODO make sure this actually gets updated for any change
+	private Type type = Type.INDIVIDUAL;
 	private Date changedate = new Date();
 	private String 	spousefrst = "", 
 	state = "", 
@@ -33,7 +32,15 @@ public class DonorData {
 	notes = "";
 
 	public static enum Type {
-		I, B;
+		INDIVIDUAL, BUSINESS, NONPROFIT, OTHER;
+		@Override
+		public String toString() {
+			return super.toString().substring(0,1);
+		}
+		public String getName() {
+			String n = super.toString();
+			return n.substring(0,1) + n.substring(1).toLowerCase();
+		}
 	}
 	
 	public String getData(String key) {

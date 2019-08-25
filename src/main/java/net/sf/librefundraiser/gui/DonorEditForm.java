@@ -5,17 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ResourceManager;
-import net.sf.librefundraiser.gui.flextable.FlexTable;
-import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
-import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
-import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
-import net.sf.librefundraiser.io.Donor;
-import net.sf.librefundraiser.io.DonorData.Type;
-import net.sf.librefundraiser.io.Gift;
-import net.sf.librefundraiser.io.GiftStats;
-
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.swt.SWT;
@@ -43,6 +32,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.gui.flextable.FlexTable;
+import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.DonorData.Type;
+import net.sf.librefundraiser.io.Gift;
+import net.sf.librefundraiser.io.GiftStats;
+
 //TODO offer setting to change states to two-letter codes
 public class DonorEditForm extends Composite {
 	private Text txtFirstName;
@@ -67,7 +67,7 @@ public class DonorEditForm extends Composite {
 	private Text txtLastGiftDate;
 	private Text txtLastEdited;
 	public final Donor donor;
-	private boolean business = false;
+	private Type businessType;
 	private Combo comboSalutation;
 	private Combo comboCategory;
 	private Combo comboDonorSource;
@@ -75,8 +75,10 @@ public class DonorEditForm extends Composite {
 	private Combo comboState;
 	private Text txtSpouseLast;
 	private Text txtSpouseFirst;
-	private Button btnBusinessother;
+	private Button btnBusiness;
 	private Button btnIndividual;
+	private Button btnNonprofit;
+	private Button btnOthertype;
 	private Text txtContactLast;
 	private Text txtContactFirst;
 	private Text txtBusinessName;
@@ -98,7 +100,7 @@ public class DonorEditForm extends Composite {
 	private Text txtAccountID;
 	private Composite compositeEditForm;
 	private GridData gd_compositeEditForm;
-	private ToolItem tltmAdd;
+	private ToolItem tltmNew;
 	private ToolItem tltmEdit;
 	private ToolItem tltmDelete;
 	private FlexTable<Gift> giftTable;
@@ -156,8 +158,10 @@ public class DonorEditForm extends Composite {
 		SelectionAdapter typeSelect = new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean business = e.getSource().equals(btnBusinessother);
-				setBusiness(business);
+				if (e.getSource().equals(btnIndividual)) setBusinessType(Type.INDIVIDUAL);
+				if (e.getSource().equals(btnBusiness)) setBusinessType(Type.BUSINESS);
+				if (e.getSource().equals(btnNonprofit)) setBusinessType(Type.NONPROFIT);
+				if (e.getSource().equals(btnOthertype)) setBusinessType(Type.OTHER);
 			}
 		};
 		grpType.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -167,9 +171,17 @@ public class DonorEditForm extends Composite {
 		btnIndividual.setSelection(true);
 		btnIndividual.setText("Individual");
 
-		btnBusinessother = new Button(grpType, SWT.RADIO);
-		btnBusinessother.setText("Business/Other");
-		btnBusinessother.addSelectionListener(typeSelect);
+		btnBusiness = new Button(grpType, SWT.RADIO);
+		btnBusiness.setText("Business");
+		btnBusiness.addSelectionListener(typeSelect);
+		
+		btnNonprofit = new Button(grpType, SWT.RADIO);
+		btnNonprofit.setText("Non-profit");
+		btnNonprofit.addSelectionListener(typeSelect);
+		
+		btnOthertype = new Button(grpType, SWT.RADIO);
+		btnOthertype.setText("Other");
+		btnOthertype.addSelectionListener(typeSelect);
 
 		compositeNames = new Composite(compositeBasic, SWT.NONE);
 		compositeNames.setLayout(new StackLayout());
@@ -567,8 +579,8 @@ public class DonorEditForm extends Composite {
 				1, 1));
 		tbrGifts.setBounds(0, 0, 89, 23);
 
-		tltmAdd = new ToolItem(tbrGifts, SWT.NONE);
-		tltmAdd.addSelectionListener(new SelectionAdapter() {
+		tltmNew = new ToolItem(tbrGifts, SWT.NONE);
+		tltmNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
@@ -576,11 +588,10 @@ public class DonorEditForm extends Composite {
 				editGift(gift);
 			}
 		});
-		tltmAdd.setImage(ResourceManager.getIcon("new-gift.png"));
-		tltmAdd.setText("Add");
+		tltmNew.setImage(ResourceManager.getIcon("new-gift.png"));
+		tltmNew.setText("New");
 
-		ToolItem tltmSep = new ToolItem(tbrGifts, SWT.SEPARATOR);
-		tltmSep.setText("sep");
+		new ToolItem(tbrGifts, SWT.SEPARATOR);
 
 		tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
 		tltmEdit.setEnabled(false);
@@ -913,7 +924,7 @@ public class DonorEditForm extends Composite {
 		}).start();
 		this.fillForm();
 		this.attachModifyListeners();
-		this.setBusiness(donor.data.getType() != Type.I);
+		this.setBusinessType(donor.data.getType());
 		this.setEdited(false);
 	}
 
@@ -987,7 +998,7 @@ public class DonorEditForm extends Composite {
 	}
 
 	public void saveForm(boolean refresh) {
-		if (!business) {
+		if (this.businessType == Type.INDIVIDUAL) {
 			txtBusinessName.setText(txtLastName.getText());
 			txtContactLast.setText(txtSpouseLast.getText());
 			txtContactFirst.setText(txtSpouseFirst.getText());
@@ -996,10 +1007,11 @@ public class DonorEditForm extends Composite {
 			txtSpouseFirst.setText(txtContactFirst.getText());
 			txtSpouseLast.setText(txtContactLast.getText());
 		}
-		donor.data.setType(business ? Type.B : Type.I);
+		donor.data.setType(this.businessType);
 		Format dateFormat = Main.getDateFormat();
-		//TODO actually update the changeDate field
-		txtLastEdited.setText(dateFormat.format(new Date()));
+		//update the changeDate field and Last Edited
+		donor.data.setChangedate(new Date());
+		txtLastEdited.setText(dateFormat.format(donor.data.getChangedate()));
 		
 		donor.data.setFirstname(txtFirstName.getText());
 		donor.data.setLastname(txtLastName.getText()); 
@@ -1025,15 +1037,16 @@ public class DonorEditForm extends Composite {
 		
 		grpWeb.saveLinks();
 		Main.getDonorDB().saveDonor(this.donor);
-		if (refresh)
-			Main.getWindow().refresh();
+		if (refresh) Main.getWindow().refresh();
 		this.fillForm();
 		this.setEdited(false);
 	}
 
-	protected void setBusiness(boolean business) {
-		if (this.business != business) {
-			this.business = business;
+	protected void setBusinessType(Type t) {
+		if (donor.data.getType() != t) this.setEdited(true);
+		this.businessType = t;
+		boolean business = t != Type.INDIVIDUAL;
+		if (this.businessType != t) {
 			this.setEdited(true);
 			if (business) {
 				txtBusinessName.setText(txtLastName.getText());
@@ -1045,8 +1058,10 @@ public class DonorEditForm extends Composite {
 				txtSpouseLast.setText(txtContactLast.getText());
 			}
 		}
-		btnIndividual.setSelection(!business);
-		btnBusinessother.setSelection(business);
+		btnIndividual.setSelection(t == Type.INDIVIDUAL);
+		btnBusiness.setSelection(t == Type.BUSINESS);
+		btnNonprofit.setSelection(t == Type.NONPROFIT);
+		btnOthertype.setSelection(t == Type.OTHER);
 		compositeIndvNames.setVisible(!business);
 		compositeBusiNames.setVisible(business);
 		lblOptional.setVisible(!business);
@@ -1105,7 +1120,7 @@ public class DonorEditForm extends Composite {
 						compositeGifts.layout();
 						giftTable.refresh();
 						giftTable.setEnabled(true);
-						tltmAdd.setEnabled(true);
+						tltmNew.setEnabled(true);
 					} catch (SWTException e1) {
 					}
 				}
@@ -1115,7 +1130,7 @@ public class DonorEditForm extends Composite {
 			compositeEditForm.layout();
 			compositeGifts.layout();
 			giftEditForm.initializePointer();
-			tltmAdd.setEnabled(false);
+			tltmNew.setEnabled(false);
 			tltmEdit.setEnabled(false);
 			tltmDelete.setEnabled(false);
 			giftTable.setEnabled(false);

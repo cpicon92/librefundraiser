@@ -163,9 +163,9 @@ public class DonorTable extends Composite {
 					case 0:
 						return donor.getAccountNum();
 					case 1:
-						return donor.data.getType() == Type.B ? "Business" : "Individual";
+						return donor.data.getType().getName();
 					case 2:
-						if (donor.data.getFirstname().isEmpty() || donor.data.getType() == Type.B) {
+						if (donor.data.getFirstname().isEmpty() || donor.data.getType() != Type.INDIVIDUAL) {
 							return donor.data.getLastname();
 						}
 						return String.format("%s, %s", donor.data.getLastname(), donor.data.getFirstname());

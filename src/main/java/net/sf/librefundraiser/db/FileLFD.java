@@ -23,11 +23,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.io.Donor;
-import net.sf.librefundraiser.io.Gift;
-import net.sf.librefundraiser.io.Money;
-
 import org.tukaani.xz.LZMA2Options;
 import org.tukaani.xz.XZInputStream;
 import org.tukaani.xz.XZOutputStream;
@@ -41,6 +36,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.DonorData;
+import net.sf.librefundraiser.io.Gift;
+import net.sf.librefundraiser.io.Money;
 
 public class FileLFD {
 	private static final int latestDbVersion = 2;
@@ -97,6 +98,15 @@ public class FileLFD {
 					} else {
 						return new Money(json.getAsString());
 					}
+				}
+			})
+			.registerTypeAdapter(DonorData.Type.class, new JsonDeserializer<DonorData.Type>() {
+				@Override
+				public DonorData.Type deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
+					String t = json.getAsString();
+					if (t.equalsIgnoreCase("i")) return DonorData.Type.INDIVIDUAL;
+					else if (t.equalsIgnoreCase("b")) return DonorData.Type.BUSINESS;
+					else return DonorData.Type.valueOf(t);
 				}
 			})
 			.setDateFormat(Main.getDateFormatString())

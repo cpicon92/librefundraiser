@@ -99,7 +99,7 @@ public class Tester extends Shell {
 					case 0:
 						return donor.getAccountNum();
 					case 1:
-						return donor.data.getType() == Type.B ? "Business" : "Individual";
+						return donor.data.getType() == Type.BUSINESS ? "Business" : "Individual";
 					case 2:
 						return String.format("%s, %s", donor.data.getFirstname(), donor.data.getLastname());
 					case 3:
