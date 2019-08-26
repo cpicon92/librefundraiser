@@ -48,6 +48,7 @@ public class FileLFD {
 	private final File dbFile;
 	private List<Donor> donors = new ArrayList<>();
 	private Map<String, String> info = new HashMap<>();
+	private List<CustomField> customFields = new ArrayList<>();
 
 	public String getDbPath() {
 		return dbFile.getPath();
@@ -60,7 +61,7 @@ public class FileLFD {
 		"LASTENTAMT", "EMAIL2", "WEB" };
 	public static final String[] giftFields = new String[] { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
 		"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
-	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
+//	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
 
 	
 	public FileLFD(String filename) throws IOException {
@@ -126,6 +127,8 @@ public class FileLFD {
 				String name = reader.nextName();
 				if (name.equals("info")) {
 					this.info = gson.fromJson(reader, Map.class);
+				} else if (name.equals("customFields")) {
+					this.customFields = gson.fromJson(reader, List.class);
 				} else if (name.equals("donors")) {
 					reader.beginArray();
 					while (reader.hasNext()) {
@@ -156,6 +159,8 @@ public class FileLFD {
 			writer.beginObject();
 			writer.name("info");
 			gson.toJson(this.info, Map.class, writer);
+			writer.name("customFields");
+			gson.toJson(this.customFields, List.class, writer);
 			writer.name("donors");
 			writer.beginArray();
 			for (Donor donor: this.donors) {
@@ -318,6 +323,30 @@ public class FileLFD {
 	
 	public void putDbInfo(Map<String, String> entries) {
 		this.info.putAll(entries);
+		this.writeAll();
+	}
+	
+	/**
+	 * @return a deep copy of the custom fields defined in this db
+	 */
+	public CustomField[] getCustomFields() {
+		CustomField[] out = new CustomField[customFields.size()];
+		int i = 0;
+		for (CustomField f : customFields) {
+			out[i++] = f.copy();
+		}
+		return out;
+	}
+	
+	/**
+	 * Overwrites custom fields for db with deep copy
+	 * @param fields list of fields to copy
+	 */
+	public void setCustomFields(List<CustomField> fields) {
+		this.customFields.clear();
+		for (CustomField f : fields) {
+			this.customFields.add(f.copy());
+		}
 		this.writeAll();
 	}
 

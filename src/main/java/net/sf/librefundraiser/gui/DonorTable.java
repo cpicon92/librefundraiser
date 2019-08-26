@@ -581,10 +581,8 @@ public class DonorTable extends Composite {
 					row[headers.length] = valid?d.getData("notes"):"";
 					l.add(row);
 				}
-				String[][] sheetData = l.toArray(new String[][]{});
 				l.addFirst(headers);
 				String[][] sheetDataWithTitles = l.toArray(new String[][]{});
-				TableModel model = new DefaultTableModel(sheetData, headers); 
 				try {
 //					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(model);
 					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(new DefaultTableModel(headers, donors.size()));

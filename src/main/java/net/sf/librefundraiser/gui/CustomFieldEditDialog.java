@@ -1,18 +1,18 @@
 package net.sf.librefundraiser.gui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -27,34 +27,35 @@ import org.eclipse.swt.widgets.Text;
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.db.CustomField;
 
-public class DatabasePropertiesDialog extends Dialog {
+public class CustomFieldEditDialog extends Dialog {
 
+	protected CustomField editing, result;
 	protected Shell shell;
-	private Text txtDatabaseName;
-	private Text txtFileName;
+	private Combo comboFieldType;
+	private Text txtFieldName;
 	private boolean changeEffected = false;
 	private Button btnApply;
-	private ArrayList<CustomField> customFields = new ArrayList<CustomField>(Arrays.asList(Main.getDonorDB().getCustomFields()));
 
 	/**
 	 * Create the dialog.
 	 * @param parent
 	 * @param style
 	 */
-	public DatabasePropertiesDialog(Shell parent, int style) {
+	public CustomFieldEditDialog(Shell parent, int style, CustomField toEdit) {
 		super(parent, style);
-		String filename = null;
-		try {
-			filename = new File(Main.getDonorDB().getDbPath()).getName();
-		} catch (Exception e) {}
-		if (filename != null) filename = filename + " ";
-		setText(filename+"Properties");
+		setText("Edit Custom Field");
+		this.editing = toEdit == null ? new CustomField() : toEdit.copy();
+	}
+	
+	public CustomFieldEditDialog(Shell parent, int style) {
+		this(parent, style, null);
 	}
 
 	/**
 	 * Open the dialog.
+	 * @return the result
 	 */
-	public void open() {
+	public CustomField open() {
 		createContents();
 		shell.open();
 		shell.layout();
@@ -64,6 +65,7 @@ public class DatabasePropertiesDialog extends Dialog {
 				display.sleep();
 			}
 		}
+		return result;
 	}
 
 	/**
@@ -75,63 +77,72 @@ public class DatabasePropertiesDialog extends Dialog {
 		shell.setText(getText());
 		shell.setLayout(new GridLayout(1, false));
 		
-		Group grpGeneral = new Group(shell, SWT.NONE);
-		grpGeneral.setLayout(new GridLayout(1, false));
-		grpGeneral.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		grpGeneral.setText("General");
+		Label lblFieldName = new Label(shell, SWT.NONE);
+		lblFieldName.setBounds(0, 0, 49, 13);
+		lblFieldName.setText("Field Name");
 		
-		Label lblFileName = new Label(grpGeneral, SWT.NONE);
-		lblFileName.setBounds(0, 0, 49, 13);
-		lblFileName.setText("File Name");
-		
-		txtFileName = new Text(grpGeneral, SWT.BORDER | SWT.READ_ONLY);
-		txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtFileName.setBounds(0, 0, 76, 19);
-		txtFileName.setText(Main.getDonorDB().getDbPath());
-		
-		Label lblDatabaseName = new Label(grpGeneral, SWT.NONE);
-		lblDatabaseName.setBounds(0, 0, 49, 13);
-		lblDatabaseName.setText("Database Name");
-		
-		txtDatabaseName = new Text(grpGeneral, SWT.BORDER);
-		txtDatabaseName.addModifyListener(new ModifyListener() {
+		txtFieldName = new Text(shell, SWT.BORDER);
+		txtFieldName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtFieldName.setBounds(0, 0, 76, 19);
+		txtFieldName.setText(editing.name);
+		txtFieldName.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
 				changeEffected();
+				editing.name = txtFieldName.getText();
 			}
 		});
-		txtDatabaseName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtDatabaseName.setBounds(0, 0, 76, 19);
-		txtDatabaseName.setText(Main.getDonorDB().getDbName());
 		
-		Group grpCustomFields = new Group(shell, SWT.NONE);
-		grpCustomFields.setLayout(new GridLayout(1, false));
-		grpCustomFields.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpCustomFields.setText("Custom Fields");
+		Label lblFieldType = new Label(shell, SWT.NONE);
+		lblFieldType.setBounds(0, 0, 49, 13);
+		lblFieldType.setText("Type");
 		
-		Label lblCustomFieldExplanation = new Label(grpCustomFields, SWT.WRAP);
-		lblCustomFieldExplanation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		lblCustomFieldExplanation.setText("LibreFundraiser allows an unlimited number of custom fields for your donors. When you add a field here, it will show up on the \"Custom\" tab of the donor entry. ");
+		comboFieldType = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
+		comboFieldType.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				changeEffected();
+				try {
+					editing.type = CustomField.Type.valueOf(comboFieldType.getText().toUpperCase());
+				} catch (IllegalArgumentException ex) {
+				}
+			}
+		});
+		comboFieldType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		comboFieldType.setBounds(0, 0, 76, 19);
+		comboFieldType.add("");
+		int selectedType = 0, i = 1;
+		for (CustomField.Type t : CustomField.Type.values()) {
+			comboFieldType.add(t.getName());
+			if (t == editing.type) selectedType = i;
+			i++;
+		}
+		comboFieldType.setSelection(new Point(selectedType, selectedType));
 		
-		//TODO implement add/remove custom field functionality
-		Table list = new Table(grpCustomFields, SWT.BORDER);
+		Group grpChoices = new Group(shell, SWT.NONE);
+		grpChoices.setLayout(new GridLayout(1, false));
+		grpChoices.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		grpChoices.setText("Choices");
+
+		Table list = new Table(grpChoices, SWT.BORDER);
 		list.setHeaderVisible(true);
 		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
-		TableColumn tblclmnName = new TableColumn(list, SWT.NONE);
-		tblclmnName.setWidth(100);
-		tblclmnName.setText("Name");
+//		TableColumn tblclmnName = new TableColumn(list, SWT.NONE);
+//		tblclmnName.setWidth(100);
+//		tblclmnName.setText("Name");
+//		
+//		TableColumn tblclmnType = new TableColumn(list, SWT.NONE);
+//		tblclmnType.setWidth(100);
+//		tblclmnType.setText("Type");
 		
-		TableColumn tblclmnType = new TableColumn(list, SWT.NONE);
-		tblclmnType.setWidth(100);
-		tblclmnType.setText("Type");
-		
-		for (CustomField item : customFields) {
+		CustomField[] items = Main.getDonorDB().getCustomFields();
+		for (CustomField item : items) {
 			TableItem tableItem = new TableItem(list, SWT.NONE);
 			tableItem.setText(new String[] {item.name, item.type.getName()});
 		}
 		
-		Composite compositeCustomFieldButtons = new Composite(grpCustomFields, SWT.NONE);
+		Composite compositeCustomFieldButtons = new Composite(grpChoices, SWT.NONE);
 		compositeCustomFieldButtons.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_compositeCustomFieldButtons = new GridLayout(3, false);
 		gl_compositeCustomFieldButtons.marginWidth = 0;
@@ -148,11 +159,7 @@ public class DatabasePropertiesDialog extends Dialog {
 		btnAddAField.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CustomField newField = new CustomFieldEditDialog(shell, SWT.DIALOG_TRIM, null).open();
-				if (newField != null) {
-					customFields.add(newField);
-					changeEffected();
-				}
+				
 			}
 		});
 		
@@ -202,9 +209,7 @@ public class DatabasePropertiesDialog extends Dialog {
 	}
 	
 	public void saveChanges() {
-		Main.getDonorDB().setCustomFields(customFields);
-		Main.getDonorDB().setDbName(txtDatabaseName.getText());
-		Main.getWindow().refreshTitle();
+		this.result = this.editing.copy();
 		btnApply.setEnabled(false);
 		changeEffected = false;
 	}
