@@ -64,7 +64,7 @@ public class GiftEditForm extends Composite {
 		lblDateGiven.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblDateGiven.setText("Date Given");
 
-		dtDateGiven = new DatePicker(Main.getDateFormat(), compositeTop, SWT.NONE);
+		dtDateGiven = new DatePicker(Main.getDateFormat(), compositeTop, SWT.LEFT);
 		GridData gd_dtDateGiven = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_dtDateGiven.widthHint = 160;
 		dtDateGiven.setLayoutData(gd_dtDateGiven);

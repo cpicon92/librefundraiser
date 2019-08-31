@@ -41,14 +41,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class DatePicker extends Composite {
-	private Text text;
+	private Text txtDate;
 	private CalendarPopup calendarPopup = null;
 	private final DateFormat dateFormat;
 
 	/**
-	 * Create the composite.
+	 * Replacement for SWT's DatePicker that actually looks okay on Linux
 	 * @param parent
-	 * @param style
+	 * @param style SWT.LEFT moves calendar button to left side of text input
 	 */
 	public DatePicker(DateFormat format, Composite parent, int style) {
 		super(parent, style);
@@ -58,8 +58,11 @@ public class DatePicker extends Composite {
 		gridLayout.marginHeight = 0;
 		gridLayout.marginWidth = 0;
 		setLayout(gridLayout);
-		text = new Text(this, SWT.BORDER);
-		text.addTraverseListener(new TraverseListener() {
+		
+		if (SWT.LEFT==(style & SWT.LEFT)) makeButton();
+		
+		txtDate = new Text(this, SWT.BORDER);
+		txtDate.addTraverseListener(new TraverseListener() {
 			@Override
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
@@ -69,15 +72,15 @@ public class DatePicker extends Composite {
 				}
 			}
 		});
-		text.addKeyListener(new KeyAdapter() {
+		txtDate.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				switch (e.keyCode) {
 				case SWT.ARROW_DOWN: 
-					incrementSelection(text, -1);
+					incrementSelection(txtDate, -1);
 					break;
 				case SWT.ARROW_UP:
-					incrementSelection(text, +1);
+					incrementSelection(txtDate, +1);
 					break;
 				case SWT.TAB:
 				case SWT.ESC:
@@ -88,16 +91,16 @@ public class DatePicker extends Composite {
 				}
 			}
 		});
-		text.addMouseListener(new MouseAdapter() {
+		txtDate.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				selectText(text);
+				selectText(txtDate);
 			}
 		});
-		text.addFocusListener(new FocusAdapter() {
+		txtDate.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
-				selectText(text);
+				selectText(txtDate);
 			}
 			@Override
 			public void focusLost(FocusEvent e) {
@@ -111,8 +114,16 @@ public class DatePicker extends Composite {
 				});
 			}
 		});
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
+		if (SWT.LEFT!=(style & SWT.LEFT)) makeButton();
+		
+		setTabList(new Control[]{txtDate});
+
+
+	}
+	
+	private void makeButton() {
 		final Label btnDropDown = new Label(this, SWT.NONE);
 		btnDropDown.setImage(ResourceManager.getIcon("calendar.png"));
 		btnDropDown.addMouseListener(new MouseAdapter() {
@@ -120,13 +131,13 @@ public class DatePicker extends Composite {
 			public void mouseUp(MouseEvent e) {
 				Date initial = null;
 				try {
-					initial = dateFormat.parse(text.getText());
+					initial = dateFormat.parse(txtDate.getText());
 				} catch (Exception e1) {
 				}
 				if (initial == null) {
 					initial = new Date();
 				}
-				text.setFocus();
+				txtDate.setFocus();
 				if (calendarPopup != null) {
 					calendarPopup.close();
 				}
@@ -148,19 +159,16 @@ public class DatePicker extends Composite {
 			}
 		});
 		btnDropDown.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-		setTabList(new Control[]{text});
-
-
 	}
-	
+
 	private boolean tabRight() {
-		selectText(text);
+		selectText(txtDate);
 		Integer[] indexes = getDateIndexes(this.getDate(), this.dateFormat);
 		boolean changed = false;
 		for (Integer i : indexes) {
-			if (i > text.getSelection().y) {
-				text.setSelection(i);
-				selectText(text);
+			if (i > txtDate.getSelection().y) {
+				txtDate.setSelection(i);
+				selectText(txtDate);
 				changed = true;
 				break;
 			}
@@ -254,14 +262,14 @@ public class DatePicker extends Composite {
 
 	public Date getDate() {
 		try {
-			return dateFormat.parse(text.getText());
+			return dateFormat.parse(txtDate.getText());
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
 	public void setDate(Date date) {
-		text.setText(dateFormat.format(date));
+		txtDate.setText(dateFormat.format(date));
 	}
 
 	private static class CalendarPopup extends PopupDialog {
