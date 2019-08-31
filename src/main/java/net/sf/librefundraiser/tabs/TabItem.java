@@ -252,11 +252,14 @@ public class TabItem extends Composite {
 						}
 						try {
 							//TODO fix bug that causes app to crash when tabs are closed (seems to be starting here)
+							//2019/08/31 added try catch.. should fix this
 							getDisplay().asyncExec(new Runnable() {
 								@Override
 								public void run() {
-									Point mousePos = toControl(getDisplay().getCursorLocation());
-									checkCloseButton(mousePos.x, mousePos.y);
+									try {
+										Point mousePos = toControl(getDisplay().getCursorLocation());
+										checkCloseButton(mousePos.x, mousePos.y);
+									} catch (RuntimeException e) {}
 								}
 							});
 						} catch (Exception e) {}

@@ -136,22 +136,18 @@ public class DonorEditForm extends Composite {
 		setLayout(mainGrid);
 
 		compositeMain = new Composite(this, SWT.NONE);
-		compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 3));
+		compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
 		compositeMain.setLayout(new GridLayout(1, false));
 
 		Composite compositeBasic = new Composite(compositeMain, SWT.NONE);
-		GridData gd_compositeBasic = new GridData(SWT.CENTER, SWT.CENTER, true,
-				false, 1, 1);
+		GridData gd_compositeBasic = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
 		gd_compositeBasic.widthHint = 800;
 		compositeBasic.setLayoutData(gd_compositeBasic);
-		compositeBasic.setLayout(new GridLayout(1, false));
+		compositeBasic.setLayout(new GridLayout(2, false));
 
 		Group grpType = new Group(compositeBasic, SWT.NONE);
-		grpType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
+		grpType.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 		grpType.setText("Type");
-		grpType.setBounds(0, 0, 70, 82);
 
 		SelectionAdapter typeSelect = new SelectionAdapter() {
 			@Override
@@ -162,7 +158,28 @@ public class DonorEditForm extends Composite {
 				if (e.getSource().equals(btnOthertype)) setBusinessType(Type.OTHER);
 			}
 		};
-		grpType.setLayout(new RowLayout(SWT.HORIZONTAL));
+		RowLayout lytType = new RowLayout(SWT.HORIZONTAL);
+		lytType.marginBottom = 10;
+		lytType.marginRight = 10;
+		grpType.setLayout(lytType);
+		
+		Group grpStatus = new Group(compositeBasic, SWT.NONE);
+		RowLayout lytStatus = new RowLayout(SWT.HORIZONTAL);
+		lytStatus.marginBottom = 10;
+		lytStatus.marginRight = 10;
+		grpStatus.setLayout(lytStatus);
+		grpStatus.setText("Status");
+		Button chkActive = new Button(grpStatus, SWT.CHECK);
+		chkActive.setText("Active");
+		chkActive.setSelection(this.donor.data.isActive());
+		chkActive.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				donor.data.setActive(chkActive.getSelection());
+				setEdited(true);
+			}
+		});
+		grpStatus.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 
 		btnIndividual = new Button(grpType, SWT.RADIO);
 		btnIndividual.addSelectionListener(typeSelect);
@@ -183,8 +200,7 @@ public class DonorEditForm extends Composite {
 
 		compositeNames = new Composite(compositeBasic, SWT.NONE);
 		compositeNames.setLayout(new StackLayout());
-		compositeNames.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		compositeNames.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 2, 1));
 
 		compositeIndvNames = new Composite(compositeNames, SWT.NONE);
 		GridLayout gl_compositeIndvNames = new GridLayout(4, false);
@@ -194,44 +210,36 @@ public class DonorEditForm extends Composite {
 		gl_compositeIndvNames.marginLeft = -5;
 		compositeIndvNames.setLayout(gl_compositeIndvNames);
 		compositeIndvNames.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true, false, 1, 1));
+				true,false, 1, 1));
 
 		Label lblFirstName = new Label(compositeIndvNames, SWT.NONE);
-		lblFirstName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblFirstName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblFirstName.setText("First Name");
 
 		txtFirstName = new Text(compositeIndvNames, SWT.BORDER);
-		txtFirstName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtFirstName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtFirstName.addVerifyListener(verifyListener);
 
 		Label lblLastName = new Label(compositeIndvNames, SWT.NONE);
-		lblLastName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblLastName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblLastName.setText("Last Name");
 
 		txtLastName = new Text(compositeIndvNames, SWT.BORDER);
-		txtLastName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtLastName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Label lblSpouseFirst = new Label(compositeIndvNames, SWT.NONE);
-		lblSpouseFirst.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblSpouseFirst.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblSpouseFirst.setText("Spouse First");
 
 		txtSpouseFirst = new Text(compositeIndvNames, SWT.BORDER);
-		txtSpouseFirst.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtSpouseFirst.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Label lblSpouseLast = new Label(compositeIndvNames, SWT.NONE);
-		lblSpouseLast.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblSpouseLast.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblSpouseLast.setText("Spouse Last");
 
 		txtSpouseLast = new Text(compositeIndvNames, SWT.BORDER);
-		txtSpouseLast.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtSpouseLast.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		compositeBusiNames = new Composite(compositeNames, SWT.NONE);
 		GridLayout gl_compositeBusiNames = new GridLayout(4, false);
@@ -242,8 +250,7 @@ public class DonorEditForm extends Composite {
 		compositeBusiNames.setLayout(gl_compositeBusiNames);
 
 		Label lblBusinessName = new Label(compositeBusiNames, SWT.NONE);
-		lblBusinessName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				false, false, 1, 1));
+		lblBusinessName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblBusinessName.setText("Business Name");
 
 		txtBusinessName = new Text(compositeBusiNames, SWT.BORDER);
@@ -251,25 +258,21 @@ public class DonorEditForm extends Composite {
 				false, 3, 1));
 
 		Label lblContactFirst = new Label(compositeBusiNames, SWT.NONE);
-		lblContactFirst.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				false, false, 1, 1));
+		lblContactFirst.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblContactFirst.setText("Contact First");
 
 		txtContactFirst = new Text(compositeBusiNames, SWT.BORDER);
-		txtContactFirst.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtContactFirst.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Label lblContactLast = new Label(compositeBusiNames, SWT.NONE);
-		lblContactLast.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblContactLast.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblContactLast.setText("Contact Last");
 
 		txtContactLast = new Text(compositeBusiNames, SWT.BORDER);
-		txtContactLast.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtContactLast.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Label sep = new Label(compositeMain, SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Composite compositeMisc = new Composite(compositeMain, SWT.NONE);
 		GridData gd_compositeMisc = new GridData(SWT.CENTER, SWT.CENTER, true,
@@ -279,59 +282,49 @@ public class DonorEditForm extends Composite {
 		compositeMisc.setLayout(new GridLayout(4, false));
 
 		Label lblSalutation = new Label(compositeMisc, SWT.NONE);
-		lblSalutation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblSalutation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblSalutation.setBounds(0, 0, 55, 15);
 		lblSalutation.setText("Salutation");
 
 		// TODO:implement proper autosuggest and field filling
 		comboSalutation = new Combo(compositeMisc, SWT.NONE);
-		comboSalutation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		comboSalutation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		comboSalutation.setBounds(0, 0, 91, 23);
 
 		Label lblHomePhone = new Label(compositeMisc, SWT.NONE);
-		lblHomePhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblHomePhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblHomePhone.setBounds(0, 0, 55, 15);
 		lblHomePhone.setText("Home Phone");
 
 		txtHomePhone = new Text(compositeMisc, SWT.BORDER);
-		txtHomePhone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtHomePhone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtHomePhone.setBounds(0, 0, 76, 21);
 
 		Label lblCategory = new Label(compositeMisc, SWT.NONE);
-		lblCategory.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblCategory.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblCategory.setBounds(0, 0, 55, 15);
 		lblCategory.setText("Category");
 
 		comboCategory = new Combo(compositeMisc, SWT.NONE);
-		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		comboCategory.setBounds(0, 0, 91, 23);
 
 		Label lblWorkPhone = new Label(compositeMisc, SWT.NONE);
-		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblWorkPhone.setBounds(0, 0, 55, 15);
 		lblWorkPhone.setText("Work Phone");
 
 		txtWorkPhone = new Text(compositeMisc, SWT.BORDER);
-		txtWorkPhone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtWorkPhone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtWorkPhone.setBounds(0, 0, 76, 21);
 
 		Label lblDonorSource = new Label(compositeMisc, SWT.NONE);
-		lblDonorSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblDonorSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblDonorSource.setBounds(0, 0, 55, 15);
 		lblDonorSource.setText("Donor Source");
 
 		comboDonorSource = new Combo(compositeMisc, SWT.NONE);
-		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		comboDonorSource.setBounds(0, 0, 91, 23);
 
 		Label lblFax = new Label(compositeMisc, SWT.NONE);
@@ -349,7 +342,7 @@ public class DonorEditForm extends Composite {
 				txtFax });
 
 		sep1 = new Label(compositeMain, SWT.SEPARATOR | SWT.HORIZONTAL);
-		sep1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		sep1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		compositeBigAddress = new Composite(compositeMain, SWT.NONE);
 		GridData gd_compositeBigAddress = new GridData(SWT.CENTER, SWT.CENTER,
@@ -365,8 +358,7 @@ public class DonorEditForm extends Composite {
 
 		tabFolder = new TabFolder(compositeMain, SWT.NONE);
 		tabFolder.setSelection(0);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-				1);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_tabFolder.heightHint = 500;
 		tabFolder.setLayoutData(gd_tabFolder);
 
@@ -374,14 +366,12 @@ public class DonorEditForm extends Composite {
 		compositeAddressPadder.setLayout(new GridLayout(1, false));
 
 		compositeAddress = new Composite(compositeAddressPadder, SWT.NONE);
-		compositeAddress.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true,
-				true, 1, 1));
+		compositeAddress.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1));
 		GridLayout gl_compositeAddress = new GridLayout(4, false);
 		gl_compositeAddress.horizontalSpacing = 10;
 		compositeAddress.setLayout(gl_compositeAddress);
 
-		GridData gd_compositeAddress = new GridData(SWT.FILL, SWT.TOP, true,
-				true, 1, 1);
+		GridData gd_compositeAddress = new GridData(SWT.FILL, SWT.TOP, true, true, 1, 1);
 		gd_compositeAddress.minimumWidth = 0;
 		gd_compositeAddress.minimumHeight = 0;
 		gd_compositeAddress.heightHint = SWT.DEFAULT;
@@ -397,8 +387,7 @@ public class DonorEditForm extends Composite {
 		compositeAddress.setVisible(true);
 
 		compositeOptional = new Composite(compositeAddress, SWT.NONE);
-		compositeOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				false, false, 1, 1));
+		compositeOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,false, 1, 1));
 		compositeOptional.setLayout(new StackLayout());
 
 		lblOptional = new Label(compositeOptional, SWT.NONE);
@@ -426,8 +415,7 @@ public class DonorEditForm extends Composite {
 		comboCity.setBounds(0, 0, 76, 21);
 
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
-		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblMailingName.setBounds(0, 0, 55, 15);
 		lblMailingName.setText("Mailing Name");
 
@@ -437,8 +425,7 @@ public class DonorEditForm extends Composite {
 		comboMailingName.setBounds(0, 0, 91, 23);
 
 		Label lblState = new Label(compositeAddress, SWT.NONE);
-		lblState.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblState.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblState.setBounds(0, 0, 55, 15);
 		lblState.setText("State/Province");
 
@@ -468,8 +455,7 @@ public class DonorEditForm extends Composite {
 		new AutoCompleteField(comboState, new ComboContentAdapter(), states);
 
 		Label lblAddress1 = new Label(compositeAddress, SWT.NONE);
-		lblAddress1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblAddress1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblAddress1.setBounds(0, 0, 55, 15);
 		lblAddress1.setText("Address 1");
 
@@ -492,8 +478,7 @@ public class DonorEditForm extends Composite {
 		Label lblAddress2 = new Label(compositeAddress, SWT.NONE);
 		lblAddress2
 				.setToolTipText("This is the primary address the post office will deliver to. ");
-		lblAddress2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblAddress2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblAddress2.setBounds(0, 0, 55, 15);
 		lblAddress2.setText("Address 2");
 
@@ -503,8 +488,7 @@ public class DonorEditForm extends Composite {
 		txtAddress2.setBounds(0, 0, 76, 21);
 
 		Label lblCountry = new Label(compositeAddress, SWT.NONE);
-		lblCountry.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblCountry.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblCountry.setBounds(0, 0, 55, 15);
 		lblCountry.setText("Country");
 
@@ -761,8 +745,7 @@ public class DonorEditForm extends Composite {
 		gl_compositeDetails.marginHeight = 0;
 		gl_compositeDetails.marginWidth = 0;
 		compositeDetails.setLayout(gl_compositeDetails);
-		compositeDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false, 1, 1));
+		compositeDetails.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1, 1));
 		if (System.getProperty("os.name").indexOf("nux") >= 0) {
 			compositeDetails.setBackground(DonorEditForm.this.getBackground());
 			compositeDetails.setBackgroundMode(SWT.INHERIT_FORCE);
@@ -780,20 +763,17 @@ public class DonorEditForm extends Composite {
 
 		txtTotalGiven = new Text(grpGifts, SWT.BORDER);
 		txtTotalGiven.setEditable(false);
-		txtTotalGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtTotalGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtTotalGiven.setBounds(0, 0, 76, 21);
 		txtTotalGiven.setData("money");
 
 		Label lblLargestGift = new Label(grpGifts, SWT.NONE);
-		lblLargestGift.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblLargestGift.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblLargestGift.setText("Largest Gift");
 
 		txtLargestGift = new Text(grpGifts, SWT.BORDER);
 		txtLargestGift.setEditable(false);
-		txtLargestGift.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtLargestGift.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtLargestGift.setData("money");
 
 		Label lblYearToDate = new Label(grpGifts, SWT.NONE);
@@ -801,40 +781,33 @@ public class DonorEditForm extends Composite {
 
 		txtYearToDate = new Text(grpGifts, SWT.BORDER);
 		txtYearToDate.setEditable(false);
-		txtYearToDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtYearToDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtYearToDate.setData("money");
 
 		Label lblFirstGiftDate = new Label(grpGifts, SWT.NONE);
-		lblFirstGiftDate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				false, false, 1, 1));
+		lblFirstGiftDate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblFirstGiftDate.setText("First Gift Date");
 
 		txtFirstGiftDate = new Text(grpGifts, SWT.BORDER);
 		txtFirstGiftDate.setEditable(false);
-		txtFirstGiftDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtFirstGiftDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Label lblLastGiftAmt = new Label(grpGifts, SWT.NONE);
-		lblLastGiftAmt.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblLastGiftAmt.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblLastGiftAmt.setText("Last Gift Amt");
 
 		txtLastGiftAmt = new Text(grpGifts, SWT.BORDER);
 		txtLastGiftAmt.setEditable(false);
-		txtLastGiftAmt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtLastGiftAmt.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 		txtLastGiftAmt.setData("money");
 
 		Label lblLastGiftDate = new Label(grpGifts, SWT.NONE);
-		lblLastGiftDate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER,
-				false, false, 1, 1));
+		lblLastGiftDate.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblLastGiftDate.setText("Last Gift Date");
 
 		txtLastGiftDate = new Text(grpGifts, SWT.BORDER);
 		txtLastGiftDate.setEditable(false);
-		txtLastGiftDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtLastGiftDate.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Group grpOther = new Group(compositeDetails, SWT.NONE);
 		grpOther.setLayout(new GridLayout(2, false));
@@ -843,24 +816,20 @@ public class DonorEditForm extends Composite {
 		grpOther.setText("Other");
 
 		Label lblLastEdited = new Label(grpOther, SWT.NONE);
-		lblLastEdited.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblLastEdited.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblLastEdited.setText("Last Edited");
 
 		txtLastEdited = new Text(grpOther, SWT.BORDER);
 		txtLastEdited.setEditable(false);
-		txtLastEdited.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtLastEdited.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Label lblAccountId = new Label(grpOther, SWT.NONE);
-		lblAccountId.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		lblAccountId.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 		lblAccountId.setText("Account ID");
 
 		txtAccountID = new Text(grpOther, SWT.BORDER);
 		txtAccountID.setEditable(false);
-		txtAccountID.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		txtAccountID.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		tbtmCustom = new TabItem(tabFolder, SWT.NONE);
 		tbtmCustom.setText("Custom");
@@ -872,26 +841,26 @@ public class DonorEditForm extends Composite {
 		
 		for (CustomField cf : Main.getDonorDB().getCustomFields()) {
 			Label lblCustom = new Label(compositeCustom, SWT.NONE);
-			lblCustom.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			lblCustom.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 			lblCustom.setText(cf.getName());
 			if (cf.getType() == CustomField.Type.TEXT) {
 				Text txtCustom = new Text(compositeCustom, SWT.BORDER);
 				txtCustom.setText("");
-				txtCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				txtCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 			} else if (cf.getType() == CustomField.Type.NUMBER) {
 				Spinner spnCustom = new Spinner(compositeCustom, SWT.BORDER);
 				spnCustom.setDigits(0);
-				spnCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				spnCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 			} else if (cf.getType() == CustomField.Type.BINARY) {
 				Button chkCustom = new Button(compositeCustom, SWT.CHECK);
-				chkCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				chkCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 			} else if (cf.getType() == CustomField.Type.CHOICE) {
 				Combo cmbCustom = new Combo(compositeCustom, SWT.DROP_DOWN | SWT.READ_ONLY);
 				cmbCustom.add("");
 				for (String choice : cf.getChoices()) {
 					cmbCustom.add(choice);
 				}
-				cmbCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				cmbCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 			}
 		}
 

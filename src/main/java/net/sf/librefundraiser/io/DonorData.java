@@ -8,6 +8,7 @@ import java.util.Date;
 public class DonorData {
 	private Type type = Type.INDIVIDUAL;
 	private Date changedate = new Date();
+	private boolean active = true;
 	private String 	spousefrst = "", 
 	state = "", 
 	lastname = "", 
@@ -264,6 +265,14 @@ public class DonorData {
 
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }
