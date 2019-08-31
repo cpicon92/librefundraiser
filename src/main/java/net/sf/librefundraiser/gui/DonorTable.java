@@ -14,19 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ResourceManager;
-import net.sf.librefundraiser.gui.flextable.FlexTable;
-import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
-import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
-import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
-import net.sf.librefundraiser.io.Donor;
-import net.sf.librefundraiser.io.DonorData.Type;
-import net.sf.librefundraiser.io.GiftStats;
-import net.sf.librefundraiser.tabs.TabFolder;
-import net.sf.librefundraiser.tabs.TabItem;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -56,6 +43,18 @@ import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Column;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
+
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.gui.flextable.FlexTable;
+import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
+import net.sf.librefundraiser.io.Donor;
+import net.sf.librefundraiser.io.DonorData.Type;
+import net.sf.librefundraiser.io.GiftStats;
+import net.sf.librefundraiser.tabs.TabFolder;
+import net.sf.librefundraiser.tabs.TabItem;
 
 
 

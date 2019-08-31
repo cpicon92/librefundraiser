@@ -13,18 +13,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
 
-import net.sf.librefundraiser.db.FileDBASE;
-import net.sf.librefundraiser.db.FileLFD;
-import net.sf.librefundraiser.db.SQLite;
-import net.sf.librefundraiser.gui.MainWindow;
-import net.sf.librefundraiser.gui.NewDatabaseWizard;
-import net.sf.librefundraiser.io.Donor;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import net.sf.librefundraiser.db.FileDBASE;
+import net.sf.librefundraiser.db.FileLFD;
+import net.sf.librefundraiser.gui.MainWindow;
+import net.sf.librefundraiser.gui.NewDatabaseWizard;
+import net.sf.librefundraiser.io.Donor;
 
 //TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
@@ -66,12 +65,6 @@ public class Main {
 	}
 	public static void resetLocalDB() {
 		try {
-			try {
-				//attempt to load/convert legacy SQLite db
-				SQLite sqLite = new SQLite(getSetting("lastDB"));
-				sqLite.toFileLFD();
-			} catch (Exception e) {
-			}
 			localDB = new FileLFD(getSetting("lastDB"));
 		} catch (IOException e) {
 			// TODO Display gui error message about this
