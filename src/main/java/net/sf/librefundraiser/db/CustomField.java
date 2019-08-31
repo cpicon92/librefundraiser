@@ -1,14 +1,13 @@
 package net.sf.librefundraiser.db;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CustomField {
-	public String name = "";
-	public int decDigits = 0;
-	public Type type;
-	public List<String> choices;
+	private String name = "";
+	private int decDigits = 0;
+	private Type type;
+	private List<String> choices;
 	
 	public enum Type {
 		TEXT, NUMBER, CHOICE, BINARY;
@@ -25,7 +24,7 @@ public class CustomField {
 		c.decDigits = this.decDigits;
 		if (type == Type.CHOICE && choices != null) {
 			List<String> choices = new ArrayList<>(this.choices.size());
-			Collections.copy(choices, this.choices);
+			for (String choice : this.choices) choices.add(choice);
 			c.choices = choices;
 		}
 		return c;
@@ -55,12 +54,13 @@ public class CustomField {
 
 	public void setType(Type type) {
 		this.type = type;
-		if (type == Type.CHOICE && this.type != Type.CHOICE) this.choices = new ArrayList<>();
+		if (type == Type.CHOICE && this.type != Type.CHOICE && this.choices == null) this.choices = new ArrayList<>();
 		if (type != Type.CHOICE) this.choices = null;
 	}
 
 	public List<String> getChoices() {
-		if (type != Type.CHOICE) return null;
+		if (type != Type.CHOICE) throw new RuntimeException("Cannot get choices for non-choice type field");
+		if (this.choices == null) this.choices = new ArrayList<>();
 		return choices;
 	}
 	

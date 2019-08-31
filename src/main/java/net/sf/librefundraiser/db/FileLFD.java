@@ -34,6 +34,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
@@ -128,7 +129,7 @@ public class FileLFD {
 				if (name.equals("info")) {
 					this.info = gson.fromJson(reader, Map.class);
 				} else if (name.equals("customFields")) {
-					this.customFields = gson.fromJson(reader, List.class);
+					this.customFields = gson.fromJson(reader, new TypeToken<List<CustomField>>(){}.getType());
 				} else if (name.equals("donors")) {
 					reader.beginArray();
 					while (reader.hasNext()) {

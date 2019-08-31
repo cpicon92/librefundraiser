@@ -35,6 +35,7 @@ public class DatabasePropertiesDialog extends Dialog {
 	private boolean changeEffected = false;
 	private Button btnApply;
 	private ArrayList<CustomField> customFields = new ArrayList<CustomField>(Arrays.asList(Main.getDonorDB().getCustomFields()));
+	private Table tblFields;
 
 	/**
 	 * Create the dialog.
@@ -113,23 +114,19 @@ public class DatabasePropertiesDialog extends Dialog {
 		lblCustomFieldExplanation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		lblCustomFieldExplanation.setText("LibreFundraiser allows an unlimited number of custom fields for your donors. When you add a field here, it will show up on the \"Custom\" tab of the donor entry. ");
 		
-		//TODO implement add/remove custom field functionality
-		Table list = new Table(grpCustomFields, SWT.BORDER);
-		list.setHeaderVisible(true);
-		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		tblFields = new Table(grpCustomFields, SWT.BORDER);
+		tblFields.setHeaderVisible(true);
+		tblFields.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
-		TableColumn tblclmnName = new TableColumn(list, SWT.NONE);
+		TableColumn tblclmnName = new TableColumn(tblFields, SWT.NONE);
 		tblclmnName.setWidth(100);
 		tblclmnName.setText("Name");
 		
-		TableColumn tblclmnType = new TableColumn(list, SWT.NONE);
+		TableColumn tblclmnType = new TableColumn(tblFields, SWT.NONE);
 		tblclmnType.setWidth(100);
 		tblclmnType.setText("Type");
 		
-		for (CustomField item : customFields) {
-			TableItem tableItem = new TableItem(list, SWT.NONE);
-			tableItem.setText(new String[] {item.name, item.type.getName()});
-		}
+		refreshFieldTable();
 		
 		Composite compositeCustomFieldButtons = new Composite(grpCustomFields, SWT.NONE);
 		compositeCustomFieldButtons.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -141,6 +138,15 @@ public class DatabasePropertiesDialog extends Dialog {
 		Button btnDeleteField = new Button(compositeCustomFieldButtons, SWT.NONE);
 		btnDeleteField.setSize(126, 27);
 		btnDeleteField.setText("Delete selected");
+		btnDeleteField.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (tblFields.getSelectionIndex() < 0) return;
+				customFields.remove(tblFields.getSelectionIndex());
+				refreshFieldTable();
+				changeEffected();
+			}
+		});
 		
 		Button btnAddAField = new Button(compositeCustomFieldButtons, SWT.NONE);
 		btnAddAField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -148,9 +154,10 @@ public class DatabasePropertiesDialog extends Dialog {
 		btnAddAField.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				CustomField newField = new CustomFieldEditDialog(shell, SWT.DIALOG_TRIM, null).open();
+				CustomField newField = new CustomFieldEditDialog(shell, SWT.DIALOG_TRIM).open();
 				if (newField != null) {
 					customFields.add(newField);
+					refreshFieldTable();
 					changeEffected();
 				}
 			}
@@ -159,6 +166,20 @@ public class DatabasePropertiesDialog extends Dialog {
 		Button btnEdit = new Button(compositeCustomFieldButtons, SWT.NONE);
 		btnEdit.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		btnEdit.setText("Edit");
+		btnEdit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				int sel = tblFields.getSelectionIndex();
+				if (sel < 0) return;
+				CustomField editing = customFields.get(sel);
+				CustomField edited = new CustomFieldEditDialog(shell, SWT.DIALOG_TRIM, editing).open();
+				if (edited != null) {
+					customFields.set(sel, edited);
+					refreshFieldTable();
+					changeEffected();
+				}
+			}
+		});
 		
 		Composite compositeButtons = new Composite(shell, SWT.NONE);
 		compositeButtons.setLayout(new RowLayout(SWT.HORIZONTAL));
@@ -194,18 +215,26 @@ public class DatabasePropertiesDialog extends Dialog {
 		btnApply.setEnabled(false);
 	}
 
-	public void changeEffected() {
+	private void changeEffected() {
 		if (btnApply != null) {
 			btnApply.setEnabled(true);
 			changeEffected = true;
 		}
 	}
 	
-	public void saveChanges() {
+	private void saveChanges() {
 		Main.getDonorDB().setCustomFields(customFields);
 		Main.getDonorDB().setDbName(txtDatabaseName.getText());
 		Main.getWindow().refreshTitle();
 		btnApply.setEnabled(false);
 		changeEffected = false;
+	}
+	
+	private void refreshFieldTable() {
+		tblFields.removeAll();
+		for (CustomField item : customFields) {
+			TableItem tableItem = new TableItem(tblFields, SWT.NONE);
+			tableItem.setText(new String[] {item.getName(), item.getType().getName()});
+		}
 	}
 }
