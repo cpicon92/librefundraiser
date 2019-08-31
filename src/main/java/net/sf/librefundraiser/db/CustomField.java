@@ -5,6 +5,7 @@ import java.util.List;
 
 public class CustomField {
 	private String name = "";
+	//TODO implement gui support for dec. digits and range limits
 	private int decDigits = 0;
 	private Type type;
 	private List<String> choices;

@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.db.CustomField;
 import net.sf.librefundraiser.gui.flextable.FlexTable;
 import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
 import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
@@ -116,10 +118,6 @@ public class DonorEditForm extends Composite {
 	private Label sep1;
 	private TabItem tbtmCustom;
 	private Composite compositeCustom;
-	private Label lblCategory_1;
-	private Label lblCategory_2;
-	private Text txtCategory;
-	private Text txtCategory_1;
 
 	/**
 	 * Create the composite.
@@ -871,26 +869,31 @@ public class DonorEditForm extends Composite {
 		compositeCustom = new Composite(tabFolder, SWT.NONE);
 		tbtmCustom.setControl(compositeCustom);
 		compositeCustom.setLayout(new GridLayout(2, false));
-
-		lblCategory_1 = new Label(compositeCustom, SWT.NONE);
-		lblCategory_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblCategory_1.setText("Category1");
-
-		txtCategory = new Text(compositeCustom, SWT.BORDER);
-		txtCategory.setText("Category 1");
-		txtCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
-
-		lblCategory_2 = new Label(compositeCustom, SWT.NONE);
-		lblCategory_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
-		lblCategory_2.setText("Category2");
-
-		txtCategory_1 = new Text(compositeCustom, SWT.BORDER);
-		txtCategory_1.setText("Category 2");
-		txtCategory_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 1, 1));
+		
+		for (CustomField cf : Main.getDonorDB().getCustomFields()) {
+			Label lblCustom = new Label(compositeCustom, SWT.NONE);
+			lblCustom.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			lblCustom.setText(cf.getName());
+			if (cf.getType() == CustomField.Type.TEXT) {
+				Text txtCustom = new Text(compositeCustom, SWT.BORDER);
+				txtCustom.setText("");
+				txtCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			} else if (cf.getType() == CustomField.Type.NUMBER) {
+				Spinner spnCustom = new Spinner(compositeCustom, SWT.BORDER);
+				spnCustom.setDigits(0);
+				spnCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			} else if (cf.getType() == CustomField.Type.BINARY) {
+				Button chkCustom = new Button(compositeCustom, SWT.CHECK);
+				chkCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			} else if (cf.getType() == CustomField.Type.CHOICE) {
+				Combo cmbCustom = new Combo(compositeCustom, SWT.DROP_DOWN | SWT.READ_ONLY);
+				cmbCustom.add("");
+				for (String choice : cf.getChoices()) {
+					cmbCustom.add(choice);
+				}
+				cmbCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			}
+		}
 
 		// load previous values in another thread
 		new Thread(new Runnable() {
