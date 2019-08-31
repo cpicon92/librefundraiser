@@ -181,6 +181,7 @@ public class MainWindow {
 		mntmCsv.setText("To CSV file...");
 
 		MenuItem mntmOds = new MenuItem(menu_1, SWT.NONE);
+		mntmOds.setEnabled(false);
 		mntmOds.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -196,6 +197,7 @@ public class MainWindow {
 		mntmOds.setText("To ODS (LibreOffice Spreadsheet) file...");
 
 		MenuItem mntmOdb = new MenuItem(menu_1, SWT.NONE);
+		mntmOdb.setEnabled(false);
 		mntmOdb.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

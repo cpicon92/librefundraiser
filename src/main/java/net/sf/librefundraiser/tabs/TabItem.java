@@ -234,6 +234,11 @@ public class TabItem extends Composite {
 		checkCloseButton(e.x, e.y);
 	}
 
+	/**
+	 * Checks the close button every two seconds (recursive)
+	 * @param x mouse position
+	 * @param y mouse position
+	 */
 	private void checkCloseButton(int x, int y) {
 		try { 
 			boolean newCloseHover = closeButtonArea.contains(x, y);
