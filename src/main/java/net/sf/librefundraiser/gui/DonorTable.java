@@ -1,11 +1,5 @@
 package net.sf.librefundraiser.gui;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,10 +7,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.table.DefaultTableModel;
-
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -24,25 +14,15 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
-import org.jopendocument.dom.OOUtils;
-import org.jopendocument.dom.spreadsheet.Column;
-import org.jopendocument.dom.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
@@ -512,127 +492,7 @@ public class DonorTable extends Composite {
 		}
 		return true;
 	}
-
-	public void writeCSV(File file) {
-		//TODO move this method into different class
-		//TODO make this universal somehow
-		final String[] headers = { "Account", "Type", "Last Name/Business",
-				"First Name", "Spouse/Contact Last", "Spouse/Contact First",
-				"Salutation", "Home Phone", "Work Phone", "Fax", "Category",
-				"Donor Source", "Mail Name", "Address 1", "Address 2", "City",
-				"State", "Zip", "Country", "Email", "Other Email", "Web",
-				"Last Change", "Last Gift Date", "Last Gift", "Total Gifts",
-				"Year-to-date", "First Gift", "Largest Gift",
-				"Last Entry Date", "Last Entry Amount", "Notes" };
-		try (CSVPrinter csv = CSVFormat.EXCEL.withHeader(headers).print(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"))) {
-			for (Donor d : donors) {
-				GiftStats stats = d.getGiftStats();
-				csv.printRecord(
-					d.getAccountNum(),
-					d.data.getType().toString(), d.data.getLastname(),
-					d.data.getFirstname(), d.data.getSpouselast(),
-					d.data.getSpousefrst(), d.data.getSalutation(),
-					d.data.getHomephone(), d.data.getWorkphone(),
-					d.data.getFax(), d.data.getCategory1(),
-					d.data.getCategory2(), d.data.getMailname(),
-					d.data.getAddress1(), d.data.getAddress2(),
-					d.data.getCity(), d.data.getState(), d.data.getZip(),
-					d.data.getCountry(), d.data.getEmail(),
-					d.data.getEmail2(), d.data.getWeb(),
-					csvDate(d.data.getChangedate()),
-					csvDate(stats.getLastGiveDt()),
-					stats.getLastAmt().toString(""),
-					stats.getAllTime().toString(""),
-					stats.getYearToDt().toString(""),
-					csvDate(stats.getFirstGift()),
-					stats.getLargest().toString(""),
-					csvDate(stats.getLastEntDt()),
-					stats.getLastEntAmt().toString(""), 
-					d.data.getNotes() 
-				);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 	
-	public static String csvDate(Date d) {
-		return d != null ? Main.getDateFormat().format(d) : "Never";
-	}
-
-	public void writeODS(final File f, final boolean openFile) {
-		new Thread(new Runnable(){
-			@Override
-			public void run() {
-				ArrayDeque<String[]> l = new ArrayDeque<>();
-				for (Donor d : donors) {
-					String[] row = new String[headers.length+1];
-					for (int i = 0; i < row.length-1; i++) {
-						//TODO fix this
-//						row[i] = d.getData(headers[i][1]);
-					}
-					String notes = d.data.getNotes();
-					boolean valid = false;
-					try {
-						valid = !notes.contains(new String(new char[]{(char)0}));
-					} catch (Exception e) {
-					}
-					row[headers.length] = valid?d.getData("notes"):"";
-					l.add(row);
-				}
-				l.addFirst(headers);
-				String[][] sheetDataWithTitles = l.toArray(new String[][]{});
-				try {
-//					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(model);
-					SpreadSheet outputSpreadSheet = SpreadSheet.createEmpty(new DefaultTableModel(headers, donors.size()));
-					Sheet donorSheet = outputSpreadSheet.getSheet(0);
-					int r = 0;
-					for (Donor d : donors) {
-						donorSheet.getCellAt(0, r++).setValue(d.getAccountNum());
-					}
-					donorSheet.setName("Donors");
-					final Display display = Display.getDefault();
-					final double[] pixelsPerMm = new double[1];
-					final GC[] gcA = new GC[1];
-					display.syncExec(new Runnable(){
-						@Override
-						public void run() {
-							final GC gc = new GC(new Image(display, new Rectangle(0,0,10,10)));
-							final Font arial = new Font(display, new FontData("Arial", 10, SWT.NORMAL));
-							gc.setFont(arial);
-							pixelsPerMm[0] = (display.getDPI().x)/25.4;
-							gcA[0] = gc;
-						}
-					});
-					final GC gc = gcA[0];
-					//stupid hack to optimize column width since jopendocument makes it impossibly hard to do this otherwise
-					for (int i = 0; i < donorSheet.getColumnCount(); i++) {
-						Column<SpreadSheet> c = donorSheet.getColumn(i);
-						double maxWidth = 0;
-						for (int j = 0; j < sheetDataWithTitles.length; j++) {
-							String[] cellLines = sheetDataWithTitles[j][i].split("\n");
-							for (String line : cellLines) {
-								//padding and mmWidth (and maxWidth) are in mm
-								double padding = 4;
-								double mmWidth = ((gc.stringExtent(line).x)/pixelsPerMm[0])*1.1+padding;
-								if (mmWidth > maxWidth) {
-									maxWidth = mmWidth;
-								}
-							}
-						}
-						c.setWidth(maxWidth);
-					}
-					outputSpreadSheet.saveAs(f);
-					if (openFile) OOUtils.open(f);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}).start();
-		
-	}
 
 	public TabFolder getTabFolder() {
 		return tabFolder;

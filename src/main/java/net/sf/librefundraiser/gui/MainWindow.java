@@ -1,6 +1,15 @@
 package net.sf.librefundraiser.gui;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MenuAdapter;
@@ -32,7 +41,9 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.Util;
 import net.sf.librefundraiser.db.ODB;
+import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.tabs.TabFolder;
 import net.sf.librefundraiser.tabs.TabFolderEvent;
 import net.sf.librefundraiser.tabs.TabFolderListener;
@@ -146,26 +157,61 @@ public class MainWindow {
 		Menu menuImport = new Menu(mntmImport);
 		mntmImport.setMenu(menuImport);
 
-		MenuItem mntmFromFundraiserBasic = new MenuItem(menuImport, SWT.NONE);
-		mntmFromFundraiserBasic.addSelectionListener(new SelectionAdapter() {
+		MenuItem mntmFromFBRW = new MenuItem(menuImport, SWT.NONE);
+		mntmFromFBRW.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				importFRBW();
 			}
 		});
-		mntmFromFundraiserBasic.setText("From FundRaiser Basic...");
+		mntmFromFBRW.setText("From FundRaiser Basic...");
 
-		MenuItem mntmFromCsvFile = new MenuItem(menuImport, SWT.NONE);
-		mntmFromCsvFile.setEnabled(false);
-		mntmFromCsvFile.setText("From CSV File...");
+		MenuItem mntmFromCsv = new MenuItem(menuImport, SWT.NONE);
+		mntmFromCsv.setText("From CSV File...");
+		mntmFromCsv.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent ev) {
+				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
+				fileDialog.setFilterExtensions(new String[]{"*.csv","*.*"});
+				fileDialog.setFilterNames(new String[]{"Comma Separated Values (*.csv)","All Files"});
+				final String path = fileDialog.open();
+				if (path == null) return;
+				File f = new File(path);
+				if (!f.exists()) return;
+				//TODO check Excel compatibility
+				try (CSVParser csvParser = Util.readCSV(f, CSVFormat.DEFAULT)) {
+					Iterator<CSVRecord> iterRecord = csvParser.iterator();
+					CSVRecord rawHeaders = iterRecord.next();
+					List<String> headers = new ArrayList<>(rawHeaders.size());
+					for (String h : rawHeaders) headers.add(h);
+					ColumnMatcherDialog cmd = new ColumnMatcherDialog(shell, SWT.NONE);
+					Map<String, Integer> columnMap = cmd.open(headers);
+					if (columnMap == null) return;
+					List<Donor> newDonors = new ArrayList<>();
+					while (iterRecord.hasNext()) {
+						CSVRecord record = iterRecord.next();
+						Donor d = new Donor(Main.getDonorDB().getMaxAccount()+1);
+						for (Entry<String, Integer> e : columnMap.entrySet()) {
+							d.data.putData(e.getKey(), record.get(e.getValue()));
+						}
+						newDonors.add(d);
+					}
+					donorTable.donors.addAll(newDonors);
+					refresh();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		});;
 
 		MenuItem mntmExport = new MenuItem(menuFile, SWT.CASCADE);
 		mntmExport.setText("Export");
 
-		Menu menu_1 = new Menu(mntmExport);
-		mntmExport.setMenu(menu_1);
+		Menu menuExport = new Menu(mntmExport);
+		mntmExport.setMenu(menuExport);
 
-		MenuItem mntmCsv = new MenuItem(menu_1, SWT.NONE);
+		MenuItem mntmCsv = new MenuItem(menuExport, SWT.NONE);
 		mntmCsv.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -175,12 +221,12 @@ public class MainWindow {
 				final String path = fileDialog.open();
 				if (path == null) return;
 				File f = new File(path);
-				MainWindow.this.donorTable.writeCSV(f);
+				Util.writeCSV(donorTable.donors, f);
 			}
 		});
 		mntmCsv.setText("To CSV file...");
 
-		MenuItem mntmOds = new MenuItem(menu_1, SWT.NONE);
+		MenuItem mntmOds = new MenuItem(menuExport, SWT.NONE);
 		mntmOds.setEnabled(false);
 		mntmOds.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -191,12 +237,12 @@ public class MainWindow {
 				final String path = fileDialog.open();
 				if (path == null) return;
 				File f = new File(path);
-				MainWindow.this.donorTable.writeODS(f, true);
+				Util.writeODS(donorTable.donors, f, true);
 			}
 		});
 		mntmOds.setText("To ODS (LibreOffice Spreadsheet) file...");
 
-		MenuItem mntmOdb = new MenuItem(menu_1, SWT.NONE);
+		MenuItem mntmOdb = new MenuItem(menuExport, SWT.NONE);
 		mntmOdb.setEnabled(false);
 		mntmOdb.addSelectionListener(new SelectionAdapter() {
 			@Override
