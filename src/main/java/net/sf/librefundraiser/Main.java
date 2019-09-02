@@ -75,26 +75,6 @@ public class Main {
 		if (currency == null) currency = NumberFormat.getCurrencyInstance();
 		return currency.format(amount);
 	}
-	
-	@Deprecated
-	public static String toMoney(String amount) {
-		if (amount.trim().equals("")) amount = "0.00";
-		try {
-			return toMoney(Double.parseDouble(amount));
-		} catch (Exception e) {
-			System.err.println("Value \""+amount+"\" could not be parsed as money.");
-			return amount;
-		}
-	}
-	
-	@Deprecated
-	public static double fromMoney(String amount) {
-		if (currency == null) currency = NumberFormat.getCurrencyInstance();
-		try {
-			return currency.parse(amount).doubleValue();
-		} catch (ParseException e) {}
-		return 0;
-	}
 
 	public static void loadSettings() {
 		String path = System.getenv("AppData");
@@ -145,6 +125,8 @@ public class Main {
 	public static String getDateFormatString() {
 		return dateFormatString;
 	}
+
+	//I'm keeping this method written this way because it's hilarious
 	public static boolean fileExists (String path) {
 		boolean realFile = false;
 		try {
