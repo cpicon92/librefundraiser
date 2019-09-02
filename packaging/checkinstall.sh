@@ -1,1 +1,1 @@
-checkinstall --pkgversion 0.0.5 --pkggroup database --provides 'librefundraiser' --requires 'java-runtime' --arch 'all' --maintainer 'kristianpicon@gmail.com' 
+checkinstall --pkgname librefundraiser --pkgversion 0.0.5 --pkggroup database --provides 'librefundraiser' --requires '' --arch 'all' --maintainer 'kristianpicon@gmail.com' 
