@@ -113,10 +113,7 @@ public class MainWindow {
 		mntmNewDatabase.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-				fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
-				fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
-				String path = fileDialog.open();
+				String path = Main.newDbFilePrompt(shell);
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();

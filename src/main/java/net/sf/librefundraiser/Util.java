@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.Date;
@@ -17,6 +19,8 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
+import org.eclipse.nebula.widgets.opal.dialog.Dialog;
+import org.eclipse.nebula.widgets.opal.dialog.Dialog.OpalDialogType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -168,5 +172,22 @@ public class Util {
 		} catch (Exception e) {
 			throw new IOException("Could not parse "+f.getName()+" as CSV", e);
 		}
+	}
+	
+	public static String getStackTrace(Exception e) {
+		StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
+	}
+	
+	public static void exceptionError(Exception e) {
+		final Dialog dialog = new Dialog();
+		dialog.setTitle("LibreFundraiser Takes Exception!");
+		dialog.getMessageArea().setTitle("Illegal Action: " + e.getClass().getSimpleName())
+		.setText("Send detailed error below to a developer for help.")
+		.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
+		dialog.setButtonType(OpalDialogType.OK);
+		dialog.getFooterArea().setExpanded(false).setDetailText(Util.getStackTrace(e));
+		dialog.show();
 	}
 }

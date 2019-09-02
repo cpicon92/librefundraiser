@@ -32,7 +32,7 @@ dependencies {
 	compile ("org.eclipse.platform:org.eclipse.jface:3.16.0"){
 		exclude group: "org.eclipse.platform", module: "org.eclipse.swt"
 	}
-	//compile fileTree(dir: 'lib', include: '*.jar')
+	compile fileTree(dir: 'lib', include: '*.jar')
 }
 
 jar.baseName = 'librefundraiser'
