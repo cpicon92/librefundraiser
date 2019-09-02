@@ -45,7 +45,7 @@ public class DonorTable extends Composite {
 			"First Name", "Spouse/Contact Last", "Spouse/Contact First",
 			"Salutation", "Home Phone", "Work Phone", "Fax", "Category",
 			"Donor Source", "Mail Name", "Address 1", "Address 2", "City",
-			"State", "Zip", "Country", "Email", "Other Email", "Web",
+			"State", "Zip", "Country", "Email", "Other Email", "Web", "Obsolete",
 			"Last Change", "Last Gift Date", "Last Gift", "Total Gifts",
 			"Year-to-date", "First Gift", "Largest Gift",
 			"Last Entry Date", "Last Entry Amount", "Notes" };
@@ -129,6 +129,11 @@ public class DonorTable extends Composite {
 			}
 			
 			@Override
+			public int columnCount() {
+				return headers.length;
+			}
+			
+			@Override
 			public String[] getHeaders() {
 				return headers;
 			}
@@ -166,6 +171,7 @@ public class DonorTable extends Composite {
 				return d != null ? Main.getDateFormat().format(d) : "Never";
 			}
 			
+			//TODO: incorporate these field index numbers into everything else somehow, or remove them
 			public Object getData(Donor donor, int field) {
 				GiftStats stats = donor.getGiftStats();
 				Object data;
@@ -244,33 +250,36 @@ public class DonorTable extends Composite {
 					data = url;
 					break;
 				case 22:
-					data = donor.data.getChangedate();
+					data = donor.data.isObsolete() ? "Yes" : "No";
 					break;
 				case 23:
-					data = stats.getLastGiveDt();
+					data = donor.data.getChangedate();
 					break;
 				case 24:
-					data = stats.getLastAmt();
+					data = stats.getLastGiveDt();
 					break;
 				case 25:
-					data = stats.getAllTime();
+					data = stats.getLastAmt();
 					break;
 				case 26:
-					data = stats.getYearToDt();
+					data = stats.getAllTime();
 					break;
 				case 27:
-					data = stats.getFirstGift();
+					data = stats.getYearToDt();
 					break;
 				case 28:
-					data = stats.getLargest();
+					data = stats.getFirstGift();
 					break;
 				case 29:
-					data = stats.getLastEntDt();
+					data = stats.getLargest();
 					break;
 				case 30:
-					data = stats.getLastEntAmt();
+					data = stats.getLastEntDt();
 					break;
 				case 31:
+					data = stats.getLastEntAmt();
+					break;
+				case 32:
 					data = donor.data.getNotes();
 					break;
 				default:
@@ -282,11 +291,6 @@ public class DonorTable extends Composite {
 			@Override
 			public Donor get(int i) {
 				return filteredDonors.get(i);
-			}
-			
-			@Override
-			public int columnCount() {
-				return headers.length;
 			}
 
 			@Override

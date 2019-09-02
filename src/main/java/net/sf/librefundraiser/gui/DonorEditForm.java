@@ -118,6 +118,7 @@ public class DonorEditForm extends Composite {
 	private Label sep1;
 	private TabItem tbtmCustom;
 	private Composite compositeCustom;
+	private Button chkObsolete;
 
 	/**
 	 * Create the composite.
@@ -169,13 +170,13 @@ public class DonorEditForm extends Composite {
 		lytStatus.marginRight = 10;
 		grpStatus.setLayout(lytStatus);
 		grpStatus.setText("Status");
-		Button chkActive = new Button(grpStatus, SWT.CHECK);
-		chkActive.setText("Active");
-		chkActive.setSelection(this.donor.data.isActive());
-		chkActive.addSelectionListener(new SelectionAdapter() {
+		chkObsolete = new Button(grpStatus, SWT.CHECK);
+		chkObsolete.setText("Obsolete");
+		chkObsolete.setSelection(this.donor.data.isObsolete());
+		chkObsolete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				donor.data.setActive(chkActive.getSelection());
+				donor.data.setObsolete(chkObsolete.getSelection());
 				setEdited(true);
 			}
 		});

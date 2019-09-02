@@ -8,7 +8,7 @@ import java.util.Date;
 public class DonorData {
 	private Type type = Type.INDIVIDUAL;
 	private Date changedate = new Date();
-	private boolean active = true;
+	private boolean obsolete = false;
 	private String 	spousefrst = "", 
 	state = "", 
 	lastname = "", 
@@ -267,12 +267,12 @@ public class DonorData {
 		this.notes = notes;
 	}
 
-	public boolean isActive() {
-		return active;
+	public boolean isObsolete() {
+		return obsolete;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setObsolete(boolean active) {
+		this.obsolete = active;
 	}
 
 }

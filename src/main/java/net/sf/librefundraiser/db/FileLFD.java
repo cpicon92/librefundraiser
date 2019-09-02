@@ -55,14 +55,10 @@ public class FileLFD {
 		return dbFile.getPath();
 	}
 
-	public static final String[] donorFields = { "ACCOUNT", "TYPE", "FIRSTNAME", "LASTNAME", "SPOUSEFRST",
-		"SPOUSELAST", "SALUTATION", "HOMEPHONE", "WORKPHONE", "FAX", "CATEGORY1", "CATEGORY2", "CONTACT",
-		"MAILNAME", "ADDRESS1", "ADDRESS2", "CITY", "STATE", "ZIP", "COUNTRY", "ENTRYDATE", "CHANGEDATE", "NOTES",
-		"LASTGIVEDT", "LASTAMT", "ALLTIME", "YEARTODT", "FIRSTGIFT", "LARGEST", "FILTER", "EMAIL", "LASTENTDT",
-		"LASTENTAMT", "EMAIL2", "WEB" };
-	public static final String[] giftFields = new String[] { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
-		"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
-//	public static final String[] dbInfoFields = new String[] { "KEY", "VALUE" };
+	public static final String[] donorFields = {"type", "changedate","obsolete","spousefrst", "state", "lastname", "address1","address2", "contact", "city", "homephone","workphone", "zip", "fax", "spouselast", "web", "category1", "firstname", "category2", "mailname", "email2", "country","email", "salutation", "notes"};
+//	public static final String[] giftFields = { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
+//		"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
+//	public static final String[] dbInfoFields = { "KEY", "VALUE" };
 
 	
 	public FileLFD(String filename) throws IOException {
