@@ -55,7 +55,7 @@ public class FileLFD {
 		return dbFile.getPath();
 	}
 
-	public static final String[] donorFields = {"type", "changedate","obsolete","spousefrst", "state", "lastname", "address1","address2", "contact", "city", "homephone","workphone", "zip", "fax", "spouselast", "web", "category1", "firstname", "category2", "mailname", "email2", "country","email", "salutation", "notes"};
+	public static final String[] donorFields = {"type", "changedate", "address1", "address2", "contact", "city", "state", "country", "homephone", "workphone", "fax", "zip", "category", "source", "firstname", "lastname", "spousefrst", "spouselast", "mailname", "email", "email2", "web", "obsolete", "salutation", "notes"};
 //	public static final String[] giftFields = { "ACCOUNT", "AMOUNT", "DATEGIVEN", "LETTER", "DT_ENTRY",
 //		"SOURCE", "NOTE", "TEMPTOTAL", "RECNUM" };
 //	public static final String[] dbInfoFields = { "KEY", "VALUE" };
@@ -345,6 +345,13 @@ public class FileLFD {
 			this.customFields.add(f.copy());
 		}
 		this.writeAll();
+	}
+	
+	public boolean customFieldExists(String key) {
+		for (CustomField f : this.customFields) {
+			if (f.getName().equals(key)) return true;
+		}
+		return false;
 	}
 
 	public static String formatDate(String date) {

@@ -4,6 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.sf.librefundraiser.Main;
 
 public class DonorData {
 	private Type type = Type.INDIVIDUAL;
@@ -22,15 +26,17 @@ public class DonorData {
 	fax = "", 
 	spouselast = "", 
 	web = "", 
-	category1 = "", 
 	firstname = "", 
-	category2 = "", 
 	mailname = "", 
 	email2 = "", 
 	country = "",	
 	email = "", 
 	salutation = "", 
+	category = "",
+	source = "",
 	notes = "";
+
+	private Map<String, Object> custom = new HashMap<>();
 
 	public static enum Type {
 		INDIVIDUAL, BUSINESS, NONPROFIT, OTHER;
@@ -41,6 +47,13 @@ public class DonorData {
 		public String getName() {
 			String n = super.toString();
 			return n.substring(0,1) + n.substring(1).toLowerCase();
+		}
+		public static Type forName(String n) {
+			try {
+				return Type.valueOf(n);
+			} catch (IllegalArgumentException e) {
+				return Type.OTHER;
+			}
 		}
 	}
 	
@@ -61,13 +74,23 @@ public class DonorData {
 		try {
 			Field f = this.getClass().getDeclaredField(key);
 			f.setAccessible(true);
-			if (f.getType().equals(String.class)) {
+			if (f.getType().equals(DonorData.Type.class)) {
+				if (value.equalsIgnoreCase("i")) value = "INDIVIDUAL";
+				else if (value.equalsIgnoreCase("b")) value = "BUSINESS";
+				else if (value.equalsIgnoreCase("n") || value.equalsIgnoreCase("np")) value = "NONPROFIT";
+				f.set(this, Type.forName(value.toUpperCase()));
+			} else if (f.getType().equals(String.class)) {
 				f.set(this, value);
 			} else {
 				System.err.println("Field " + key + " is not a string");
 			}
 		} catch (NoSuchFieldException e) {
-			System.err.println("No donor field " + key);
+			//TODO support non-text custom fields
+			if (Main.getDonorDB().customFieldExists(key)) {
+				this.custom.put(key, value);
+			} else {
+				System.err.println("No donor field " + key);
+			}
 		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -194,28 +217,12 @@ public class DonorData {
 		this.web = web;
 	}
 
-	public String getCategory1() {
-		return category1;
-	}
-
-	public void setCategory1(String category1) {
-		this.category1 = category1;
-	}
-
 	public String getFirstname() {
 		return firstname;
 	}
 
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
-	}
-
-	public String getCategory2() {
-		return category2;
-	}
-
-	public void setCategory2(String category2) {
-		this.category2 = category2;
 	}
 
 	public String getMailname() {
@@ -273,6 +280,30 @@ public class DonorData {
 
 	public void setObsolete(boolean active) {
 		this.obsolete = active;
+	}
+
+	public void putCustom(String key, Object value) {
+		custom.put(key, value);
+	}
+	
+	public Object getCustom(String key) {
+		return custom.get(key);
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 }

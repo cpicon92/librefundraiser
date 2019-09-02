@@ -1,5 +1,6 @@
 package net.sf.librefundraiser.gui;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -25,6 +28,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.db.CustomField;
 import net.sf.librefundraiser.db.FileLFD;
 
 public class ColumnMatcherDialog extends Dialog {
@@ -153,6 +158,11 @@ public class ColumnMatcherDialog extends Dialog {
 			TableItem tableItem = new TableItem(tblAvailable, SWT.NONE);
 			tableItem.setText(new String[]{itm});
 		}
+		for (CustomField itm : Main.getDonorDB().getCustomFields()) {
+			if (itm.getType() != CustomField.Type.TEXT && itm.getType() != CustomField.Type.CHOICE) continue;
+			TableItem tableItem = new TableItem(tblAvailable, SWT.NONE);
+			tableItem.setText(new String[]{itm.getName()});
+		}
 		//drag source for available fields
 		DragSource srcAvailable = new DragSource(tblAvailable, DND.DROP_MOVE);
 		srcAvailable.setTransfer(new Transfer[] {TextTransfer.getInstance()});
@@ -194,9 +204,27 @@ public class ColumnMatcherDialog extends Dialog {
 		
 		btnImport = new Button(cmpButtons, SWT.NONE);
 		btnImport.setText("Import");
+		btnImport.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				result = new HashMap<>();
+				TableItem[] items = tblMap.getItems();
+				for (int i = 0; i < items.length; i++) {
+					String field = items[i].getText(1);
+					if (!field.isEmpty()) result.put(field, i);
+				}
+				shell.close();
+			}
+		});
 		
 		btnCancel = new Button(cmpButtons, SWT.NONE);
 		btnCancel.setText("Cancel");
+		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				shell.close();
+			}
+		});
 
 	}
 

@@ -70,6 +70,7 @@ public class FileDBASE {
 						}
 					}
 					if (donor != null) {
+						//TODO when fixing this note that Donor Source and Category are called custom1 and custom2 in frbw
 						donor.putData(fieldName, fieldData);
 					}
 				} catch (Exception e) {

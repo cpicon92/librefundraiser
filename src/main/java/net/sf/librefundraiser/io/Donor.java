@@ -100,5 +100,9 @@ public class Donor {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "Donor " + this.id + " " + this.data;
+	}
 
 }

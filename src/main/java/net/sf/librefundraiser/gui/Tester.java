@@ -150,10 +150,10 @@ public class Tester extends Shell {
 					data = donor.data.getFax();
 					break;
 				case 10:
-					data = donor.data.getCategory1();
+					data = donor.data.getCategory();
 					break;
 				case 11:
-					data = donor.data.getCategory2();
+					data = donor.data.getSource();
 					break;
 				case 12:
 					data = donor.data.getMailname();

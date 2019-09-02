@@ -1,6 +1,7 @@
 package net.sf.librefundraiser.gui;
 
 import java.text.Format;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +13,11 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -99,6 +103,18 @@ public class DonorEditForm extends Composite {
 			DonorEditForm.this.setEdited(true);
 		}
 	};
+	private ModifyListener modifyListener = new ModifyListener() {
+		@Override
+		public void modifyText(ModifyEvent e) {
+			DonorEditForm.this.setEdited(true);
+		}
+	};
+	private SelectionListener verifyBtnListener = new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			DonorEditForm.this.setEdited(true);
+		}
+	};
 	private Text txtAccountID;
 	private Composite compositeEditForm;
 	private GridData gd_compositeEditForm;
@@ -119,6 +135,7 @@ public class DonorEditForm extends Composite {
 	private TabItem tbtmCustom;
 	private Composite compositeCustom;
 	private Button chkObsolete;
+	private final List<Control> customWidgets = new ArrayList<>();
 
 	/**
 	 * Create the composite.
@@ -255,8 +272,7 @@ public class DonorEditForm extends Composite {
 		lblBusinessName.setText("Business Name");
 
 		txtBusinessName = new Text(compositeBusiNames, SWT.BORDER);
-		txtBusinessName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				false, 3, 1));
+		txtBusinessName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 
 		Label lblContactFirst = new Label(compositeBusiNames, SWT.NONE);
 		lblContactFirst.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
@@ -844,17 +860,21 @@ public class DonorEditForm extends Composite {
 			Label lblCustom = new Label(compositeCustom, SWT.NONE);
 			lblCustom.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
 			lblCustom.setText(cf.getName());
+			Control customWidget = null;
 			if (cf.getType() == CustomField.Type.TEXT) {
 				Text txtCustom = new Text(compositeCustom, SWT.BORDER);
 				txtCustom.setText("");
 				txtCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
+				customWidget = txtCustom;
 			} else if (cf.getType() == CustomField.Type.NUMBER) {
 				Spinner spnCustom = new Spinner(compositeCustom, SWT.BORDER);
 				spnCustom.setDigits(0);
 				spnCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
+				customWidget = spnCustom;
 			} else if (cf.getType() == CustomField.Type.BINARY) {
 				Button chkCustom = new Button(compositeCustom, SWT.CHECK);
 				chkCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
+				customWidget = chkCustom;
 			} else if (cf.getType() == CustomField.Type.CHOICE) {
 				Combo cmbCustom = new Combo(compositeCustom, SWT.DROP_DOWN | SWT.READ_ONLY);
 				cmbCustom.add("");
@@ -862,7 +882,10 @@ public class DonorEditForm extends Composite {
 					cmbCustom.add(choice);
 				}
 				cmbCustom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
+				customWidget = cmbCustom;
 			}
+			customWidget.setData(cf.getName());
+			customWidgets.add(customWidget);
 		}
 
 		// load previous values in another thread
@@ -931,6 +954,17 @@ public class DonorEditForm extends Composite {
 		comboDonorSource.addVerifyListener(verifyListener);
 		comboMailingName.addVerifyListener(verifyListener); 
 		comboState.addVerifyListener(verifyListener);
+		for (Control w : customWidgets) {
+			if (w.getClass().equals(Button.class)) {
+				((Button) w).addSelectionListener(verifyBtnListener);
+			} else if (w.getClass().equals(Text.class)) {
+				((Text) w).addVerifyListener(verifyListener);
+			} else if (w.getClass().equals(Spinner.class)) {
+				((Spinner) w).addModifyListener(modifyListener);
+			} else if (w.getClass().equals(Combo.class)) {
+				((Combo) w).addVerifyListener(verifyListener);
+			}
+		}
 	}
 
 	private void fillForm() {
@@ -955,8 +989,8 @@ public class DonorEditForm extends Composite {
 		txtOther.setText(donor.data.getEmail2()); 
 		txtLastEdited.setText(Main.getDateFormat().format(donor.data.getChangedate()));
 		comboSalutation.setText(donor.data.getSalutation());
-		comboCategory.setText(donor.data.getCategory1());
-		comboDonorSource.setText(donor.data.getCategory2());
+		comboCategory.setText(donor.data.getCategory());
+		comboDonorSource.setText(donor.data.getSource());
 		comboMailingName.setText(donor.data.getMailname()); 
 		comboState.setText(donor.data.getState());
 		txtAccountID.setText(donor.getAccountNum());
@@ -968,6 +1002,28 @@ public class DonorEditForm extends Composite {
 		txtFirstGiftDate.setText(gs.getFirstGift() != null ? Main.getDateFormat().format(gs.getFirstGift()) : "Never");
 		txtLastGiftAmt.setText(gs.getLastAmt() != null ? String.valueOf(gs.getLastAmt()) : "N/A");
 		txtLastGiftDate.setText(gs.getLastGiveDt() != null ? Main.getDateFormat().format(gs.getLastGiveDt()) : "Never");
+		
+		for (Control w : customWidgets) {
+			String field = (String) w.getData();
+			Object fieldValue = donor.data.getCustom(field);
+			if (fieldValue == null) continue;
+			if (w.getClass().equals(Button.class)) {
+				((Button) w).setSelection((Boolean) fieldValue);
+			} else if (w.getClass().equals(Text.class)) {
+				((Text) w).setText((String) fieldValue);
+			} else if (w.getClass().equals(Spinner.class)) {
+				((Spinner) w).setSelection(((Number) fieldValue).intValue());
+			} else if (w.getClass().equals(Combo.class)) {
+				int i = 0;
+				String val = (String) fieldValue;
+				for (String s : ((Combo) w).getItems()) {
+					if (val.equals(s)) break;
+					i++;
+				}
+				if (i >= ((Combo) w).getItemCount()) i = 0;
+				((Combo) w).select(i);
+			}
+		}
 	}
 
 	public void saveForm(boolean refresh) {
@@ -1003,12 +1059,30 @@ public class DonorEditForm extends Composite {
 		donor.data.setEmail(txtMain.getText());
 		donor.data.setEmail2(txtOther.getText()); 
 		donor.data.setSalutation(comboSalutation.getText());
-		donor.data.setCategory1(comboCategory.getText());
-		donor.data.setCategory2(comboDonorSource.getText());
+		donor.data.setCategory(comboCategory.getText());
+		donor.data.setSource(comboDonorSource.getText());
 		donor.data.setMailname(comboMailingName.getText()); 
 		donor.data.setState(comboState.getText());
 		
 		grpWeb.saveLinks();
+		
+		for (Control w : customWidgets) {
+			String field = (String) w.getData();
+			try {
+				if (w.getClass().equals(Button.class)) {
+					donor.data.putCustom(field, ((Button) w).getSelection());
+				} else if (w.getClass().equals(Text.class)) {
+					donor.data.putCustom(field, ((Text) w).getText());
+				} else if (w.getClass().equals(Spinner.class)) {
+					donor.data.putCustom(field, ((Spinner) w).getSelection());
+				} else if (w.getClass().equals(Combo.class)) {
+					donor.data.putCustom(field, ((Combo) w).getItem(((Combo) w).getSelectionIndex()));
+				}
+			} catch (RuntimeException e) {
+				new RuntimeException("Cannot save custom field " + field, e).printStackTrace();
+			}
+		}
+		
 		Main.getDonorDB().saveDonor(this.donor);
 		if (refresh) Main.getWindow().refresh();
 		this.fillForm();

@@ -79,6 +79,7 @@ public class CustomFieldEditDialog extends Dialog {
 		lblFieldName.setBounds(0, 0, 49, 13);
 		lblFieldName.setText("Field Name");
 		
+		//TODO warn if name exists
 		txtFieldName = new Text(shell, SWT.BORDER);
 		txtFieldName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		txtFieldName.setBounds(0, 0, 76, 19);
