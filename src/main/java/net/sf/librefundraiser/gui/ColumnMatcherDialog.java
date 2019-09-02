@@ -4,13 +4,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+
+import net.sf.librefundraiser.db.FileLFD;
 
 public class ColumnMatcherDialog extends Dialog {
 
@@ -19,6 +34,9 @@ public class ColumnMatcherDialog extends Dialog {
 	private Table tblMap;
 	private Table tblAvailable;
 	private TableColumn tblclmnAvailable;
+	private Composite cmpButtons;
+	private Button btnImport;
+	private Button btnCancel;
 
 	/**
 	 * Create the dialog.
@@ -71,6 +89,57 @@ public class ColumnMatcherDialog extends Dialog {
 		tblclmnDonorField.setWidth(100);
 		tblclmnDonorField.setText("Donor Field");
 		
+		for (String itm : importColumns) {
+			TableItem tableItem = new TableItem(tblMap, SWT.NONE);
+			tableItem.setText(new String[]{itm, null});
+		}
+		//drop target for map
+		DropTarget tgtMap = new DropTarget(tblMap, DND.DROP_MOVE);
+		tgtMap.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		tgtMap.addDropListener(new DropTargetAdapter() {
+			@Override
+			public void drop(DropTargetEvent event) {
+				TableItem item = (TableItem) event.item;
+				item.setText(1, (String) event.data); 
+			}
+			@Override
+			public void dragOver(DropTargetEvent event) {
+				event.feedback = DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
+				drag(event);
+			}
+			@Override
+			public void dragEnter(DropTargetEvent event) {
+				drag(event);
+			}
+			@Override
+			public void dragLeave(DropTargetEvent event) {
+				event.detail = DND.DROP_DEFAULT;
+			}
+			private void drag(DropTargetEvent event) {
+				TableItem item = (TableItem) event.item;
+				event.detail = !item.getText(1).isEmpty() ? DND.DROP_NONE : DND.DROP_MOVE;
+			}
+		});
+		//drag source for map
+		DragSource srcMap = new DragSource(tblMap, DND.DROP_MOVE);
+		srcMap.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		srcMap.addDragListener(new DragSourceListener() {
+			TableItem item;
+			@Override
+			public void dragStart(DragSourceEvent event) {
+				item = (TableItem) tblMap.getItem(tblMap.getSelectionIndex());
+				if (item.getText(1).isEmpty()) event.doit = false;
+			}
+			@Override
+			public void dragSetData(DragSourceEvent event) {
+				event.data = item.getText(1);
+			}
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+				if (event.detail == DND.DROP_MOVE) item.setText(1, "");
+			}
+		});
+		
 		tblAvailable = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
 		tblAvailable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		tblAvailable.setHeaderVisible(true);
@@ -79,6 +148,55 @@ public class ColumnMatcherDialog extends Dialog {
 		tblclmnAvailable = new TableColumn(tblAvailable, SWT.NONE);
 		tblclmnAvailable.setWidth(100);
 		tblclmnAvailable.setText("Available");
+		
+		for (String itm : FileLFD.donorFields) {
+			TableItem tableItem = new TableItem(tblAvailable, SWT.NONE);
+			tableItem.setText(new String[]{itm});
+		}
+		//drag source for available fields
+		DragSource srcAvailable = new DragSource(tblAvailable, DND.DROP_MOVE);
+		srcAvailable.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		srcAvailable.addDragListener(new DragSourceListener() {
+			int sel;
+			@Override
+			public void dragStart(DragSourceEvent event) {
+				sel = tblAvailable.getSelectionIndex();
+				if (sel < 0) event.doit = false;
+			}
+			@Override
+			public void dragSetData(DragSourceEvent event) {
+				event.data = tblAvailable.getItem(sel).getText();
+			}
+			@Override
+			public void dragFinished(DragSourceEvent event) {
+				if (event.detail == DND.DROP_MOVE) tblAvailable.remove(sel);
+			}
+		});
+		//drop target for available fields
+		DropTarget tgtAvailable = new DropTarget(tblAvailable, DND.DROP_MOVE);
+		tgtAvailable.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		tgtAvailable.addDropListener(new DropTargetAdapter() {
+			@Override
+			public void drop(DropTargetEvent event) {
+				int index = tblAvailable.indexOf((TableItem) event.item);
+				TableItem item = new TableItem(tblAvailable, SWT.NONE, index);
+				item.setText(0, (String) event.data);
+			}
+			@Override
+			public void dragOver(DropTargetEvent event) {
+				event.feedback = DND.FEEDBACK_SCROLL | DND.FEEDBACK_INSERT_BEFORE;
+			}
+		});
+		
+		cmpButtons = new Composite(shell, SWT.NONE);
+		cmpButtons.setLayout(new RowLayout(SWT.HORIZONTAL));
+		cmpButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 2, 1));
+		
+		btnImport = new Button(cmpButtons, SWT.NONE);
+		btnImport.setText("Import");
+		
+		btnCancel = new Button(cmpButtons, SWT.NONE);
+		btnCancel.setText("Cancel");
 
 	}
 
