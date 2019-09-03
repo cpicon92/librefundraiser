@@ -1,18 +1,19 @@
 package net.sf.librefundraiser.gui;
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.tabs.TabFolder;
-import net.sf.librefundraiser.tabs.TabFolderEvent;
-import net.sf.librefundraiser.tabs.TabFolderListener;
-import net.sf.librefundraiser.tabs.TabItem;
-
+import org.eclipse.nebula.widgets.opal.dialog.ChoiceItem;
+import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.tabs.TabFolder;
+import net.sf.librefundraiser.tabs.TabFolderEvent;
+import net.sf.librefundraiser.tabs.TabFolderListener;
+import net.sf.librefundraiser.tabs.TabItem;
 
 
 
@@ -34,7 +35,9 @@ public class DonorTabFolder extends Composite {
 			public void close(TabFolderEvent event) {
 				TabItem closing = event.item;
 				if (!closing.getText().substring(0, 1).equals("*")) return;
-				event.doit = DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1));
+				int choice = DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1));
+				if (choice == 2) event.doit = false;
+				if (choice == 0) ((DonorTab) closing).save(false);
 			}
 		});
 		new Label(tabFolder, SWT.NONE);
@@ -88,17 +91,19 @@ public class DonorTabFolder extends Composite {
 	public boolean closeAllTabs() {
 		for (TabItem closing : tabFolder.getItems()) {
 			if (!closing.getText().substring(0, 1).equals("*")) continue;
-			if (!DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1))) return false;
+			int choice = DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1));
+			if (choice == 2) return false;
+			if (choice == 0) ((DonorTab) closing).save(false);
 			closing.dispose();
 		}
 		return true;
 	}
 
-	public static boolean verifyUnsaved(Shell shell, String donor) {
-		MessageBox verify = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
-		verify.setMessage(donor + " has unsaved changes, are you sure you want to close this donor?");
-		verify.setText("LibreFundraiser Warning");
-		return verify.open() == SWT.YES;
+	public static int verifyUnsaved(Shell shell, String donor) {
+		return Dialog.choice(donor + " has unsaved changes, are you sure you want to close this donor?", "", 2, 
+		new ChoiceItem("Close and save my changes", "Save changes to this donor, then close. "),
+		new ChoiceItem("Close and don't save", "Close without changes to this donor.  All unsaved \nchanges will be erased."), 
+		new ChoiceItem("Don't close", "Return to edit " + donor));
 	}
 
 }
