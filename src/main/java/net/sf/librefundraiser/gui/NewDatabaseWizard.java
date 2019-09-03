@@ -1,10 +1,4 @@
 package net.sf.librefundraiser.gui;
-import java.io.File;
-import java.io.IOException;
-
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ResourceManager;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
@@ -23,9 +17,11 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.ResourceManager;
 
 
 public class NewDatabaseWizard {
@@ -368,29 +364,7 @@ public class NewDatabaseWizard {
 				public void widgetSelected(SelectionEvent e) {
 					if (currentSelection[0] == null) return;
 					result = txtFilename.getText();
-					if (!txtFilename.getText().equals(pickedPath[0])) {
-						FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
-						fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
-						fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
-						boolean goodPath = false;
-						while (!goodPath) {
-							try {
-								while (!Main.fileCreationPossible(result)) {
-									result = fileDialog.open();
-								}
-								goodPath = true;
-							} catch (IOException e1) {
-								File file = new File(result);
-								MessageBox verify = new MessageBox(shell,SWT.YES | SWT.NO | SWT.ICON_WARNING);
-								verify.setMessage(file.getName() + " already exists. Do you want to overwrite it?");
-								verify.setText("LibreFundraiser Warning");
-								goodPath = verify.open() == SWT.YES;
-								if (!goodPath) {
-									result = fileDialog.open();
-								}
-							}
-						}
-					}
+					if (!result.equals(pickedPath[0]) && !Main.pathWritable(result)) result = Main.newDbFilePrompt(shell);
 					if (currentSelection[0].equals(btnImportedDb)) {
 						frbwImportFile = txtFilenameImport.getText();
 					}

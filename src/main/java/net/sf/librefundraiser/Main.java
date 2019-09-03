@@ -36,21 +36,21 @@ public class Main {
 	public static final String version = "(Development Snapshot)";
 
 	public static void main(String args[]) {
-		if (args.length > 1) {
-			System.err.println("Syntax: librefundraiser [filename]");
-		}
-		loadSettings();
-		if (args.length == 1) {
-			addSetting("lastDB",args[0]);
-		}
-		String importDb = null;
-		if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
-			NewDatabaseWizard dialog = new NewDatabaseWizard();
-			addSetting("lastDB",dialog.open());
-			importDb = dialog.getFrbwImportFile();
-		}
-		resetLocalDB();
 		try {
+			if (args.length > 1) {
+				System.err.println("Syntax: librefundraiser [filename]");
+			}
+			loadSettings();
+			if (args.length == 1) {
+				addSetting("lastDB",args[0]);
+			}
+			String importDb = null;
+			if (getSetting("lastDB") == null || !(new File(getSetting("lastDB")).exists())) {
+				NewDatabaseWizard dialog = new NewDatabaseWizard();
+				addSetting("lastDB",dialog.open());
+				importDb = dialog.getFrbwImportFile();
+			}
+			resetLocalDB();
 			window = new MainWindow();
 			window.open(importDb);
 			Display.getCurrent().dispose();
@@ -136,13 +136,11 @@ public class Main {
 		}
 		return realFile;
 	}
-	public static boolean fileCreationPossible(String path) throws IOException {
-		if (fileExists(path)) {
-			throw new IOException(String.format("The file \"%s\" already exists.", path));
-		}
-		boolean canCreate = true;
+	public static boolean pathWritable(String path) {
+		boolean canCreate = false;
 		try {
 			File file = new File(path);
+			if (file.exists()) return file.canWrite();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 			writer.write(" ");
 			writer.close();
@@ -159,18 +157,23 @@ public class Main {
 		String path = "";
 		boolean goodPath = false;
 		while (!goodPath) {
-			try {
-				do {
-					path = fileDialog.open();
-				} while(!fileCreationPossible(path));
-				goodPath = true;
-			} catch (IOException e) {
+			do {
+				path = fileDialog.open();
+				if (path == null) {
+					goodPath = true;
+					break;
+				}
 				File file = new File(path);
-				MessageBox verify = new MessageBox(shell,SWT.YES | SWT.NO | SWT.ICON_WARNING);
-				verify.setMessage(file.getName() + " already exists. Do you want to overwrite it?");
-				verify.setText("LibreFundraiser Warning");
-				goodPath = verify.open() == SWT.YES;
-			}
+				goodPath = !file.exists();
+				if (!goodPath) {
+					MessageBox verify = new MessageBox(shell,SWT.YES | SWT.NO | SWT.ICON_WARNING);
+					verify.setMessage(file.getName() + " already exists. Do you want to overwrite it?");
+					verify.setText("LibreFundraiser Warning");
+					int r = verify.open();
+					System.out.println(r);
+					goodPath = r == SWT.YES;
+				}
+			} while(!pathWritable(path));
 		}
 		return path;
 	}

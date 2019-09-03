@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 
 
@@ -33,10 +34,7 @@ public class DonorTabFolder extends Composite {
 			public void close(TabFolderEvent event) {
 				TabItem closing = event.item;
 				if (!closing.getText().substring(0, 1).equals("*")) return;
-				MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
-				verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
-				verify.setText("LibreFundraiser Warning");
-				event.doit = verify.open() == SWT.YES;
+				event.doit = DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1));
 			}
 		});
 		new Label(tabFolder, SWT.NONE);
@@ -90,15 +88,17 @@ public class DonorTabFolder extends Composite {
 	public boolean closeAllTabs() {
 		for (TabItem closing : tabFolder.getItems()) {
 			if (!closing.getText().substring(0, 1).equals("*")) continue;
-			MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
-			verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
-			verify.setText("LibreFundraiser Warning");
-			if (verify.open() != SWT.YES) {
-				return false;
-			}
+			if (!DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1))) return false;
 			closing.dispose();
 		}
 		return true;
+	}
+
+	public static boolean verifyUnsaved(Shell shell, String donor) {
+		MessageBox verify = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
+		verify.setMessage(donor + " has unsaved changes, are you sure you want to close this donor?");
+		verify.setText("LibreFundraiser Warning");
+		return verify.open() == SWT.YES;
 	}
 
 }

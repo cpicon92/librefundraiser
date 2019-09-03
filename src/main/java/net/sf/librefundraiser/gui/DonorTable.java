@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.Util;
 import net.sf.librefundraiser.gui.flextable.FlexTable;
 import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
 import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
@@ -482,21 +483,6 @@ public class DonorTable extends Composite {
 		Main.getDonorDB().deleteDonors(ids);
 		refresh();
 	}
-
-	public boolean closeAllTabs() {
-		for (TabItem closing : tabFolder.getItems()) {
-			if (!closing.getText().substring(0, 1).equals("*")) continue;
-			MessageBox verify = new MessageBox(getShell(),SWT.YES | SWT.NO | SWT.ICON_WARNING);
-			verify.setMessage(closing.getText().substring(1)+" has unsaved changes, are you sure you want to close this donor?");
-			verify.setText("LibreFundraiser Warning");
-			if (verify.open() != SWT.YES) {
-				return false;
-			}
-			closing.dispose();
-		}
-		return true;
-	}
-	
 
 	public TabFolder getTabFolder() {
 		return tabFolder;
