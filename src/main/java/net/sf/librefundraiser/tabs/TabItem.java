@@ -253,7 +253,6 @@ public class TabItem extends Composite {
 						try {
 							Thread.sleep(2000);
 						} catch (InterruptedException e) {
-							e.printStackTrace();
 						}
 						try {
 							//TODO fix bug that causes app to crash when tabs are closed (seems to be starting here)

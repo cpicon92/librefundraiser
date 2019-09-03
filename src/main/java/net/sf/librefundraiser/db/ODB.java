@@ -40,10 +40,8 @@ public class ODB {
 			Util.writeODS(Main.getWindow().getDonorTable().donors, odsFile, false);
 			if (register) registerDB(f);
 			OOUtils.open(f);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Error with ODB export", e);
 		}
 	}
 	private static String convertFilename(File f) {

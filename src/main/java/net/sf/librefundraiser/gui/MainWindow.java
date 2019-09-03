@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
@@ -53,7 +52,7 @@ public class MainWindow {
 
 	protected Shell shell;
 	private ToolItem tltmSave;
-	private Composite compositeDonorList;
+	private DonorTabFolder donorTabFolder;
 	private Display display;
 	private Runnable saveCurrent;
 	private DonorTable donorTable;
@@ -90,7 +89,7 @@ public class MainWindow {
 		shell.addListener(SWT.Close, new Listener() {	
 			@Override
 			public void handleEvent(Event event) {
-				if (!((DonorTabFolder)compositeDonorList).closeAllTabs()) event.doit = false;
+				if (!donorTabFolder.closeAllTabs()) event.doit = false;
 			}
 		});
 		refreshTitle();
@@ -197,7 +196,7 @@ public class MainWindow {
 					Main.getDonorDB().saveDonors(newDonors.toArray(new Donor[0]));
 					refresh();
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw new RuntimeException("Error importing CSV file", e);
 				}
 
 			}
@@ -358,7 +357,7 @@ public class MainWindow {
 		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				((DonorTabFolder)compositeDonorList).saveAll();
+				((DonorTabFolder)donorTabFolder).saveAll();
 			}
 		});
 		mntmSaveAllDonors.setText("Save All Donors");
@@ -438,22 +437,22 @@ public class MainWindow {
 		
 		donorTable = new DonorTable(mainPanel, SWT.NONE);
 
-		compositeDonorList = new DonorTabFolder(mainPanel, SWT.NONE);
-		FillLayout fillLayout = (FillLayout) compositeDonorList.getLayout();
+		donorTabFolder = new DonorTabFolder(mainPanel, SWT.NONE);
+		FillLayout fillLayout = (FillLayout) donorTabFolder.getLayout();
 		fillLayout.marginWidth = 1;
-		compositeDonorList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		donorTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 //		mainPanel.setBackground(new Color(display, 0, 0, 0));
 		final Color divider = TabFolder.changeColorBrightness(display, display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -50);
-		compositeDonorList.addPaintListener(new PaintListener() {
+		donorTabFolder.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				Rectangle size = compositeDonorList.getClientArea();
+				Rectangle size = donorTabFolder.getClientArea();
 				e.gc.setForeground(divider);
 				e.gc.drawLine(size.x, size.y, size.x, size.y + size.height);
 			}
 		});
 		
-		final TabFolder tabFolder = ((DonorTabFolder) compositeDonorList).tabFolder;
+		final TabFolder tabFolder = ((DonorTabFolder) donorTabFolder).tabFolder;
 		donorTable.setTabFolder(tabFolder);
 		tabFolder.addTabFolderListener(new TabFolderListener() {
 			@Override
@@ -496,7 +495,7 @@ public class MainWindow {
 		Main.importFromFRBW(display, shell, this, path);
 	}
 	public DonorTabFolder getCompositeDonorList() {
-		return (DonorTabFolder) compositeDonorList;
+		return (DonorTabFolder) donorTabFolder;
 	}
 
 
@@ -505,7 +504,7 @@ public class MainWindow {
 	}
 
 	public void newDonor() {
-		((DonorTabFolder)compositeDonorList).newDonor();
+		((DonorTabFolder)donorTabFolder).newDonor();
 	}
 
 	public void refreshTitle() {

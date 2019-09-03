@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Text;
 
 import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
-import net.sf.librefundraiser.Util;
 import net.sf.librefundraiser.gui.flextable.FlexTable;
 import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
 import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
@@ -443,6 +442,7 @@ public class DonorTable extends Composite {
 	}
 
 	public void newDonor() {
+		//TODO make sure imports don't interfere with unique donor IDs
 		int id = Main.getDonorDB().getMaxAccount()+1;
 		for (TabItem t : tabFolder.getItems()) {
 			try {

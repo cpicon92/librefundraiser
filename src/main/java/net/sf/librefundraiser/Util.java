@@ -158,7 +158,7 @@ public class Util {
 				);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Error writing CSV file", e);
 		}
 	}
 	
@@ -181,6 +181,7 @@ public class Util {
 	}
 	
 	public static void exceptionError(Exception e) {
+		e.printStackTrace();
 		final Dialog dialog = new Dialog();
 		dialog.setTitle("LibreFundraiser Takes Exception!");
 		dialog.getMessageArea().setTitle("Illegal Action: " + e.getClass().getSimpleName())

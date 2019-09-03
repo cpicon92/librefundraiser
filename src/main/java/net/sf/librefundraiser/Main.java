@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.sf.librefundraiser.db.FileDBASE;
 import net.sf.librefundraiser.db.FileLFD;
+import net.sf.librefundraiser.db.FileLFD.DatabaseIOException;
 import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
 import net.sf.librefundraiser.io.Donor;
@@ -55,7 +56,6 @@ public class Main {
 			window.open(importDb);
 			Display.getCurrent().dispose();
 		} catch (Exception e) {
-			e.printStackTrace();
 			Util.exceptionError(e);
 		}
 	}
@@ -67,8 +67,7 @@ public class Main {
 		try {
 			localDB = new FileLFD(getSetting("lastDB"));
 		} catch (IOException e) {
-			// TODO Display gui error message about this
-			e.printStackTrace();
+			throw new DatabaseIOException("Could not reset local DB", e);
 		}
 	}
 	public static String toMoney(double amount) {
