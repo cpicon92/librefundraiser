@@ -54,10 +54,10 @@ public class Main {
 			resetLocalDB();
 			window = new MainWindow();
 			window.open(importDb);
-			Display.getCurrent().dispose();
 		} catch (Exception e) {
 			Util.exceptionError(e);
 		}
+		Display.getCurrent().dispose();
 	}
 	public static FileLFD getDonorDB() {
 		if (localDB == null) localDB = new FileLFD();

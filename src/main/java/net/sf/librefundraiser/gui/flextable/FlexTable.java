@@ -387,15 +387,11 @@ public class FlexTable<T> extends Composite {
 	
 	public void refresh() {
 		new Thread("FlexTable Refresh"){
-			@Override
 			public void run() {
 				dataProvider.refresh();
-				getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						FlexTable.this.dirty = true;
-						FlexTable.this.redraw();
-					}
+				getDisplay().asyncExec(() -> {
+					FlexTable.this.dirty = true;
+					FlexTable.this.redraw();
 				});
 			}
 		}.start();
