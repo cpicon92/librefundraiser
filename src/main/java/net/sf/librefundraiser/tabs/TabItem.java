@@ -1,6 +1,7 @@
 package net.sf.librefundraiser.tabs;
 
 import net.sf.librefundraiser.ResourceManager;
+import net.sf.librefundraiser.Util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -50,12 +51,12 @@ public class TabItem extends Composite {
 			}
 		});
 		final Color gradBottom = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		final Color gradTop = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, 25);
+		final Color gradTop = Util.changeColorBrightness(this.getDisplay(), gradBottom, 25);
 		final Color colorSelectedHighlight = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		final Color colorTabLines = TabFolder.changeColorBrightness(TabItem.this.getDisplay(), gradBottom, -50);		final Color colorTabLinesInactive = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		final Color colorTabLines = Util.changeColorBrightness(TabItem.this.getDisplay(), gradBottom, -50);		final Color colorTabLinesInactive = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 		final Color colorBlack = new Color(TabItem.this.getDisplay(), 0, 0, 0);
-		final Color colorShadow = TabFolder.changeColorBrightness(this.getDisplay(), gradBottom, -20);
-		final Color grayTab = TabFolder.changeColorBrightness(this.getDisplay(), colorShadow, 10);
+		final Color colorShadow = Util.changeColorBrightness(this.getDisplay(), gradBottom, -20);
+		final Color grayTab = Util.changeColorBrightness(this.getDisplay(), colorShadow, 10);
 		final boolean[] repainting = new boolean[] {false};
 		addPaintListener(new PaintListener() {
 			@Override

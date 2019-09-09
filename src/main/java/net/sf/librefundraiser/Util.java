@@ -22,6 +22,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog.OpalDialogType;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -183,7 +184,7 @@ public class Util {
 	public static void exceptionError(Exception e) {
 		e.printStackTrace();
 		try {
-			Display.getCurrent().dispose();
+			if (Display.getCurrent() != null) Display.getCurrent().dispose();
 		} finally {
 			final Dialog dialog = new Dialog();
 			dialog.setTitle("LibreFundraiser Takes Exception!");
@@ -194,5 +195,18 @@ public class Util {
 			dialog.getFooterArea().setExpanded(false).setDetailText(Util.getStackTrace(e));
 			dialog.show();
 		}
+	}
+
+	public static Color changeColorBrightness(Display display, Color color, int increment) {
+		return new Color(
+			display,
+			Util.incrementValue(color.getRed(), increment), 
+			Util.incrementValue(color.getGreen(), increment), 
+			Util.incrementValue(color.getBlue(), increment)
+		);
+	}
+
+	public static int incrementValue(int value, int increment) {
+		return Math.max(Math.min((value + increment), 255), 0);
 	}
 }

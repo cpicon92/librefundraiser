@@ -23,6 +23,7 @@ public class Gift implements Comparable<Gift> {
 	}
 
 	public String getSource() {
+		if (source == null) return "";
 		return source;
 	}
 	public void setSource(String source) {
@@ -41,6 +42,7 @@ public class Gift implements Comparable<Gift> {
 		this.account = account;
 	}
 	public String getNote() {
+		if (note == null) return "";
 		return note;
 	}
 	public void setNote(String note) {

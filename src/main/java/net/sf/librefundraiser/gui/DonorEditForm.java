@@ -12,7 +12,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -1149,38 +1148,32 @@ public class DonorEditForm extends Composite {
 	}
 
 	public void editGift(Gift gift) {
-		if (compositeEditForm.getChildren().length == 0) {
-			final GiftEditForm giftEditForm = new GiftEditForm(
-					compositeEditForm, SWT.NONE, gift);
-			giftEditForm.addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					try {
-						if (!giftEditForm.canceled) {
-							Gift gift = giftEditForm.getGift();
-							donor.addGift(gift);
-							setEdited(true);
-						}
-						compositeEditForm.setVisible(false);
-						gd_compositeEditForm.exclude = true;
-						compositeEditForm.layout();
-						compositeGifts.layout();
-						giftTable.refresh();
-						giftTable.setEnabled(true);
-						tltmNew.setEnabled(true);
-					} catch (SWTException e1) {
-					}
+		if (compositeEditForm.getChildren().length != 0) return;
+		final GiftEditForm giftEditForm = new GiftEditForm(compositeEditForm, SWT.NONE, gift);
+		giftEditForm.addDisposeListener((DisposeEvent ev) -> {
+			try {
+				if (!giftEditForm.canceled) {
+					donor.addGift(giftEditForm.getGift());
+					setEdited(true);
 				}
-			});
-			compositeEditForm.setVisible(true);
-			gd_compositeEditForm.exclude = false;
-			compositeEditForm.layout();
-			compositeGifts.layout();
-			giftEditForm.initializePointer();
-			tltmNew.setEnabled(false);
-			tltmEdit.setEnabled(false);
-			tltmDelete.setEnabled(false);
-			giftTable.setEnabled(false);
-		}
+				compositeEditForm.setVisible(false);
+				gd_compositeEditForm.exclude = true;
+				compositeEditForm.layout();
+				compositeGifts.layout();
+				giftTable.refresh();
+				giftTable.setEnabled(true);
+				tltmNew.setEnabled(true);
+			} catch (SWTException e) {
+			}
+		});
+		compositeEditForm.setVisible(true);
+		gd_compositeEditForm.exclude = false;
+		compositeEditForm.layout();
+		compositeGifts.layout();
+		giftEditForm.initializePointer();
+		tltmNew.setEnabled(false);
+		tltmEdit.setEnabled(false);
+		tltmDelete.setEnabled(false);
+		giftTable.setEnabled(false);
 	}
 }

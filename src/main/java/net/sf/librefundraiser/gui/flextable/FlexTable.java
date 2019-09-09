@@ -69,11 +69,11 @@ public class FlexTable<T> extends Composite {
 						break;
 					}
 				}
+				if (event.row < 0) return;
 				event.target = dataProvider.get(event.row);
 				for (FlexTableSelectionListener<T> l : selectionListeners) {
 					l.widgetDefaultSelected(event);
 				}
-				
 			}
 			@Override
 			public void mouseUp(MouseEvent e) {

@@ -34,6 +34,9 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -85,15 +88,18 @@ public class FileLFD {
 			.registerTypeAdapter(Money.class, new JsonDeserializer<Money>() {
 				@Override
 				public Money deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext ctx) throws JsonParseException {
-					//needed due to old file format storing money as string
 					if (json.isJsonObject()) {
 						JsonObject m = json.getAsJsonObject();
+						String currency;
+						if (m.get("currency").isJsonObject()) currency = m.get("currency").getAsJsonObject().get("currencyCode").getAsString();
+						else currency = m.get("currency").getAsString();
 						return new Money(
 							m.get("amount").getAsInt(), 
-							m.get("currency").getAsJsonObject().get("currencyCode").getAsString(), 
+							currency, 
 							m.get("fractionDigits").getAsInt()
 						);
 					} else {
+						//needed due to old file format storing money as string
 						return new Money(json.getAsString());
 					}
 				}
@@ -149,6 +155,13 @@ public class FileLFD {
 		try {
 			Gson gson = new GsonBuilder()
 			.setDateFormat(Main.getDateFormatString())
+			.registerTypeAdapter(String.class, new JsonSerializer<String>() {
+				@Override
+				public JsonElement serialize(String src, Type typeOfT, JsonSerializationContext ctx) {
+					if (src == null || src.isEmpty()) return null;
+					return new JsonPrimitive(src);
+				}
+			})
 			.create();
 			OutputStream os = new FileOutputStream(this.dbFile);
 			os.write(new byte[] {(byte) 0x89, 'L','F','D'});

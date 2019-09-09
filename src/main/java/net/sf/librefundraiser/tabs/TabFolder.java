@@ -18,7 +18,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+
+import net.sf.librefundraiser.Util;
 
 public class TabFolder extends Composite {
 
@@ -47,9 +48,9 @@ public class TabFolder extends Composite {
 
 		compositeTabs = new Composite(this, SWT.NONE);
 		final Color gradBottom = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-		final Color colorShadow = TabFolder.changeColorBrightness(compositeTabs.getDisplay(), gradBottom, -20);
+		final Color colorShadow = Util.changeColorBrightness(compositeTabs.getDisplay(), gradBottom, -20);
 //		final Color colorTabLines = compositeTabs.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		final Color colorTabLines = TabFolder.changeColorBrightness(compositeTabs.getDisplay(), gradBottom, -50);
+		final Color colorTabLines = Util.changeColorBrightness(compositeTabs.getDisplay(), gradBottom, -50);
 		compositeTabs.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
@@ -243,17 +244,5 @@ public class TabFolder extends Composite {
 			this.changed(new Control[]{compositeControlArea});
 			this.layout(true, true);
 		}
-	}
-	
-	public static Color changeColorBrightness(Display display, Color color, int increment) {
-		return new Color(
-			display,
-			incrementValue(color.getRed(), increment), 
-			incrementValue(color.getGreen(), increment), 
-			incrementValue(color.getBlue(), increment)
-		);
-	}
-	private static int incrementValue(int value, int increment) {
-		return Math.max(Math.min((value + increment), 255), 0);
 	}
 }

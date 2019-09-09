@@ -2,11 +2,7 @@ package net.sf.librefundraiser.gui;
 
 import java.util.Date;
 
-import net.sf.librefundraiser.Main;
-import net.sf.librefundraiser.ResourceManager;
-import net.sf.librefundraiser.io.Gift;
-import net.sf.librefundraiser.io.Money;
-
+import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.swt.SWT;
@@ -20,14 +16,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import net.sf.librefundraiser.Main;
+import net.sf.librefundraiser.Util;
+import net.sf.librefundraiser.io.Gift;
+import net.sf.librefundraiser.io.Money;
+
 public class GiftEditForm extends Composite {
-	private Combo txtAmount;
+	private Combo cmbAmount;
 	private DatePicker dtDateGiven;
 	private Text txtNote;
 	private final Gift gift;
 	public boolean canceled = true;
 	private Button chkLetter;
-	private Combo comboSource;
+	private Combo cmbSource;
 
 	/**
 	 * Create the composite.
@@ -36,8 +37,8 @@ public class GiftEditForm extends Composite {
 	 */
 	public GiftEditForm(Composite parent, int style, Gift gift) {
 		super(parent, SWT.BORDER);
-		if (System.getProperty("os.name").indexOf("nux") >= 0) {
-			setBackground(ResourceManager.getColor(0xd3d3d3));
+		if (SystemUtils.IS_OS_LINUX) {
+			setBackground(Util.changeColorBrightness(getDisplay(), getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -10));
 			setBackgroundMode(SWT.INHERIT_FORCE);
 		}
 		this.gift = gift;
@@ -54,11 +55,11 @@ public class GiftEditForm extends Composite {
 		gl_compositeTop.marginHeight = 0;
 		compositeTop.setLayout(gl_compositeTop);
 
-		txtAmount = new Combo(compositeTop, SWT.BORDER);
-		txtAmount.setItems(new String[] {"15", "25", "40", "50", "100", "150", "200", "250", "500"});
+		cmbAmount = new Combo(compositeTop, SWT.NONE);
+		cmbAmount.setItems(new String[] {"15", "25", "40", "50", "100", "150", "200", "250", "500"});
 		GridData gd_txtAmount = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_txtAmount.widthHint = 120;
-		txtAmount.setLayoutData(gd_txtAmount);
+		cmbAmount.setLayoutData(gd_txtAmount);
 
 		Label lblDateGiven = new Label(compositeTop, SWT.NONE);
 		lblDateGiven.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -74,11 +75,11 @@ public class GiftEditForm extends Composite {
 		lblSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblSource.setText("Source");
 
-		comboSource = new Combo(compositeTop, SWT.NONE);
-		comboSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		cmbSource = new Combo(compositeTop, SWT.NONE);
+		cmbSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		String[] previousSources = Main.getDonorDB().getPreviousGiftValues("source").toArray(new String[0]);
-		comboSource.setItems(previousSources);
-		new AutoCompleteField(comboSource, new ComboContentAdapter(), previousSources);
+		cmbSource.setItems(previousSources);
+		new AutoCompleteField(cmbSource, new ComboContentAdapter(), previousSources);
 
 		Label lblNote = new Label(this, SWT.NONE);
 		lblNote.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -131,18 +132,18 @@ public class GiftEditForm extends Composite {
 	}
 
 	private void fillForm() {
-		txtAmount.setText(String.valueOf(gift.getAmount()));
+		cmbAmount.setText(String.valueOf(gift.getAmount()));
 		dtDateGiven.setDate(gift.getDategiven());
 		chkLetter.setSelection(gift.isLetter());
-		comboSource.setText(gift.getSource());
+		cmbSource.setText(gift.getSource());
 		txtNote.setText(gift.getNote());
 	}
 	
 	private void saveForm() {
-		gift.setAmount(new Money(txtAmount.getText()));
+		gift.setAmount(new Money(cmbAmount.getText()));
 		gift.setDategiven(dtDateGiven.getDate());
 		gift.setLetter(chkLetter.getSelection());
-		gift.setSource(comboSource.getText());
+		gift.setSource(cmbSource.getText());
 		gift.setNote(txtNote.getText());
 		gift.setDt_entry(new Date());
 	}
@@ -151,6 +152,6 @@ public class GiftEditForm extends Composite {
 		return gift;
 	}
 	public void initializePointer() {
-		txtAmount.setFocus();
+		cmbAmount.setFocus();
 	}
 }

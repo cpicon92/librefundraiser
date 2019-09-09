@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.eclipse.swt.SWT;
@@ -30,6 +31,8 @@ public class Main {
 	private static FileLFD localDB = null;
 	private static NumberFormat currency = null;
 	private static MainWindow window;
+	//TODO make locale a setting
+	private static Locale locale = Locale.US;
 	private final static Properties settings = new Properties();
 	private static final String dateFormatString = "yyyy-MM-dd";
 	private static final DateFormat dateFormat = new SimpleDateFormat(getDateFormatString());
@@ -203,5 +206,8 @@ public class Main {
 				Main.getWindow().refresh();				
 			}
 		}).start();
+	}
+	public static Locale getLocale() {
+		return locale;
 	}
 }

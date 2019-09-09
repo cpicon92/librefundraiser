@@ -460,7 +460,7 @@ public class MainWindow {
 		fillLayout.marginWidth = 1;
 		donorTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 //		mainPanel.setBackground(new Color(display, 0, 0, 0));
-		final Color divider = TabFolder.changeColorBrightness(display, display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -50);
+		final Color divider = Util.changeColorBrightness(display, display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -50);
 		donorTabFolder.addPaintListener(new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {

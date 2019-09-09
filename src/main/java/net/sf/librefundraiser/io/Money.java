@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import net.sf.librefundraiser.Main;
+
 public class Money implements Comparable<Money> {
 	private final Currency currency;
 	private final int amount, fractionDigits;
@@ -91,13 +93,13 @@ public class Money implements Comparable<Money> {
 		return amount % (int) Math.pow(10, fractionDigits);
 	}
 
-	public static String getSymbol(String currencyCode) {
-		Currency currency = Currency.getInstance(currencyCode);
-		return currency.getSymbol(currencyLocaleMap.get(currency));
-	}
+//	public static String getSymbol(String currencyCode) {
+//		Currency currency = Currency.getInstance(currencyCode);
+//		return currency.getSymbol(currencyLocaleMap.get(currency));
+//	}
 	
 	public static String getSymbol(Currency c) {
-		return getSymbol(c.getCurrencyCode());
+		return c.getSymbol(Main.getLocale());
 	}
 
 	@Override
