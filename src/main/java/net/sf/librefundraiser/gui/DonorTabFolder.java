@@ -1,6 +1,7 @@
 package net.sf.librefundraiser.gui;
 import org.eclipse.nebula.widgets.opal.dialog.ChoiceItem;
 import org.eclipse.nebula.widgets.opal.dialog.Dialog;
+import org.eclipse.nebula.widgets.opal.dialog.Dialog.OpalDialogType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -100,10 +101,17 @@ public class DonorTabFolder extends Composite {
 	}
 
 	public static int verifyUnsaved(Shell shell, String donor) {
-		return Dialog.choice(donor + " has unsaved changes, are you sure you want to close this donor?", "", 2, 
-		new ChoiceItem("Close and save my changes", "Save changes to this donor, then close. "),
-		new ChoiceItem("Close and don't save", "Close without changes to this donor.  All unsaved \nchanges will be erased."), 
-		new ChoiceItem("Don't close", "Return to edit " + donor));
+		final Dialog dialog = new Dialog(shell);
+		dialog.setTitle("LibreFundraiser Warning");
+		dialog.setButtonType(OpalDialogType.NONE);
+		dialog.getMessageArea().setTitle(donor + " has unsaved changes, are you sure you want to close this donor?")
+		.setIcon(shell.getDisplay().getSystemImage(SWT.ICON_WARNING))
+		.addChoice(2, new ChoiceItem("Close and save my changes", "Save changes to this donor, then close. "),
+				new ChoiceItem("Close and don't save", "Close without saving changes to donor.  All unsaved changes will \nbe erased."), 
+				new ChoiceItem("Don't close", "Return to edit " + donor + ".")
+				);
+		dialog.show();
+		return dialog.getMessageArea().getChoice();
 	}
 
 }

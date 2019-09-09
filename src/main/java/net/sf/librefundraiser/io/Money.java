@@ -85,6 +85,10 @@ public class Money implements Comparable<Money> {
 		return sb.toString();
 	}
 	
+	public String getValueString() {
+		return this.toString("");
+	}
+	
 	private int getCharacteristic() {
 		return amount / (int) Math.pow(10, fractionDigits);
 	}

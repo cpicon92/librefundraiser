@@ -220,7 +220,7 @@ public class FlexTable<T> extends Composite {
 								g.setFont(arialBold);
 								g.setBackground(colorSelectedRow);
 								g.setAlpha(60);
-								g.fillRectangle(x - scrollX - pad / 2, y + rowHeight / 2 - scrollY - pad / 2, columnWidths[col], rowHeight + pad);
+								g.fillRectangle(x - scrollX - pad / 2, y - scrollY, columnWidths[col], rowHeight + pad);
 								g.setAlpha(255);
 							} else {
 								g.setFont(arial);
@@ -367,6 +367,7 @@ public class FlexTable<T> extends Composite {
 	}
 	
 	public T getFirstSelection() {
+		if (firstSelectedRow == -1) return null;
 		return dataProvider.get(firstSelectedRow);
 	}
 	

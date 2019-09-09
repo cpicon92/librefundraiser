@@ -42,7 +42,7 @@ public class FlexTableDataAdapter<T> implements FlexTableDataProvider<T> {
 
 	@Override
 	public int getSortField() {
-		return 1;
+		return -1;
 	}
 
 	@Override

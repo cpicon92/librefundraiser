@@ -2,7 +2,6 @@ package net.sf.librefundraiser.gui;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.swt.SWT;
@@ -37,10 +36,7 @@ public class GiftEditForm extends Composite {
 	 */
 	public GiftEditForm(Composite parent, int style, Gift gift) {
 		super(parent, SWT.BORDER);
-		if (SystemUtils.IS_OS_LINUX) {
-			setBackground(Util.changeColorBrightness(getDisplay(), getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -10));
-			setBackgroundMode(SWT.INHERIT_FORCE);
-		}
+		setBackground(Util.changeColorBrightness(getDisplay(), getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND), -15));
 		this.gift = gift;
 		setLayout(new GridLayout(2, false));
 
@@ -88,7 +84,7 @@ public class GiftEditForm extends Composite {
 		Composite compositeBottom = new Composite(this, SWT.None);
 		compositeBottom.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_compositeBottom = new GridLayout(4, false);
-		gl_compositeBottom.horizontalSpacing = 4;
+		gl_compositeBottom.horizontalSpacing = 6;
 		gl_compositeBottom.marginHeight = 0;
 		gl_compositeBottom.marginWidth = 0;
 		compositeBottom.setLayout(gl_compositeBottom);
@@ -98,9 +94,6 @@ public class GiftEditForm extends Composite {
 
 		chkLetter = new Button(compositeBottom, SWT.CHECK);
 		chkLetter.setText("Send a thank you letter or receipt");
-		GridData gd_chkLetter = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_chkLetter.verticalIndent = 1;
-		chkLetter.setLayoutData(gd_chkLetter);
 
 		Button btnCancel = new Button(compositeBottom, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -120,7 +113,6 @@ public class GiftEditForm extends Composite {
 				dispose();
 			}
 		});
-		btnSave.setSize(36, 23);
 		btnSave.setText("Confirm");
 
 		fillForm();
@@ -132,7 +124,7 @@ public class GiftEditForm extends Composite {
 	}
 
 	private void fillForm() {
-		cmbAmount.setText(String.valueOf(gift.getAmount()));
+		cmbAmount.setText(gift.getAmount() == null ? "" : gift.getAmount().getValueString());
 		dtDateGiven.setDate(gift.getDategiven());
 		chkLetter.setSelection(gift.isLetter());
 		cmbSource.setText(gift.getSource());

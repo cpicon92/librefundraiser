@@ -40,9 +40,9 @@ import net.sf.librefundraiser.Main;
 import net.sf.librefundraiser.ResourceManager;
 import net.sf.librefundraiser.db.CustomField;
 import net.sf.librefundraiser.gui.flextable.FlexTable;
-import net.sf.librefundraiser.gui.flextable.FlexTableDataProvider;
-import net.sf.librefundraiser.gui.flextable.FlexTableSelectionAdapter;
+import net.sf.librefundraiser.gui.flextable.FlexTableDataAdapter;
 import net.sf.librefundraiser.gui.flextable.FlexTableSelectionEvent;
+import net.sf.librefundraiser.gui.flextable.FlexTableSelectionListener;
 import net.sf.librefundraiser.io.Donor;
 import net.sf.librefundraiser.io.DonorData.Type;
 import net.sf.librefundraiser.io.Gift;
@@ -115,12 +115,12 @@ public class DonorEditForm extends Composite {
 		}
 	};
 	private Text txtAccountID;
-	private Composite compositeEditForm;
-	private GridData gd_compositeEditForm;
+	private Composite cmpEditForm;
+	private GridData gdCmpEditForm;
 	private ToolItem tltmNew;
 	private ToolItem tltmEdit;
 	private ToolItem tltmDelete;
-	private FlexTable<Gift> giftTable;
+	private FlexTable<Gift> tblGifts;
 	private Composite compositeGifts;
 	private LinkEditForm grpWeb;
 	private TabFolder tabFolder;
@@ -135,6 +135,8 @@ public class DonorEditForm extends Composite {
 	private Composite compositeCustom;
 	private Button chkObsolete;
 	private final List<Control> customWidgets = new ArrayList<>();
+	private ToolBar tlbrGifts;
+	private GridData gdTlbrGifts;
 
 	/**
 	 * Create the composite.
@@ -566,18 +568,16 @@ public class DonorEditForm extends Composite {
 		gl_compositeGifts.marginHeight = 0;
 		compositeGifts.setLayout(gl_compositeGifts);
 		compositeGifts.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		compositeGifts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 1));
+		compositeGifts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		if (System.getProperty("os.name").indexOf("nux") >= 0) {
 			compositeGifts.setBackground(DonorEditForm.this.getBackground());
 		}
 
-		ToolBar tbrGifts = new ToolBar(compositeGifts, SWT.FLAT | SWT.RIGHT);
-		tbrGifts.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
-		tbrGifts.setBounds(0, 0, 89, 23);
+		tlbrGifts = new ToolBar(compositeGifts, SWT.FLAT | SWT.RIGHT);
+		gdTlbrGifts = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		tlbrGifts.setLayoutData(gdTlbrGifts );
 
-		tltmNew = new ToolItem(tbrGifts, SWT.NONE);
+		tltmNew = new ToolItem(tlbrGifts, SWT.NONE);
 		tltmNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -589,26 +589,26 @@ public class DonorEditForm extends Composite {
 		tltmNew.setImage(ResourceManager.getIcon("new-gift.png"));
 		tltmNew.setText("New");
 
-		new ToolItem(tbrGifts, SWT.SEPARATOR);
+		new ToolItem(tlbrGifts, SWT.SEPARATOR);
 
-		tltmEdit = new ToolItem(tbrGifts, SWT.NONE);
+		tltmEdit = new ToolItem(tlbrGifts, SWT.NONE);
 		tltmEdit.setEnabled(false);
 		tltmEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				editGift(giftTable.getFirstSelection());
+				editGift(tblGifts.getFirstSelection());
 			}
 		});
 		tltmEdit.setImage(ResourceManager.getIcon("edit-gift.png"));
 		tltmEdit.setText("Edit");
 
-		tltmDelete = new ToolItem(tbrGifts, SWT.NONE);
+		tltmDelete = new ToolItem(tlbrGifts, SWT.NONE);
 		tltmDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.getDonorDB().deleteGift(giftTable.getFirstSelection().recnum);
+				Main.getDonorDB().deleteGift(tblGifts.getFirstSelection().recnum);
 				Main.getDonorDB().refreshGifts(donor);
-				giftTable.refresh();
+				tblGifts.refresh();
 				tltmDelete.setEnabled(false);
 				tltmEdit.setEnabled(false);
 			}
@@ -617,16 +617,16 @@ public class DonorEditForm extends Composite {
 		tltmDelete.setEnabled(false);
 		tltmDelete.setText("Delete");
 
-		compositeEditForm = new Composite(compositeGifts, SWT.NONE);
-		gd_compositeEditForm = new GridData(SWT.FILL, SWT.CENTER, true, false,
+		cmpEditForm = new Composite(compositeGifts, SWT.NONE);
+		gdCmpEditForm = new GridData(SWT.FILL, SWT.CENTER, true, false,
 				1, 1);
-		gd_compositeEditForm.exclude = true;
-		compositeEditForm.setLayoutData(gd_compositeEditForm);
-		compositeEditForm.setLayout(new FillLayout(SWT.HORIZONTAL));
-		//TODO:Add sorting functionality
-		giftTable = new FlexTable<>(compositeGifts, SWT.BORDER);
-		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,1));
-		giftTable.addSelectionListener(new FlexTableSelectionAdapter<Gift>() {
+		gdCmpEditForm.exclude = true;
+		cmpEditForm.setLayoutData(gdCmpEditForm);
+		cmpEditForm.setLayout(new FillLayout(SWT.HORIZONTAL));
+		
+		tblGifts = new FlexTable<>(compositeGifts, SWT.BORDER);
+		tblGifts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,1));
+		tblGifts.addSelectionListener(new FlexTableSelectionListener<Gift>() {
 			@Override
 			public void widgetSelected(FlexTableSelectionEvent<Gift> e) {
 				if (e.target != null) {
@@ -637,14 +637,23 @@ public class DonorEditForm extends Composite {
 					tltmDelete.setEnabled(false);
 				}
 			}
+			@Override
+			public void widgetDefaultSelected(FlexTableSelectionEvent<Gift> e) {
+				editGift(tblGifts.getFirstSelection());
+			}
 		});
-		giftTable.setDataProvider(new FlexTableDataProvider<Gift>() {
+		tblGifts.setDataProvider(new FlexTableDataAdapter<Gift>() {
 			final String[] headers = {"Amount", "Date Given", "Letter", "Entry Date", "Gift Source", "Note", "Record Number"};
 			final int AMOUNT = 0, DATE_GIVEN = 1, LETTER = 2, ENTRY_DATE = 3, GIFT_SOURCE = 4, NOTE = 5, RECORD_NUMBER = 6;
 			List<Gift> gifts = donor.getGifts();
-			{
-				Collections.sort(gifts);
+			
+			//TODO make sortable on things other than date
+			{Collections.sort(gifts);}
+			@Override
+			public int getSortField() {
+				return 1;
 			}
+			
 			@Override
 			public int size() {
 				return gifts.size();
@@ -667,7 +676,7 @@ public class DonorEditForm extends Composite {
 					data = gift.getDategiven();
 					break;
 				case LETTER:
-					data = gift.isLetter();
+					data = gift.isLetter() ? "Yes" : "No";
 					break;
 				case ENTRY_DATE:
 					data = gift.getDt_entry();
@@ -704,57 +713,9 @@ public class DonorEditForm extends Composite {
 			public void refresh() {
 				gifts = donor.getGifts();
 				Collections.sort(gifts);
+				System.out.println(gifts);
 			}
-
-			@Override
-			public boolean sort(int field) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void setSummaryMode(boolean summaryMode) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public int getSortField() {
-				return 1;
-			}
-
-			@Override
-			public String getFilter() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public void setFilter(String filter) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public boolean getSortAsc() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
 		});
-//		giftTable = new GiftTable(compositeGifts, SWT.NONE, donor);
-//		giftTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,
-//				1));
-//		giftTable.getTable().addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				TableItem[] selection = giftTable.getTable().getSelection();
-//				if (selection.length == 1)
-//					tltmEdit.setEnabled(true);
-//				if (selection.length > 0)
-//					tltmDelete.setEnabled(true);
-//			}
-//		});
 
 		compositeDetails = new Composite(DonorEditForm.this, SWT.NONE);
 		GridLayout gl_compositeDetails = new GridLayout(2, false);
@@ -1148,32 +1109,44 @@ public class DonorEditForm extends Composite {
 	}
 
 	public void editGift(Gift gift) {
-		if (compositeEditForm.getChildren().length != 0) return;
-		final GiftEditForm giftEditForm = new GiftEditForm(compositeEditForm, SWT.NONE, gift);
+		if (cmpEditForm.getChildren().length != 0) return;
+		final GiftEditForm giftEditForm = new GiftEditForm(cmpEditForm, SWT.NONE, gift);
 		giftEditForm.addDisposeListener((DisposeEvent ev) -> {
 			try {
 				if (!giftEditForm.canceled) {
 					donor.addGift(giftEditForm.getGift());
 					setEdited(true);
 				}
-				compositeEditForm.setVisible(false);
-				gd_compositeEditForm.exclude = true;
-				compositeEditForm.layout();
+				cmpEditForm.setVisible(false);
+				gdCmpEditForm.exclude = true;
+				tlbrGifts.setVisible(true);
+				gdTlbrGifts.exclude = false;
+				cmpEditForm.layout();
 				compositeGifts.layout();
-				giftTable.refresh();
-				giftTable.setEnabled(true);
+				tblGifts.refresh();
+				tblGifts.setEnabled(true);
 				tltmNew.setEnabled(true);
+				if (tblGifts.getFirstSelection() != null) {
+					tltmEdit.setEnabled(true);
+					tltmDelete.setEnabled(true);
+				} else {
+					tltmEdit.setEnabled(false);
+					tltmDelete.setEnabled(false);
+				}
 			} catch (SWTException e) {
 			}
 		});
-		compositeEditForm.setVisible(true);
-		gd_compositeEditForm.exclude = false;
-		compositeEditForm.layout();
+		cmpEditForm.setVisible(true);
+		gdCmpEditForm.exclude = false;
+		tlbrGifts.setVisible(false);
+		gdTlbrGifts.exclude = true;
+		cmpEditForm.layout();
 		compositeGifts.layout();
 		giftEditForm.initializePointer();
 		tltmNew.setEnabled(false);
 		tltmEdit.setEnabled(false);
 		tltmDelete.setEnabled(false);
-		giftTable.setEnabled(false);
+		tblGifts.setEnabled(false);
+		
 	}
 }

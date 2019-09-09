@@ -69,4 +69,12 @@ public class Gift implements Comparable<Gift> {
 	public String getRecNum() {
 		return String.format("%06d", recnum);
 	}
+
+	@Override
+	public String toString() {
+		return "Gift [recnum=" + recnum + ", source=" + source + ", note=" + note + ", account=" + account + ", letter="
+				+ letter + ", dt_entry=" + dt_entry + ", dategiven=" + dategiven + ", amount=" + amount + "]";
+	}
+	
+	
 }
