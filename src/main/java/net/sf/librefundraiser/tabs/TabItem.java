@@ -53,7 +53,8 @@ public class TabItem extends Composite {
 		final Color gradBottom = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		final Color gradTop = Util.changeColorBrightness(this.getDisplay(), gradBottom, 25);
 		final Color colorSelectedHighlight = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
-		final Color colorTabLines = Util.changeColorBrightness(TabItem.this.getDisplay(), gradBottom, -50);		final Color colorTabLinesInactive = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
+		final Color colorTabLines = Util.changeColorBrightness(TabItem.this.getDisplay(), gradBottom, -50);		
+//		final Color colorTabLinesInactive = TabItem.this.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND);
 		final Color colorBlack = new Color(TabItem.this.getDisplay(), 0, 0, 0);
 		final Color colorShadow = Util.changeColorBrightness(this.getDisplay(), gradBottom, -20);
 		final Color grayTab = Util.changeColorBrightness(this.getDisplay(), colorShadow, 10);
@@ -75,7 +76,7 @@ public class TabItem extends Composite {
 					e.gc.setBackground(grayTab);
 					e.gc.drawLine(0, gcSize.height-1, gcSize.width, gcSize.height-1);
 				}
-				e.gc.setForeground(selected?colorTabLines:colorTabLinesInactive);
+				e.gc.setForeground(colorTabLines);
 				e.gc.fillPolygon(generateTabShape(gcSize.width, gcSize.height));
 				if (selected) {
 					e.gc.setBackground(colorSelectedHighlight);

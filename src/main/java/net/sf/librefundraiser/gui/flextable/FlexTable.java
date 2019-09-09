@@ -146,7 +146,7 @@ public class FlexTable<T> extends Composite {
 		this.addPaintListener(new PaintListener() {
 			final Color colorEvenRows = getDisplay().getSystemColor(SWT.COLOR_WHITE),
 			colorSelectedRow = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION),
-			colorOddRows = changeSaturation(colorSelectedRow, 0.2f),
+			colorOddRows = changeBrightness(changeSaturation(colorSelectedRow, 0.2f), 35),
 			colorBg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND),
 			colorLines = changeBrightness(colorOddRows, -50),
 			colorSelectedText = getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT),
@@ -246,10 +246,6 @@ public class FlexTable<T> extends Composite {
 						String[] tableHeaders = dataProvider.getHeaders();
 						for (int i = 0; i < tableHeaders.length; i++) {
 							if (i == getHighlightField()) {
-								g.setBackground(colorSelectedRow);
-								g.setAlpha(60);
-								g.fillRectangle(x - scrollX - pad / 2, 0, columnWidths[i], rowHeight + pad);
-								g.setAlpha(255);
 								g.setBackground(colorHeaderText);
 								int b = rowHeight + pad - 2, t = b - 6, center = columnWidths[i] / 2 - pad / 2 - scrollX;
 								if (dataProvider.getSortAsc()) {
@@ -257,6 +253,10 @@ public class FlexTable<T> extends Composite {
 								} else {
 									g.fillPolygon(new int[] {center + x - 6, t + 8, center + x + 6, t + 8, center + x, b + 8});
 								}
+								g.setBackground(colorSelectedRow);
+								g.setAlpha(60);
+								g.fillRectangle(x - scrollX - pad / 2, 0, columnWidths[i], rowHeight + pad);
+								g.setAlpha(255);
 							}
 							g.drawString(String.valueOf(tableHeaders[i]), x - scrollX, rowHeight / 2 + 1, true);
 							x += columnWidths[i];
