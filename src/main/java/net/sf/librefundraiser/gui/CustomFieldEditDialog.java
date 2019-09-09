@@ -76,13 +76,13 @@ public class CustomFieldEditDialog extends Dialog {
 		shell.setLayout(new GridLayout(1, false));
 		
 		Label lblFieldName = new Label(shell, SWT.NONE);
-		lblFieldName.setBounds(0, 0, 49, 13);
+
 		lblFieldName.setText("Field Name");
 		
 		//TODO warn if name exists
 		txtFieldName = new Text(shell, SWT.BORDER);
 		txtFieldName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtFieldName.setBounds(0, 0, 76, 19);
+
 		txtFieldName.setText(editing.getName());
 		txtFieldName.addModifyListener(new ModifyListener() {
 			@Override
@@ -93,12 +93,12 @@ public class CustomFieldEditDialog extends Dialog {
 		});
 		
 		Label lblFieldType = new Label(shell, SWT.NONE);
-		lblFieldType.setBounds(0, 0, 49, 13);
+
 		lblFieldType.setText("Type");
 		
 		comboFieldType = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
 		comboFieldType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboFieldType.setBounds(0, 0, 76, 19);
+
 		comboFieldType.add("");
 		for (CustomField.Type t : CustomField.Type.values()) {
 			comboFieldType.add(t.getName());

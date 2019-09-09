@@ -63,7 +63,7 @@ public class LinkEditForm extends Group {
 		
 		this.setLayout(new GridLayout(1, false));
 		this.setText("Web");
-		this.setBounds(0, 0, 70, 82);
+
 		this.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		
 		compositeLinks = new Composite(this, SWT.NONE);
@@ -99,7 +99,7 @@ public class LinkEditForm extends Group {
 		
 		txtNewAddress = new Text(compositeLinkForm, SWT.BORDER);
 		txtNewAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtNewAddress.setBounds(0, 0, 75, 27);
+
 		
 		Button btnAdd = new Button(compositeLinkForm, SWT.NONE);
 		btnAdd.addSelectionListener(new SelectionAdapter() {

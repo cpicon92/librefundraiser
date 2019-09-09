@@ -82,16 +82,16 @@ public class DatabasePropertiesDialog extends Dialog {
 		grpGeneral.setText("General");
 		
 		Label lblFileName = new Label(grpGeneral, SWT.NONE);
-		lblFileName.setBounds(0, 0, 49, 13);
+
 		lblFileName.setText("File Name");
 		
 		txtFileName = new Text(grpGeneral, SWT.BORDER | SWT.READ_ONLY);
 		txtFileName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtFileName.setBounds(0, 0, 76, 19);
+
 		txtFileName.setText(Main.getDonorDB().getDbPath());
 		
 		Label lblDatabaseName = new Label(grpGeneral, SWT.NONE);
-		lblDatabaseName.setBounds(0, 0, 49, 13);
+
 		lblDatabaseName.setText("Database Name");
 		
 		txtDatabaseName = new Text(grpGeneral, SWT.BORDER);
@@ -102,7 +102,7 @@ public class DatabasePropertiesDialog extends Dialog {
 			}
 		});
 		txtDatabaseName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtDatabaseName.setBounds(0, 0, 76, 19);
+
 		txtDatabaseName.setText(Main.getDonorDB().getDbName());
 		
 		Group grpCustomFields = new Group(shell, SWT.NONE);

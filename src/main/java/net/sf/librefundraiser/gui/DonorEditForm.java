@@ -113,12 +113,12 @@ public class DonorEditForm extends Composite {
 	private final List<Control> customWidgets = new ArrayList<>();
 	private ToolBar tlbrGifts;
 	private GridData gdTlbrGifts;
-	
+
 	private DonorTab donorTab;		
 	public final Donor donor;
 	List<Gift> gifts;
 	private boolean edited = false;
-	
+
 	//ModifyListener sends false positives when comboboxes are dropped
 	private VerifyListener verifyListener = new VerifyListener() {
 		@Override
@@ -184,7 +184,7 @@ public class DonorEditForm extends Composite {
 		lytType.marginBottom = 10;
 		lytType.marginRight = 10;
 		grpType.setLayout(lytType);
-		
+
 		Group grpStatus = new Group(compositeBasic, SWT.NONE);
 		RowLayout lytStatus = new RowLayout(SWT.HORIZONTAL);
 		lytStatus.marginBottom = 10;
@@ -211,11 +211,11 @@ public class DonorEditForm extends Composite {
 		btnBusiness = new Button(grpType, SWT.RADIO);
 		btnBusiness.setText("Business");
 		btnBusiness.addSelectionListener(typeSelect);
-		
+
 		btnNonprofit = new Button(grpType, SWT.RADIO);
 		btnNonprofit.setText("Non-profit");
 		btnNonprofit.addSelectionListener(typeSelect);
-		
+
 		btnOthertype = new Button(grpType, SWT.RADIO);
 		btnOthertype.setText("Other");
 		btnOthertype.addSelectionListener(typeSelect);
@@ -302,58 +302,41 @@ public class DonorEditForm extends Composite {
 
 		Label lblSalutation = new Label(compositeMisc, SWT.NONE);
 		lblSalutation.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSalutation.setBounds(0, 0, 55, 15);
 		lblSalutation.setText("Salutation");
 
 		// TODO:implement proper autosuggest and field filling
 		comboSalutation = new Combo(compositeMisc, SWT.NONE);
 		comboSalutation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboSalutation.setBounds(0, 0, 91, 23);
-
 		Label lblHomePhone = new Label(compositeMisc, SWT.NONE);
 		lblHomePhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblHomePhone.setBounds(0, 0, 55, 15);
 		lblHomePhone.setText("Home Phone");
 
 		txtHomePhone = new Text(compositeMisc, SWT.BORDER);
 		txtHomePhone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtHomePhone.setBounds(0, 0, 76, 21);
-
 		Label lblCategory = new Label(compositeMisc, SWT.NONE);
 		lblCategory.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCategory.setBounds(0, 0, 55, 15);
 		lblCategory.setText("Category");
 
 		comboCategory = new Combo(compositeMisc, SWT.NONE);
 		comboCategory.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboCategory.setBounds(0, 0, 91, 23);
-
 		Label lblWorkPhone = new Label(compositeMisc, SWT.NONE);
 		lblWorkPhone.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblWorkPhone.setBounds(0, 0, 55, 15);
 		lblWorkPhone.setText("Work Phone");
 
 		txtWorkPhone = new Text(compositeMisc, SWT.BORDER);
 		txtWorkPhone.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtWorkPhone.setBounds(0, 0, 76, 21);
-
 		Label lblDonorSource = new Label(compositeMisc, SWT.NONE);
 		lblDonorSource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblDonorSource.setBounds(0, 0, 55, 15);
 		lblDonorSource.setText("Donor Source");
 
 		comboDonorSource = new Combo(compositeMisc, SWT.NONE);
 		comboDonorSource.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		comboDonorSource.setBounds(0, 0, 91, 23);
-
 		Label lblFax = new Label(compositeMisc, SWT.NONE);
 		lblFax.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblFax.setBounds(0, 0, 55, 15);
 		lblFax.setText("Fax");
 
 		txtFax = new Text(compositeMisc, SWT.BORDER);
 		txtFax.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtFax.setBounds(0, 0, 76, 21);
 		compositeMisc.setTabList(new Control[] { comboSalutation,
 				comboCategory, comboDonorSource, txtHomePhone, txtWorkPhone,
 				txtFax });
@@ -382,29 +365,20 @@ public class DonorEditForm extends Composite {
 		txtOptional = new Text(compositeAddress, SWT.BORDER);
 		txtOptional.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				true, 1, 1));
-		txtOptional.setBounds(0, 0, 76, 21);
-
 		Label lblCity = new Label(compositeAddress, SWT.NONE);
 		lblCity.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblCity.setBounds(0, 0, 55, 15);
 		lblCity.setText("City");
 
 		comboCity = new Combo(compositeAddress, SWT.BORDER);
 		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
-		comboCity.setBounds(0, 0, 76, 21);
-
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
 		lblMailingName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
-		lblMailingName.setBounds(0, 0, 55, 15);
 		lblMailingName.setText("Mailing Name");
 
 		comboMailingName = new Combo(compositeAddress, SWT.NONE);
 		comboMailingName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
-		comboMailingName.setBounds(0, 0, 91, 23);
-
 		Label lblState = new Label(compositeAddress, SWT.NONE);
 		lblState.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
-		lblState.setBounds(0, 0, 55, 15);
 		lblState.setText("State/Province");
 
 		String[] states = { "Alabama", "Alaska", "Alberta",
@@ -429,55 +403,43 @@ public class DonorEditForm extends Composite {
 		comboState.setItems(states);
 		comboState.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
 				1, 1));
-		comboState.setBounds(0, 0, 91, 23);
 		new AutoCompleteField(comboState, new ComboContentAdapter(), states);
 
 		Label lblAddress1 = new Label(compositeAddress, SWT.NONE);
 		lblAddress1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
-		lblAddress1.setBounds(0, 0, 55, 15);
 		lblAddress1.setText("Address 1");
 
 		txtAddress1 = new Text(compositeAddress, SWT.BORDER);
 		txtAddress1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				true, 1, 1));
-		txtAddress1.setBounds(0, 0, 76, 21);
-
 		Label lblZip = new Label(compositeAddress, SWT.NONE);
 		lblZip.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
 				1, 1));
-		lblZip.setBounds(0, 0, 55, 15);
 		lblZip.setText("Zip");
 
 		comboZip = new Combo(compositeAddress, SWT.BORDER);
 		comboZip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
 				1, 1));
-		comboZip.setBounds(0, 0, 76, 21);
-
 		Label lblAddress2 = new Label(compositeAddress, SWT.NONE);
 		lblAddress2
-				.setToolTipText("This is the primary address the post office will deliver to. ");
+		.setToolTipText("This is the primary address the post office will deliver to. ");
 		lblAddress2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
-		lblAddress2.setBounds(0, 0, 55, 15);
 		lblAddress2.setText("Address 2");
 
 		txtAddress2 = new Text(compositeAddress, SWT.BORDER);
 		txtAddress2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				true, 1, 1));
-		txtAddress2.setBounds(0, 0, 76, 21);
-
 		Label lblCountry = new Label(compositeAddress, SWT.NONE);
 		lblCountry.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
-		lblCountry.setBounds(0, 0, 55, 15);
 		lblCountry.setText("Country");
 
 		comboCountry = new Combo(compositeAddress, SWT.BORDER);
 		comboCountry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
 				true, 1, 1));
-		comboCountry.setBounds(0, 0, 76, 21);
 		compositeAddress.setTabList(new Control[] { txtOptional,
 				comboMailingName, txtAddress1, txtAddress2, comboCity,
 				comboState, comboZip, comboCountry });
-		
+
 
 		tabFolder = new TabFolder(compositeMain, SWT.NONE);
 		tabFolder.setSelection(0);
@@ -497,26 +459,18 @@ public class DonorEditForm extends Composite {
 		grpEmail.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1,
 				1));
 		grpEmail.setText("Email");
-		grpEmail.setBounds(0, 0, 70, 82);
-
 		Label lblMain = new Label(grpEmail, SWT.NONE);
-		lblMain.setBounds(0, 0, 55, 15);
 		lblMain.setText("Main");
 
 		txtMain = new Text(grpEmail, SWT.BORDER);
 		txtMain.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
 				1, 1));
-		txtMain.setBounds(0, 0, 76, 21);
-
 		Label lblOther = new Label(grpEmail, SWT.NONE);
-		lblOther.setBounds(0, 0, 55, 15);
 		lblOther.setText("Other");
 
 		txtOther = new Text(grpEmail, SWT.BORDER);
 		txtOther.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
 				1, 1));
-		txtOther.setBounds(0, 0, 76, 21);
-
 		grpWeb = new LinkEditForm(compositeOther, SWT.NONE, donor);
 		grpWeb.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -591,7 +545,7 @@ public class DonorEditForm extends Composite {
 		gdCmpEditForm.exclude = true;
 		cmpEditForm.setLayoutData(gdCmpEditForm);
 		cmpEditForm.setLayout(new FillLayout(SWT.HORIZONTAL));
-		
+
 		tblGifts = new FlexTable<>(compositeGifts, SWT.BORDER);
 		tblGifts.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,1));
 		tblGifts.addSelectionListener(new FlexTableSelectionListener<Gift>() {
@@ -618,17 +572,17 @@ public class DonorEditForm extends Composite {
 			public int getSortField() {
 				return 1;
 			}
-			
+
 			@Override
 			public int size() {
 				return gifts.size();
 			}
-			
+
 			@Override
 			public String[] getHeaders() {
 				return headers;
 			}
-			
+
 			@Override
 			public String get(int i, int field) {
 				Gift gift = this.get(i);
@@ -663,17 +617,17 @@ public class DonorEditForm extends Composite {
 				}
 				return String.valueOf(data);
 			}
-			
+
 			@Override
 			public Gift get(int i) {
 				return gifts.get(i);
 			}
-			
+
 			@Override
 			public int columnCount() {
 				return headers.length;
 			}
-			
+
 			@Override
 			public void refresh() {
 				Collections.sort(gifts);
@@ -698,13 +652,11 @@ public class DonorEditForm extends Composite {
 		grpGifts.setText("Gifts");
 
 		Label lblTotalGiven = new Label(grpGifts, SWT.NONE);
-		lblTotalGiven.setBounds(0, 0, 55, 15);
 		lblTotalGiven.setText("Total Given");
 
 		txtTotalGiven = new Text(grpGifts, SWT.BORDER);
 		txtTotalGiven.setEditable(false);
 		txtTotalGiven.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
-		txtTotalGiven.setBounds(0, 0, 76, 21);
 		txtTotalGiven.setData("money");
 
 		Label lblLargestGift = new Label(grpGifts, SWT.NONE);
@@ -778,7 +730,7 @@ public class DonorEditForm extends Composite {
 		compositeCustom = new Composite(tabFolder, SWT.NONE);
 		tbtmCustom.setControl(compositeCustom);
 		compositeCustom.setLayout(new GridLayout(2, false));
-		
+
 		for (CustomField cf : Main.getDonorDB().getCustomFields()) {
 			Label lblCustom = new Label(compositeCustom, SWT.NONE);
 			lblCustom.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
@@ -816,29 +768,29 @@ public class DonorEditForm extends Composite {
 			@Override
 			public void run() {
 				Object[][] toFill = new Object[][] {
-						{ comboCategory, "category1" },
-						{ comboDonorSource, "category2" },
-						{ comboCity, "city" }, { comboZip, "zip" },
-						{ comboCountry, "country" } };
-				for (Object[] data : toFill) {
-					final Combo combo = (Combo) data[0];
-					String dbField = (String) data[1];
-					final String[] previousValues = Main.getDonorDB()
-							.getPreviousDonorValues(dbField).toArray(new String[0]);
-					getDisplay().asyncExec(new Runnable() {
-						@Override
-						public void run() {
-							// temporarily remove modifylistener to prevent tab
-							// from incorrectly being marked as unsaved
-							combo.removeVerifyListener(verifyListener);
-							String prevText = combo.getText();
-							combo.setItems(previousValues);
-							new AutoCompleteField(combo, new ComboContentAdapter(), previousValues);
-							combo.setText(prevText);
-							combo.addVerifyListener(verifyListener);
-						}
-					});
-				}
+					{ comboCategory, "category1" },
+					{ comboDonorSource, "category2" },
+					{ comboCity, "city" }, { comboZip, "zip" },
+					{ comboCountry, "country" } };
+					for (Object[] data : toFill) {
+						final Combo combo = (Combo) data[0];
+						String dbField = (String) data[1];
+						final String[] previousValues = Main.getDonorDB()
+								.getPreviousDonorValues(dbField).toArray(new String[0]);
+						getDisplay().asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								// temporarily remove modifylistener to prevent tab
+								// from incorrectly being marked as unsaved
+								combo.removeVerifyListener(verifyListener);
+								String prevText = combo.getText();
+								combo.setItems(previousValues);
+								new AutoCompleteField(combo, new ComboContentAdapter(), previousValues);
+								combo.setText(prevText);
+								combo.addVerifyListener(verifyListener);
+							}
+						});
+					}
 			}
 		}).start();
 		this.fillForm();
@@ -851,7 +803,7 @@ public class DonorEditForm extends Composite {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
-	
+
 	private void attachModifyListeners() {
 		txtFirstName.addVerifyListener(verifyListener);
 		txtLastName.addVerifyListener(verifyListener); 
@@ -917,7 +869,7 @@ public class DonorEditForm extends Composite {
 		comboMailingName.setText(donor.data.getMailname()); 
 		comboState.setText(donor.data.getState());
 		txtAccountID.setText(donor.getAccountNum());
-		
+
 		GiftStats gs = donor.getGiftStats();
 		txtTotalGiven.setText(gs.getAllTime() != null ? String.valueOf(gs.getAllTime()) : "N/A"); 
 		txtYearToDate.setText(gs.getYearToDt() != null ? String.valueOf(gs.getYearToDt()) : "N/A");
@@ -925,7 +877,7 @@ public class DonorEditForm extends Composite {
 		txtFirstGiftDate.setText(gs.getFirstGift() != null ? Main.getDateFormat().format(gs.getFirstGift()) : "Never");
 		txtLastGiftAmt.setText(gs.getLastAmt() != null ? String.valueOf(gs.getLastAmt()) : "N/A");
 		txtLastGiftDate.setText(gs.getLastGiveDt() != null ? Main.getDateFormat().format(gs.getLastGiveDt()) : "Never");
-		
+
 		for (Control w : customWidgets) {
 			String field = (String) w.getData();
 			Object fieldValue = donor.data.getCustom(field);
@@ -964,7 +916,7 @@ public class DonorEditForm extends Composite {
 		//update the changeDate field and Last Edited
 		donor.data.setChangedate(new Date());
 		txtLastEdited.setText(dateFormat.format(donor.data.getChangedate()));
-		
+
 		donor.data.setFirstname(txtFirstName.getText());
 		donor.data.setLastname(txtLastName.getText()); 
 		donor.data.setSpousefrst(txtSpouseFirst.getText());
@@ -986,9 +938,9 @@ public class DonorEditForm extends Composite {
 		donor.data.setSource(comboDonorSource.getText());
 		donor.data.setMailname(comboMailingName.getText()); 
 		donor.data.setState(comboState.getText());
-		
+
 		grpWeb.saveLinks();
-		
+
 		for (Control w : customWidgets) {
 			String field = (String) w.getData();
 			try {
@@ -1005,10 +957,10 @@ public class DonorEditForm extends Composite {
 				new RuntimeException("Cannot save custom field " + field, e).printStackTrace();
 			}
 		}
-		
+
 		donor.clearGifts();
 		donor.addGifts(gifts);
-		
+
 		Main.getDonorDB().saveDonor(this.donor);
 		if (refresh) Main.getWindow().refresh();
 		this.fillForm();
@@ -1103,6 +1055,6 @@ public class DonorEditForm extends Composite {
 		tltmEdit.setEnabled(false);
 		tltmDelete.setEnabled(false);
 		tblGifts.setEnabled(false);
-		
+
 	}
 }

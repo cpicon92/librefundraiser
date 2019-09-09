@@ -83,7 +83,7 @@ public class NewDatabaseWizard {
 			compositeBanner.setBackgroundMode(SWT.INHERIT_DEFAULT);
 			compositeBanner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			compositeBanner.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			compositeBanner.setBounds(0, 0, 64, 64);
+
 			compositeBanner.setLayout(new GridLayout(2, false));
 
 			Label lblFirstStart = new Label(compositeBanner, SWT.SHADOW_NONE);
@@ -97,7 +97,7 @@ public class NewDatabaseWizard {
 
 			Label lblLogo = new Label(compositeBanner, SWT.NONE);
 			lblLogo.setImage(ResourceManager.getLogo(48));
-			lblLogo.setBounds(0, 0, 49, 13);
+
 
 			new Label(compositeFirstPage, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -112,22 +112,22 @@ public class NewDatabaseWizard {
 
 			Label lblThisAppearsTo = new Label(compositeMain, SWT.WRAP);
 			lblThisAppearsTo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			lblThisAppearsTo.setBounds(0, 0, 49, 13);
+
 			lblThisAppearsTo.setText("This appears to be the first time you are running LibreFundraiser. Before you begin, we have to make a database to store your donors. \r\n\r\nWould you like to use a local database (saved in a file), or a remote one (requires extra setup)? ");
 
 			final Button btnLocalDatabase = new Button(compositeMain, SWT.RADIO);
 			btnLocalDatabase.setSelection(true);
-			btnLocalDatabase.setBounds(0, 0, 83, 16);
+
 			btnLocalDatabase.setText("Create new local database, or import from Fundraiser Basic");
 			final Object[] currentSelection = {btnLocalDatabase};
 
 			final Button btnExistingLocalDatabase = new Button(compositeMain, SWT.RADIO);
-			btnExistingLocalDatabase.setBounds(0, 0, 134, 16);
+
 			btnExistingLocalDatabase.setText("Use existing local database");
 			
 
 			Composite compositeBrowse = new Composite(compositeMain, SWT.NONE);
-			compositeBrowse.setBounds(0, 0, 64, 64);
+
 			GridLayout gl_compositeBrowse = new GridLayout(2, false);
 			gl_compositeBrowse.marginLeft = 15;
 			gl_compositeBrowse.marginHeight = 0;
@@ -138,7 +138,7 @@ public class NewDatabaseWizard {
 			GridData gd_txtFilename = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 			gd_txtFilename.widthHint = 200;
 			txtFilename.setLayoutData(gd_txtFilename);
-			txtFilename.setBounds(0, 0, 76, 19);
+
 
 			final Button btnBrowse = new Button(compositeBrowse, SWT.NONE);
 			btnBrowse.setEnabled(false);
@@ -146,7 +146,7 @@ public class NewDatabaseWizard {
 
 			final Button btnRemoteDatabase = new Button(compositeMain, SWT.RADIO);
 			btnRemoteDatabase.setEnabled(false);
-			btnRemoteDatabase.setBounds(0, 0, 83, 16);
+
 			btnRemoteDatabase.setText("Connect to remote database");
 
 			new Label(compositeFirstPage, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -184,7 +184,7 @@ public class NewDatabaseWizard {
 					}
 				}
 			});
-			btnNext.setBounds(0, 0, 68, 23);
+
 			btnNext.setText("Next >");
 			
 			btnBrowse.addSelectionListener(new SelectionAdapter() {
@@ -246,7 +246,7 @@ public class NewDatabaseWizard {
 			compositeBanner.setBackgroundMode(SWT.INHERIT_DEFAULT);
 			compositeBanner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			compositeBanner.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			compositeBanner.setBounds(0, 0, 64, 64);
+
 			compositeBanner.setLayout(new GridLayout(2, false));
 
 			Label lblFirstStart = new Label(compositeBanner, SWT.SHADOW_NONE);
@@ -260,7 +260,7 @@ public class NewDatabaseWizard {
 
 			Label lblLogo = new Label(compositeBanner, SWT.NONE);
 			lblLogo.setImage(ResourceManager.getLogo(48));
-			lblLogo.setBounds(0, 0, 49, 13);
+
 
 			new Label(compositeLocalDbPage, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
@@ -275,11 +275,11 @@ public class NewDatabaseWizard {
 
 			Label lblThisAppearsTo = new Label(compositeMain, SWT.WRAP);
 			lblThisAppearsTo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			lblThisAppearsTo.setBounds(0, 0, 49, 13);
+
 			lblThisAppearsTo.setText("Please select the location for your new database");
 
 			Composite compositeBrowse = new Composite(compositeMain, SWT.NONE);
-			compositeBrowse.setBounds(0, 0, 64, 64);
+
 			GridLayout gl_compositeBrowse = new GridLayout(2, false);
 			gl_compositeBrowse.marginLeft = 15;
 			gl_compositeBrowse.marginHeight = 0;
@@ -289,7 +289,7 @@ public class NewDatabaseWizard {
 			GridData gd_txtFilename = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 			gd_txtFilename.widthHint = 200;
 			txtFilename.setLayoutData(gd_txtFilename);
-			txtFilename.setBounds(0, 0, 76, 19);
+
 
 			final Button btnBrowse = new Button(compositeBrowse, SWT.NONE);
 			btnBrowse.setText("Browse...");
@@ -300,7 +300,7 @@ public class NewDatabaseWizard {
 
 			final Button btnBlankDb = new Button(compositeMain, SWT.RADIO);
 			btnBlankDb.setSelection(true);
-			btnBlankDb.setBounds(0, 0, 83, 16);
+
 			btnBlankDb.setText("Create a blank database");
 			final Object[] currentSelection = {btnBlankDb};
 			
@@ -313,7 +313,7 @@ public class NewDatabaseWizard {
 			gd_compositeBrowseImport.minimumHeight = 55;
 			gd_compositeBrowseImport.verticalIndent = -10;
 			compositeBrowseImport.setLayoutData(gd_compositeBrowseImport);
-			compositeBrowseImport.setBounds(0, 0, 64, 64);
+
 			GridLayout gl_compositeBrowseImport = new GridLayout(2, false);
 			gl_compositeBrowseImport.marginLeft = 15;
 			gl_compositeBrowseImport.marginHeight = 0;
@@ -327,7 +327,7 @@ public class NewDatabaseWizard {
 			GridData gd_txtFilenameImport = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 			gd_txtFilenameImport.widthHint = 200;
 			txtFilenameImport.setLayoutData(gd_txtFilenameImport);
-			txtFilenameImport.setBounds(0, 0, 76, 19);
+
 
 			final Button btnBrowseImport = new Button(compositeBrowseImport, SWT.NONE);
 			btnBrowseImport.setEnabled(false);
@@ -401,7 +401,7 @@ public class NewDatabaseWizard {
 					}
 				}
 			});
-			btnFinish.setBounds(0, 0, 68, 23);
+
 			btnFinish.setText("Finish");
 			btnFinish.setEnabled(false);
 			

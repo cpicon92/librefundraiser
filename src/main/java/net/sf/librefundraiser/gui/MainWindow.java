@@ -412,7 +412,7 @@ public class MainWindow {
 		mntmAbout.setText("About...");
 
 		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
-		toolBar.setBounds(0, 0, 80, 21);
+
 
 		ToolItem tltmNewDonor = new ToolItem(toolBar, SWT.NONE);
 		tltmNewDonor.addSelectionListener(new SelectionAdapter() {
