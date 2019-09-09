@@ -15,6 +15,7 @@ public class DonorTab extends TabItem {
 	Rectangle closeRect = new Rectangle(0, 0, 0, 0);
 	public static final Image unedited = ResourceManager.getIcon("donor-tab.png");
 	public static final Image edited = ResourceManager.getIcon("donor-tab_edited.png");
+	private Runnable saveAction;
 	
 	public DonorTab(int id, TabFolder tabFolder) {
 		super(tabFolder, SWT.NONE);
@@ -39,18 +40,21 @@ public class DonorTab extends TabItem {
 	public Donor getDonor() {
 		return donor;
 	}
-
-	public void alterSaveButton() {
-		if (this.isDisposed()) return;
-		DonorEditForm form = ((DonorEditForm)this.getControl());
-		form.setEdited(form.isEdited());
-	}
 	
 	public void save(boolean refresh) {
 		DonorEditForm form = ((DonorEditForm)this.getControl());
 		if (form.isEdited()) {
 			form.saveForm(refresh);
 		}
+	}
+
+	public Runnable getSaveAction() {
+		return saveAction;
+	}
+
+	public void setSaveAction(Runnable saveAction) {
+		this.saveAction = saveAction;
+		Main.getWindow().setSaveAction(saveAction);
 	}
 	
 }

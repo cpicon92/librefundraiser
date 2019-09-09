@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MenuAdapter;
@@ -54,7 +55,7 @@ public class MainWindow {
 	private ToolItem tltmSave;
 	private DonorTabFolder donorTabFolder;
 	private Display display;
-	private Runnable saveCurrent;
+	private Runnable saveAction;
 	private DonorTable donorTable;
 	//TODO fix sash so that it cannot be opened by dragging when there are no donors
 	private SashForm mainPanel;
@@ -67,6 +68,7 @@ public class MainWindow {
 		createContents();
 		shell.open();
 		shell.layout();
+		registerHotkeys();
 		if (importDb != null) {
 			Main.importFromFRBW(Display.getDefault(), shell, this, importDb);
 		}
@@ -362,8 +364,8 @@ public class MainWindow {
 		mntmSaveCurrentDonor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (saveCurrent == null) return;
-				saveCurrent.run();
+				if (saveAction == null) return;
+				saveAction.run();
 			}
 		});
 		menuDatabase.addMenuListener(new MenuAdapter() {
@@ -372,7 +374,7 @@ public class MainWindow {
 				mntmSaveCurrentDonor.setEnabled(tltmSave.getEnabled());
 			}
 		});
-		mntmSaveCurrentDonor.setText("Save Current Donor");
+		mntmSaveCurrentDonor.setText("Save Current Donor\t" + (SystemUtils.IS_OS_MAC ? "\u2318" : "Ctrl") + "S");
 
 		MenuItem mntmSaveAllDonors = new MenuItem(menuDatabase, SWT.NONE);
 		mntmSaveAllDonors.addSelectionListener(new SelectionAdapter() {
@@ -381,7 +383,7 @@ public class MainWindow {
 				((DonorTabFolder)donorTabFolder).saveAll();
 			}
 		});
-		mntmSaveAllDonors.setText("Save All Donors");
+		mntmSaveAllDonors.setText("Save All Donors\t" + (SystemUtils.IS_OS_MAC ? "\u2318" : "Ctrl") + "+Shift+S");
 		
 		new MenuItem(menuDatabase, SWT.SEPARATOR);
 		
@@ -409,10 +411,6 @@ public class MainWindow {
 		});
 		mntmAbout.setText("About...");
 
-//		Composite compositeToolbar = new Composite(shell, SWT.NONE);
-//		compositeToolbar.setLayout(new GridLayout(3, false));
-//		compositeToolbar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
 		ToolBar toolBar = new ToolBar(shell, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(0, 0, 80, 21);
 
@@ -433,8 +431,8 @@ public class MainWindow {
 		tltmSave.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (saveCurrent == null) return;
-				saveCurrent.run();
+				if (saveAction == null) return;
+				saveAction.run();
 			}
 		});
 		new ToolItem(toolBar, SWT.SEPARATOR);
@@ -493,11 +491,23 @@ public class MainWindow {
 		mainPanel.setWeights(new int[] {1, 0});
 
 	}
-	public ToolItem getSaveButton() {
-		return tltmSave;
-	}
-	public void setSaveAction(Runnable r) {
-		saveCurrent = r;
+
+	private void registerHotkeys() {
+		display.addFilter(SWT.KeyDown, (Event e) -> {
+			boolean ctrl = ((e.stateMask & SWT.CTRL) != 0),
+					shift = ((e.stateMask & SWT.SHIFT) != 0);
+			if (ctrl && shift && e.keyCode == 's') {
+				//save all
+				e.doit = false;
+				((DonorTabFolder)donorTabFolder).saveAll();
+			} else if (ctrl && e.keyCode == 's') {
+				//save
+				e.doit = false;
+				if (saveAction == null) return;
+				saveAction.run();
+			}
+
+		});		
 	}
 
 	public void importFRBW() {
@@ -514,10 +524,15 @@ public class MainWindow {
 		Main.importFromFRBW(display, shell, this, path);
 		mainPanel.setWeights(new int[] {1, 0});
 	}
+	
+	public void setSaveAction(Runnable r) {
+		tltmSave.setEnabled(r != null);
+		saveAction = r;
+	}
+	
 	public DonorTabFolder getCompositeDonorList() {
 		return (DonorTabFolder) donorTabFolder;
 	}
-
 
 	public void refresh() {
 		donorTable.refresh();

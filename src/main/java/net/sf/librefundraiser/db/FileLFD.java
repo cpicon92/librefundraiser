@@ -292,19 +292,6 @@ public class FileLFD {
 		this.writeAll();
 	}
 
-	public void deleteGift(int recnum) {
-		for (Donor donor : this.donors) {
-			for (Iterator<Gift> iter = donor.getGifts().iterator(); iter.hasNext();) {
-				Gift gift = iter.next();
-				if (gift.recnum == recnum) iter.remove();
-			}
-		}
-	}
-
-	public void refreshGifts(Donor donor) {
-
-	}
-
 	public String getDbName() {
 		String name = getDbInfo("name");
 		return name == null ? "" : name;

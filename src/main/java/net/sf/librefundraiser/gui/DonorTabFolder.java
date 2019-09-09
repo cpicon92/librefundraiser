@@ -47,9 +47,9 @@ public class DonorTabFolder extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				TabItem t = tabFolder.getSelection();
 				if (!t.getClass().equals(DonorTab.class)) {
-					Main.getWindow().getSaveButton().setEnabled(false);
+					Main.getWindow().setSaveAction(null);
 				} else {
-					((DonorTab)t).alterSaveButton();
+					Main.getWindow().setSaveAction(((DonorTab)t).getSaveAction());
 				}
 			}
 		});
@@ -82,9 +82,9 @@ public class DonorTabFolder extends Composite {
 		}
 		TabItem t = tabFolder.getSelection();
 		if (!t.getClass().equals(DonorTab.class)) {
-			Main.getWindow().getSaveButton().setEnabled(false);
+			Main.getWindow().setSaveAction(null);
 		} else {
-			((DonorTab)t).alterSaveButton();
+			Main.getWindow().setSaveAction(((DonorTab)t).getSaveAction());
 		}
 		Main.getWindow().refresh();
 	}

@@ -58,11 +58,23 @@ public class Donor {
 	}
 	
 	public List<Gift> getGifts() {
-		return new ArrayList<>(gifts.values());
+		List<Gift> copy = new ArrayList<>(gifts.size());
+		for (Gift g : gifts.values()) {
+			copy.add(g.copy());
+		}
+		return copy;
 	}
 	
 	public Gift getGift(int recnum) {
 		return this.gifts.get(recnum);
+	}
+	
+	public void deleteGift(int recnum) {
+		this.gifts.remove(recnum);
+	}
+	
+	public void deleteGift(Gift g) {
+		this.deleteGift(g.recnum);
 	}
 	
 	public int getId() {

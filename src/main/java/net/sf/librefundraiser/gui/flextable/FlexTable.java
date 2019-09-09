@@ -379,6 +379,16 @@ public class FlexTable<T> extends Composite {
 		return selection;
 	}
 	
+
+	public int getSelectionCount() {
+		if (firstSelectedRow < 0 || lastSelectedRow < 0) return 0;
+		return lastSelectedRow - firstSelectedRow + 1;
+	}
+
+	public void setSelection(int i) {
+		firstSelectedRow = lastSelectedRow = i;
+	}
+	
 	public void refresh() {
 		new Thread("FlexTable Refresh"){
 			public void run() {
@@ -406,11 +416,6 @@ public class FlexTable<T> extends Composite {
 
 	public void setMultiple(boolean multiple) {
 		this.multiple = multiple;
-	}
-
-	public int getSelectionCount() {
-		if (firstSelectedRow < 0 || lastSelectedRow < 0) return 0;
-		return lastSelectedRow - firstSelectedRow + 1;
 	}
 
 	public boolean isSummaryMode() {

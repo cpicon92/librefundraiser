@@ -76,5 +76,15 @@ public class Gift implements Comparable<Gift> {
 				+ letter + ", dt_entry=" + dt_entry + ", dategiven=" + dategiven + ", amount=" + amount + "]";
 	}
 	
-	
+	public Gift copy() {
+		Gift copy = new Gift(recnum);
+		copy.account = account;
+		copy.amount = amount;
+		copy.dategiven = dategiven;
+		copy.dt_entry = dt_entry;
+		copy.letter = letter;
+		copy.note = note;
+		copy.source = source;
+		return copy;
+	}
 }

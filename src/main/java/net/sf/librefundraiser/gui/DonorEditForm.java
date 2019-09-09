@@ -71,7 +71,6 @@ public class DonorEditForm extends Composite {
 	private Text txtLastGiftAmt;
 	private Text txtLastGiftDate;
 	private Text txtLastEdited;
-	public final Donor donor;
 	private Type businessType;
 	private Combo comboSalutation;
 	private Combo comboCategory;
@@ -93,27 +92,6 @@ public class DonorEditForm extends Composite {
 	private Label lblOptional;
 	private Label lblContact;
 	private Composite compositeOptional;
-	private DonorTab donorTab;
-	private boolean edited = false;
-	//ModifyListener sends false positives when comboboxes are dropped
-	private VerifyListener verifyListener = new VerifyListener() {
-		@Override
-		public void verifyText(VerifyEvent e) {
-			DonorEditForm.this.setEdited(true);
-		}
-	};
-	private ModifyListener modifyListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			DonorEditForm.this.setEdited(true);
-		}
-	};
-	private SelectionListener verifyBtnListener = new SelectionAdapter() {
-		@Override
-		public void widgetSelected(SelectionEvent e) {
-			DonorEditForm.this.setEdited(true);
-		}
-	};
 	private Text txtAccountID;
 	private Composite cmpEditForm;
 	private GridData gdCmpEditForm;
@@ -137,6 +115,31 @@ public class DonorEditForm extends Composite {
 	private final List<Control> customWidgets = new ArrayList<>();
 	private ToolBar tlbrGifts;
 	private GridData gdTlbrGifts;
+	
+	private DonorTab donorTab;		
+	public final Donor donor;
+	List<Gift> gifts;
+	private boolean edited = false;
+	
+	//ModifyListener sends false positives when comboboxes are dropped
+	private VerifyListener verifyListener = new VerifyListener() {
+		@Override
+		public void verifyText(VerifyEvent e) {
+			DonorEditForm.this.setEdited(true);
+		}
+	};
+	private ModifyListener modifyListener = new ModifyListener() {
+		@Override
+		public void modifyText(ModifyEvent e) {
+			DonorEditForm.this.setEdited(true);
+		}
+	};
+	private SelectionListener verifyBtnListener = new SelectionAdapter() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			DonorEditForm.this.setEdited(true);
+		}
+	};
 
 	/**
 	 * Create the composite.
@@ -148,6 +151,9 @@ public class DonorEditForm extends Composite {
 		super(parent, style);
 		this.donorTab = donorTab;
 		this.donor = donorTab.getDonor();
+		this.gifts = donor.getGifts();			
+		//TODO make sortable on things other than date
+		Collections.sort(gifts);
 
 		mainGrid = new GridLayout(2, true);
 		mainGrid.marginHeight = 0;
@@ -228,8 +234,7 @@ public class DonorEditForm extends Composite {
 		gl_compositeIndvNames.marginRight = -5;
 		gl_compositeIndvNames.marginLeft = -5;
 		compositeIndvNames.setLayout(gl_compositeIndvNames);
-		compositeIndvNames.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				true,false, 1, 1));
+		compositeIndvNames.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,	true,false, 1, 1));
 
 		Label lblFirstName = new Label(compositeIndvNames, SWT.NONE);
 		lblFirstName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,false, 1, 1));
@@ -293,8 +298,7 @@ public class DonorEditForm extends Composite {
 		sep.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,false, 1, 1));
 
 		Composite compositeMisc = new Composite(compositeMain, SWT.NONE);
-		GridData gd_compositeMisc = new GridData(SWT.CENTER, SWT.CENTER, true,
-				false, 1, 1);
+		GridData gd_compositeMisc = new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1);
 		gd_compositeMisc.widthHint = 800;
 		compositeMisc.setLayoutData(gd_compositeMisc);
 		compositeMisc.setLayout(new GridLayout(4, false));
@@ -422,14 +426,12 @@ public class DonorEditForm extends Composite {
 		txtOptional.setBounds(0, 0, 76, 21);
 
 		Label lblCity = new Label(compositeAddress, SWT.NONE);
-		lblCity.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,
-				1, 1));
+		lblCity.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblCity.setBounds(0, 0, 55, 15);
 		lblCity.setText("City");
 
 		comboCity = new Combo(compositeAddress, SWT.BORDER);
-		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
-				1, 1));
+		comboCity.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboCity.setBounds(0, 0, 76, 21);
 
 		Label lblMailingName = new Label(compositeAddress, SWT.NONE);
@@ -438,8 +440,7 @@ public class DonorEditForm extends Composite {
 		lblMailingName.setText("Mailing Name");
 
 		comboMailingName = new Combo(compositeAddress, SWT.NONE);
-		comboMailingName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				true, 1, 1));
+		comboMailingName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1));
 		comboMailingName.setBounds(0, 0, 91, 23);
 
 		Label lblState = new Label(compositeAddress, SWT.NONE);
@@ -583,7 +584,7 @@ public class DonorEditForm extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
 				gift.setAccount(donor.id);
-				editGift(gift);
+				editGift(gift, true);
 			}
 		});
 		tltmNew.setImage(ResourceManager.getIcon("new-gift.png"));
@@ -596,7 +597,7 @@ public class DonorEditForm extends Composite {
 		tltmEdit.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				editGift(tblGifts.getFirstSelection());
+				editGift(tblGifts.getFirstSelection(), false);
 			}
 		});
 		tltmEdit.setImage(ResourceManager.getIcon("edit-gift.png"));
@@ -606,11 +607,12 @@ public class DonorEditForm extends Composite {
 		tltmDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Main.getDonorDB().deleteGift(tblGifts.getFirstSelection().recnum);
-				Main.getDonorDB().refreshGifts(donor);
+				gifts.remove(tblGifts.getFirstSelection());
 				tblGifts.refresh();
+				tblGifts.setSelection(-1);
 				tltmDelete.setEnabled(false);
 				tltmEdit.setEnabled(false);
+				setEdited(true);
 			}
 		});
 		tltmDelete.setImage(ResourceManager.getIcon("delete-gift.png"));
@@ -639,16 +641,13 @@ public class DonorEditForm extends Composite {
 			}
 			@Override
 			public void widgetDefaultSelected(FlexTableSelectionEvent<Gift> e) {
-				editGift(tblGifts.getFirstSelection());
+				editGift(tblGifts.getFirstSelection(), false);
 			}
 		});
 		tblGifts.setDataProvider(new FlexTableDataAdapter<Gift>() {
 			final String[] headers = {"Amount", "Date Given", "Letter", "Entry Date", "Gift Source", "Note", "Record Number"};
 			final int AMOUNT = 0, DATE_GIVEN = 1, LETTER = 2, ENTRY_DATE = 3, GIFT_SOURCE = 4, NOTE = 5, RECORD_NUMBER = 6;
-			List<Gift> gifts = donor.getGifts();
-			
-			//TODO make sortable on things other than date
-			{Collections.sort(gifts);}
+
 			@Override
 			public int getSortField() {
 				return 1;
@@ -711,9 +710,7 @@ public class DonorEditForm extends Composite {
 			
 			@Override
 			public void refresh() {
-				gifts = donor.getGifts();
 				Collections.sort(gifts);
-				System.out.println(gifts);
 			}
 		});
 
@@ -1043,6 +1040,9 @@ public class DonorEditForm extends Composite {
 			}
 		}
 		
+		donor.clearGifts();
+		donor.addGifts(gifts);
+		
 		Main.getDonorDB().saveDonor(this.donor);
 		if (refresh) Main.getWindow().refresh();
 		this.fillForm();
@@ -1095,26 +1095,16 @@ public class DonorEditForm extends Composite {
 			tabTitle = donor.getAccountNum();
 		donorTab.setText((edited ? "*" : "") + tabTitle);
 		donorTab.setImage(edited ? DonorTab.edited : DonorTab.unedited);
-		ToolItem saveButton = Main.getWindow().getSaveButton();
-		saveButton.setEnabled(edited);
-		if (edited) {
-			final DonorEditForm me = this;
-			Main.getWindow().setSaveAction(new Runnable() {
-				@Override
-				public void run() {
-					me.saveForm(true);
-				}
-			});
-		}
+		donorTab.setSaveAction(edited ? () -> this.saveForm(true) : null);
 	}
 
-	public void editGift(Gift gift) {
+	public void editGift(Gift gift, boolean isNew) {
 		if (cmpEditForm.getChildren().length != 0) return;
 		final GiftEditForm giftEditForm = new GiftEditForm(cmpEditForm, SWT.NONE, gift);
 		giftEditForm.addDisposeListener((DisposeEvent ev) -> {
 			try {
 				if (!giftEditForm.canceled) {
-					donor.addGift(giftEditForm.getGift());
+					if (isNew) gifts.add(gift);
 					setEdited(true);
 				}
 				cmpEditForm.setVisible(false);
