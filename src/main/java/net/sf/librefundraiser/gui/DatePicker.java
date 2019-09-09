@@ -12,8 +12,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.librefundraiser.ResourceManager;
-
+import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -39,6 +38,8 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import net.sf.librefundraiser.ResourceManager;
 
 public class DatePicker extends Composite {
 	private Text txtDate;
@@ -277,10 +278,14 @@ public class DatePicker extends Composite {
 		DateTime calendar;
 		private final Date initial;
 		private boolean focused = false;
+		final int width, height;
 		public CalendarPopup(Shell parent, DatePicker sibling, Date initial) {
 			super(parent, PopupDialog.HOVER_SHELLSTYLE, false, false, false, false, false, null, null);
 			this.setSibling(sibling);
 			this.initial = initial;
+			boolean unix = SystemUtils.IS_OS_UNIX && !SystemUtils.IS_OS_MAC;
+			width = unix ? 240 : 220;
+			height = unix ? 230 : 180;
 		}
 		@Override
 		protected Control createDialogArea(Composite parent) {
@@ -337,7 +342,7 @@ public class DatePicker extends Composite {
 		protected void adjustBounds() {
 			Point siblingPosition = this.getSibling().toDisplay(0, 0);
 			Rectangle siblingBounds = this.getSibling().getBounds();
-			this.getShell().setBounds(siblingPosition.x, siblingPosition.y + siblingBounds.height, 220, 180);
+			this.getShell().setBounds(siblingPosition.x, siblingPosition.y + siblingBounds.height, width, height);
 		}
 
 		public DatePicker getSibling() {

@@ -18,6 +18,7 @@ dependencies {
 	
 	compile "com.google.code.gson:gson:2.8.5"
 	compile "org.tukaani:xz:1.8"
+	compile "org.apache.commons:commons-lang3:3.9"
 	compile "org.apache.commons:commons-csv:1.7"
 	compile "com.github.DANS-KNAW:dans-dbf-lib:fc27711"
 	compile "org.jopendocument:jOpenDocument:1.3"

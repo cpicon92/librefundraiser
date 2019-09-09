@@ -390,6 +390,7 @@ public class FlexTable<T> extends Composite {
 			public void run() {
 				dataProvider.refresh();
 				getDisplay().asyncExec(() -> {
+					if (FlexTable.this.isDisposed()) return;
 					FlexTable.this.dirty = true;
 					FlexTable.this.redraw();
 				});
