@@ -9,12 +9,31 @@ import java.util.List;
 import java.util.Map;
 
 public class Donor {
-	public final DonorData data = new DonorData();
+	public final DonorData data;
 	private final Map<Integer,Gift> gifts = new HashMap<>();
-	public final int id;
+	public final int id; //TODO make id a long
 	
 	public Donor(int id) {
 		this.id = id;
+		data = new DonorData();
+	}
+	
+	public Donor(int id, DonorData data, Map<Integer, Gift> gifts) {
+		this.id = id;
+		this.data = data;
+		this.gifts.putAll(gifts);
+	}
+	
+	public Donor(int id, DonorData data, Collection<Gift> gifts) {
+		this.id = id;
+		this.data = data;
+		for (Gift g : gifts) {
+			this.gifts.put(g.recnum, g);
+		}
+	}
+	
+	public Donor(int id, Donor donor) {
+		this(id, donor.data, donor.gifts);
 	}
 	
 	@Deprecated
@@ -57,6 +76,10 @@ public class Donor {
 		}
 	}
 	
+	public int giftCount() {
+		return gifts.size();
+	}
+	
 	public List<Gift> getGifts() {
 		List<Gift> copy = new ArrayList<>(gifts.size());
 		for (Gift g : gifts.values()) {
@@ -75,10 +98,6 @@ public class Donor {
 	
 	public void deleteGift(Gift g) {
 		this.deleteGift(g.recnum);
-	}
-	
-	public int getId() {
-		return id;
 	}
 	
 	public String getAccountNum() {

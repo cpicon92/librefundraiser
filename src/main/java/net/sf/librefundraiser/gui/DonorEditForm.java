@@ -115,7 +115,7 @@ public class DonorEditForm extends Composite {
 	private GridData gdTlbrGifts;
 
 	private DonorTab donorTab;		
-	public final Donor donor;
+	public Donor donor;
 	List<Gift> gifts;
 	private boolean edited = false;
 
@@ -500,9 +500,10 @@ public class DonorEditForm extends Composite {
 
 		tltmNew = new ToolItem(tlbrGifts, SWT.NONE);
 		tltmNew.addSelectionListener(new SelectionAdapter() {
+			int lowest = -1;
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Gift gift = new Gift(Main.getDonorDB().getUniqueRecNum());
+				Gift gift = new Gift(lowest--);
 				gift.setAccount(donor.id);
 				editGift(gift, true);
 			}
@@ -607,7 +608,7 @@ public class DonorEditForm extends Composite {
 					data = gift.getNote();
 					break;
 				case RECORD_NUMBER:
-					data = gift.getRecNum();
+					data = gift.recnum < 0 ? "N/A (unsaved)" : gift.getRecNum();
 					break;
 				default:
 					data = "Missing Data";
@@ -868,7 +869,7 @@ public class DonorEditForm extends Composite {
 		comboDonorSource.setText(donor.data.getSource());
 		comboMailingName.setText(donor.data.getMailname()); 
 		comboState.setText(donor.data.getState());
-		txtAccountID.setText(donor.getAccountNum());
+		txtAccountID.setText(donor.id < 0 ? "N/A (unsaved)" : donor.getAccountNum());
 
 		GiftStats gs = donor.getGiftStats();
 		txtTotalGiven.setText(gs.getAllTime() != null ? String.valueOf(gs.getAllTime()) : "N/A"); 
@@ -961,7 +962,8 @@ public class DonorEditForm extends Composite {
 		donor.clearGifts();
 		donor.addGifts(gifts);
 
-		Main.getDonorDB().saveDonor(this.donor);
+		this.donor = Main.getDonorDB().saveDonor(this.donor);
+		this.gifts = this.donor.getGifts();
 		if (refresh) Main.getWindow().refresh();
 		this.fillForm();
 		this.setEdited(false);
@@ -1009,8 +1011,7 @@ public class DonorEditForm extends Composite {
 		String tabTitle = lastname
 				+ (!(lastname.equals("") || firstname.equals("")) ? ", " : "")
 				+ firstname;
-		if (tabTitle.equals(""))
-			tabTitle = donor.getAccountNum();
+		if (tabTitle.equals("")) tabTitle = donor.id < 0 ? "New Donor" : donor.getAccountNum();
 		donorTab.setText((edited ? "*" : "") + tabTitle);
 		donorTab.setImage(edited ? DonorTab.edited : DonorTab.unedited);
 		donorTab.setSaveAction(edited ? () -> this.saveForm(true) : null);

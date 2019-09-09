@@ -77,6 +77,10 @@ public class Gift implements Comparable<Gift> {
 	}
 	
 	public Gift copy() {
+		return this.copy(recnum);
+	}
+	
+	public Gift copy(int recnum) {
 		Gift copy = new Gift(recnum);
 		copy.account = account;
 		copy.amount = amount;

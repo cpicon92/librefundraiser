@@ -198,14 +198,13 @@ public class MainWindow {
 					Map<String, Integer> columnMap = cmd.open(headers);
 					if (columnMap == null) return;
 					List<Donor> newDonors = new ArrayList<>();
-					for (int acct = Main.getDonorDB().getMaxAccount() + 1; iterRecord.hasNext(); acct++) {
+					while (iterRecord.hasNext()) {
 						CSVRecord record = iterRecord.next();
-						Donor d = new Donor(acct);
+						Donor d = new Donor(-1);
 						for (Entry<String, Integer> e : columnMap.entrySet()) {
 							d.data.putData(e.getKey(), record.get(e.getValue()));
 						}
 						newDonors.add(d);
-						System.out.println(d);
 					}
 					Main.getDonorDB().saveDonors(newDonors.toArray(new Donor[0]));
 					refresh();

@@ -78,7 +78,7 @@ public class FileDBASE {
 				}
 			}
 			donor.data.setEmail2(email2);
-			importedDonors.put(donor.getId(), donor);
+			importedDonors.put(donor.id, donor);
 		}
 		donorTable.close();
 		System.out.println(importedDonors);

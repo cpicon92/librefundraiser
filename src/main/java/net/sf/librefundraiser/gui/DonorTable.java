@@ -442,17 +442,7 @@ public class DonorTable extends Composite {
 	}
 
 	public void newDonor() {
-		//TODO make sure imports don't interfere with unique donor IDs
-		int id = Main.getDonorDB().getMaxAccount()+1;
-		for (TabItem t : tabFolder.getItems()) {
-			try {
-				DonorTab dt = (DonorTab) t;
-				int dtId = dt.getDonor().getId();
-				if (dtId >= id) id = dtId+1;
-			} catch (Exception e) {
-			}
-		}
-		tabFolder.setSelection(DonorTable.this.openDonorTab(id));
+		tabFolder.setSelection(DonorTable.this.openDonorTab(-1));
 	}
 
 	public void saveAll() {
@@ -480,6 +470,7 @@ public class DonorTable extends Composite {
 		for (Donor selectedItem : table.getSelection()) {
 			ids[i++] = selectedItem.id;
 		}
+		//TODO close open tabs corresponding to deleted donors
 		Main.getDonorDB().deleteDonors(ids);
 		refresh();
 	}

@@ -201,7 +201,7 @@ public class LinkEditForm extends Group {
 		for (String l : links) {
 			output += l + "\n";
 		}
-		donor.putData("web", output);
+		donor.data.setWeb(output);
 	}
 	
 }

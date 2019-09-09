@@ -184,22 +184,36 @@ public class FileLFD {
 		}
 	}
 
-	public void saveDonor(Donor donor) {
-		saveDonors(new Donor[] {donor});
+	public Donor saveDonor(Donor donor) {
+		List<Donor> out = saveDonors(new Donor[] {donor});
+		return out.isEmpty() ? null : out.get(0);
 	}
 
-	public void saveDonors(Donor[] donors) {
+	public List<Donor> saveDonors(Donor[] donors) {
+		List<Donor> out = new ArrayList<Donor>();
+		int maxAcct = getMaxAccount(),
+			maxRecNum = getMaxRecNum();
 		insert: for (Donor donor : donors) {
-			for (ListIterator<Donor> iter = this.donors.listIterator(); iter.hasNext();) {
+			List<Gift> gifts = new ArrayList<>(donor.giftCount());
+			for (Gift g : donor.getGifts()) {
+				if (g.recnum < 0) g = g.copy(maxRecNum++);
+				gifts.add(g);
+			}
+			if (donor.id >= 0) for (ListIterator<Donor> iter = this.donors.listIterator(); iter.hasNext();) {
 				Donor existingDonor = iter.next();
-				if (existingDonor.getId() == donor.getId()) {
+				if (existingDonor.id == donor.id) {
+					donor = new Donor(donor.id, donor.data, gifts);
 					iter.set(donor);
+					out.add(donor);
 					continue insert;
 				}
 			}
+			donor = new Donor(maxAcct, donor.data, gifts);
 			this.donors.add(donor);
+			out.add(donor);
 		}
 		this.writeAll();
+		return out;
 	}
 
 	public List<Donor> getDonors() {
@@ -208,28 +222,28 @@ public class FileLFD {
 	
 	public Donor getDonor(int id) {
 		for (Donor d : donors) {
-			if (d.getId() == id) return d;
+			if (d.id == id) return d;
 		}
 		return null;
 	}
 
-	public int getMaxAccount() {
+	private int getMaxAccount() {
 		int output = 0;
 		for (Donor d : donors) {
-			int id = d.getId();
+			int id = d.id;
 			if (id > output) output = id;
 		}
-		return output;
+		return output + 1;
 	}
 
-	int previousMaxRecnum = 0;
-	public int getUniqueRecNum() {
+	private int getMaxRecNum() {
+		int output = 0;
 		for (Donor d : donors) {
 			for (Gift g : d.getGifts()) {
-				if (g.recnum > previousMaxRecnum) previousMaxRecnum = g.recnum;
+				if (g.recnum > output) output = g.recnum;
 			}
 		}
-		return ++previousMaxRecnum;
+		return output + 1;
 	}
 
 	//TODO make sure that previous values are cached
@@ -286,7 +300,7 @@ public class FileLFD {
 		for (Iterator<Donor> iter = this.donors.iterator(); iter.hasNext();) {
 			Donor donor = iter.next();
 			for (int id : ids) {
-				if (donor.getId() == id) iter.remove();
+				if (donor.id == id) iter.remove();
 			}
 		}
 		this.writeAll();

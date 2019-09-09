@@ -99,7 +99,7 @@ public class TabFolder extends Composite {
 //				c.setVisible(true);
 			}
 		}
-		this.changed(new Control[]{compositeControlArea});
+		this.layout(new Control[]{compositeControlArea}, SWT.CHANGED);
 		this.layout(true, true);
 	}
 
@@ -148,7 +148,7 @@ public class TabFolder extends Composite {
 		}
 		((GridLayout)compositeTabs.getLayout()).numColumns = compositeTabs.getChildren().length;
 		distributeTabs();
-		this.changed(new Control[]{compositeControlArea});
+		this.layout(new Control[]{compositeControlArea}, SWT.CHANGED);
 		this.layout(true, true);
 	}
 	
@@ -241,7 +241,7 @@ public class TabFolder extends Composite {
 			}
 			((GridLayout)compositeTabs.getLayout()).numColumns = compositeTabs.getChildren().length;
 			distributeTabs();
-			this.changed(new Control[]{compositeControlArea});
+			this.layout(new Control[]{compositeControlArea}, SWT.CHANGED);
 			this.layout(true, true);
 		}
 	}

@@ -62,16 +62,7 @@ public class DonorTabFolder extends Composite {
 	}
 
 	public void newDonor() {
-		int id = Main.getDonorDB().getMaxAccount()+1;
-		for (TabItem t : tabFolder.getItems()) {
-			try {
-				DonorTab dt = (DonorTab) t;
-				int dtId = dt.getDonor().getId();
-				if (dtId >= id) id = dtId+1;
-			} catch (Exception e) {
-			}
-		}
-		tabFolder.setSelection(new DonorTab(id,tabFolder));
+		tabFolder.setSelection(new DonorTab(-1,tabFolder));
 	}
 
 	public void saveAll() {
