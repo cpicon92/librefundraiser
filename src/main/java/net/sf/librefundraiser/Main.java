@@ -153,6 +153,8 @@ public class Main {
 		FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
 		fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
 		fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
+		String lastBrowse = Main.getSetting("lastBrowse");
+		if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 		String path = "";
 		boolean goodPath = false;
 		while (!goodPath) {
@@ -169,11 +171,11 @@ public class Main {
 					verify.setMessage(file.getName() + " already exists. Do you want to overwrite it?");
 					verify.setText("LibreFundraiser Warning");
 					int r = verify.open();
-					System.out.println(r);
 					goodPath = r == SWT.YES;
 				}
 			} while(!pathWritable(path));
 		}
+		Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 		return path;
 	}
 	

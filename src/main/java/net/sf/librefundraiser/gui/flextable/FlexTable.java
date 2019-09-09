@@ -35,15 +35,8 @@ public class FlexTable<T> extends Composite {
 	private int scrollX = 0, scrollY = 0, firstSelectedRow = -1, lastSelectedRow = -1; 
 	private final Queue<FlexTableSelectionListener<T>> selectionListeners = new ConcurrentLinkedDeque<>();
 
-	/**
-	 * Create the composite.
-	 * @param parent
-	 * @param style
-	 */
 	public FlexTable(Composite parent, int style) {
-		super(parent, style /*& ~SWT.BORDER*/ | SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
-//		border = (style & SWT.BORDER) != 0;
-//		System.out.println((border ? "has" : "no") + " border");
+		super(parent, style | SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
 		this.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {

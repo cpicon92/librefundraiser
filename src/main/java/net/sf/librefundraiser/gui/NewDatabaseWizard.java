@@ -193,8 +193,11 @@ public class NewDatabaseWizard {
 					FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
 					fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
 					fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
+					String lastBrowse = Main.getSetting("lastBrowse");
+					if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 					String path = fileDialog.open();
 					if (Main.fileExists(path)) {
+						Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 						txtFilename.setText(path);
 						btnNext.setEnabled(true);
 					}

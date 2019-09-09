@@ -56,6 +56,8 @@ public class MainWindow {
 	private Display display;
 	private Runnable saveCurrent;
 	private DonorTable donorTable;
+	//TODO fix sash so that it cannot be opened by dragging when there are no donors
+	private SashForm mainPanel;
 
 	/**
 	 * Open the window.
@@ -112,12 +114,14 @@ public class MainWindow {
 		mntmNewDatabase.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (!donorTabFolder.closeAllTabs()) return;
 				String path = Main.newDbFilePrompt(shell);
 				if (path != null) {
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
 					refreshTitle();
 					refresh();
+					mainPanel.setWeights(new int[] {1, 0});
 				}
 			}
 		});
@@ -127,15 +131,20 @@ public class MainWindow {
 		mntmOpenDatabase.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (!donorTabFolder.closeAllTabs()) return;
 				FileDialog fileDialog = new FileDialog(shell,SWT.OPEN);
 				fileDialog.setFilterExtensions(new String[]{"*.lfd","*.*"});
 				fileDialog.setFilterNames(new String[]{"LibreFundraiser Database (*.lfd)","All Files"});
+				String lastBrowse = Main.getSetting("lastBrowse");
+				if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 				String path = fileDialog.open();
 				if (path != null) {
+					Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 					Main.addSetting("lastDB",path);
 					Main.resetLocalDB();
 					refreshTitle();
 					refresh();
+					mainPanel.setWeights(new int[] {1, 0});
 				}
 			}
 		});
@@ -170,8 +179,11 @@ public class MainWindow {
 				FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
 				fileDialog.setFilterExtensions(new String[]{"*.csv","*.*"});
 				fileDialog.setFilterNames(new String[]{"Comma Separated Values (*.csv)","All Files"});
+				String lastBrowse = Main.getSetting("lastBrowse");
+				if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 				final String path = fileDialog.open();
 				if (path == null) return;
+				Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 				File f = new File(path);
 				if (!f.exists()) return;
 				//TODO check Excel compatibility
@@ -215,8 +227,11 @@ public class MainWindow {
 				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
 				fileDialog.setFilterExtensions(new String[]{"*.csv","*.*"});
 				fileDialog.setFilterNames(new String[]{"Comma Separated Values (*.csv)","All Files"});
+				String lastBrowse = Main.getSetting("lastBrowse");
+				if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 				final String path = fileDialog.open();
 				if (path == null) return;
+				Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 				File f = new File(path);
 				Util.writeCSV(donorTable.donors, f);
 			}
@@ -231,8 +246,11 @@ public class MainWindow {
 				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
 				fileDialog.setFilterExtensions(new String[]{"*.ods","*.*"});
 				fileDialog.setFilterNames(new String[]{"Open Document Spreadsheet (*.ods)","All Files"});
+				String lastBrowse = Main.getSetting("lastBrowse");
+				if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 				final String path = fileDialog.open();
 				if (path == null) return;
+				Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 				File f = new File(path);
 				Util.writeODS(donorTable.donors, f, true);
 			}
@@ -247,8 +265,11 @@ public class MainWindow {
 				FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
 				fileDialog.setFilterExtensions(new String[]{"*.odb","*.*"});
 				fileDialog.setFilterNames(new String[]{"Open Document Database (*.odb)","All Files"});
+				String lastBrowse = Main.getSetting("lastBrowse");
+				if (lastBrowse != null) fileDialog.setFilterPath(lastBrowse);
 				final String path = fileDialog.open();
 				if (path == null) return;
+				Main.addSetting("lastBrowse", fileDialog.getFilterPath());
 				File f = new File(path);
 				MessageBox registrationWarning = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
 				registrationWarning.setText("LibreFundraiser");
@@ -427,14 +448,11 @@ public class MainWindow {
 		});
 		tltmDbProperties.setText("Database Properties");
 		tltmDbProperties.setImage(ResourceManager.getIcon("db-properties.png"));
-
-		//TODO add advanced search with SQL queries
 		
-		final SashForm mainPanel = new SashForm(shell, SWT.SMOOTH);
+		mainPanel = new SashForm(shell, SWT.SMOOTH);
 		mainPanel.setSashWidth(6);
 		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-		
 		donorTable = new DonorTable(mainPanel, SWT.NONE);
 
 		donorTabFolder = new DonorTabFolder(mainPanel, SWT.NONE);
@@ -483,6 +501,7 @@ public class MainWindow {
 	}
 
 	public void importFRBW() {
+		if (!donorTabFolder.closeAllTabs()) return;
 		MessageBox warning = new MessageBox(shell,SWT.ICON_WARNING|SWT.YES|SWT.NO);
 		warning.setText("LibreFundraiser Warning");
 		warning.setMessage("The imported data will overwrite anything you currently have in your database. Do you want to continue?");
@@ -493,6 +512,7 @@ public class MainWindow {
 		fileDialog.setFilterPath(systemDrive+"\\FRBW");
 		final String path = fileDialog.open();
 		Main.importFromFRBW(display, shell, this, path);
+		mainPanel.setWeights(new int[] {1, 0});
 	}
 	public DonorTabFolder getCompositeDonorList() {
 		return (DonorTabFolder) donorTabFolder;
