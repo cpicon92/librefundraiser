@@ -121,6 +121,7 @@ public class ColumnMatcherDialog extends Dialog {
 				event.detail = DND.DROP_DEFAULT;
 			}
 			private void drag(DropTargetEvent event) {
+				if (event.item == null) return;
 				TableItem item = (TableItem) event.item;
 				event.detail = !item.getText(1).isEmpty() ? DND.DROP_NONE : DND.DROP_MOVE;
 			}

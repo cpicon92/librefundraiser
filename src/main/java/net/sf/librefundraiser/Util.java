@@ -182,13 +182,17 @@ public class Util {
 	
 	public static void exceptionError(Exception e) {
 		e.printStackTrace();
-		final Dialog dialog = new Dialog();
-		dialog.setTitle("LibreFundraiser Takes Exception!");
-		dialog.getMessageArea().setTitle("Illegal Action: " + e.getClass().getSimpleName())
-		.setText("Send detailed error below to a developer for help.")
-		.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
-		dialog.setButtonType(OpalDialogType.OK);
-		dialog.getFooterArea().setExpanded(false).setDetailText(Util.getStackTrace(e));
-		dialog.show();
+		try {
+			Display.getCurrent().dispose();
+		} finally {
+			final Dialog dialog = new Dialog();
+			dialog.setTitle("LibreFundraiser Takes Exception!");
+			dialog.getMessageArea().setTitle("Illegal Action: " + e.getClass().getSimpleName())
+			.setText("Send detailed error below to a developer for help.")
+			.setIcon(Display.getCurrent().getSystemImage(SWT.ICON_ERROR));
+			dialog.setButtonType(OpalDialogType.OK);
+			dialog.getFooterArea().setExpanded(false).setDetailText(Util.getStackTrace(e));
+			dialog.show();
+		}
 	}
 }
