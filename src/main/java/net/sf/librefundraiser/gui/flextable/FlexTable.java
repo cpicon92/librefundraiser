@@ -130,7 +130,6 @@ public class FlexTable<T> extends Composite {
 		vScroll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				scrollY = (int) ((vScroll.getSelection() / (vScroll.getMaximum() - (double) vScroll.getThumb())) * vScroll.getMaximum()); 
 				scrollY = vScroll.getSelection(); 
 				redraw();
 			}
@@ -138,7 +137,6 @@ public class FlexTable<T> extends Composite {
 		hScroll.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-//				scrollX = (int) ((hScroll.getSelection() / (hScroll.getMaximum() - (double) hScroll.getThumb())) * hScroll.getMaximum()); 
 				scrollX = hScroll.getSelection();
 				redraw();
 			}
@@ -424,6 +422,8 @@ public class FlexTable<T> extends Composite {
 
 	public void setSummaryMode(boolean summaryMode) {
 		if (summaryMode != this.summaryMode) {
+			//reset and disable/enable horizontal scroll
+			if (summaryMode) this.getHorizontalBar().setSelection(scrollX = 0);
 			this.getHorizontalBar().setVisible(!summaryMode);
 			if (this.dataProvider != null) {
 				this.dataProvider.setSummaryMode(summaryMode);
