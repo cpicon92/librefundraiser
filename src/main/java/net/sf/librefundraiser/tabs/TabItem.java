@@ -126,7 +126,7 @@ public class TabItem extends Composite {
 		};
 		addMouseListener(mouseAdapter);
 		this.parent = parent;
-		parent.createItem(this);
+		parent.addTab(this);
 		setLayout(new GridLayout(1, false));
 		new Label(this, SWT.NONE);
 

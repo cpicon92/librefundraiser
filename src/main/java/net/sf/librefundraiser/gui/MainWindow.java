@@ -472,11 +472,11 @@ public class MainWindow {
 		tabFolder.addTabFolderListener(new TabFolderListener() {
 			@Override
 			public void close(TabFolderEvent e) {
-				if (tabFolder.getItems().length <= 1) mainPanel.setWeights(new int[] {1, 0});
+				if (tabFolder.getTabs().length <= 1) mainPanel.setWeights(new int[] {1, 0});
 			}
 			@Override
 			public void open(TabFolderEvent e) {
-				if (tabFolder.getItems().length >= 1) {
+				if (tabFolder.getTabs().length >= 1) {
 					int[] weights = mainPanel.getWeights();
 					for (int w : weights) {
 						if (w == 0) {

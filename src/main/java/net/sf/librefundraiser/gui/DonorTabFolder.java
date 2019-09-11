@@ -45,12 +45,9 @@ public class DonorTabFolder extends Composite {
 		tabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TabItem t = tabFolder.getSelection();
-				if (!t.getClass().equals(DonorTab.class)) {
-					Main.getWindow().setSaveAction(null);
-				} else {
-					Main.getWindow().setSaveAction(((DonorTab)t).getSaveAction());
-				}
+				DonorTab t = (DonorTab) tabFolder.getSelection();
+				Main.getWindow().setSaveAction(t != null ? t.getSaveAction() : null);
+
 			}
 		});
 		
@@ -66,7 +63,7 @@ public class DonorTabFolder extends Composite {
 	}
 
 	public void saveAll() {
-		for (TabItem i : tabFolder.getItems()) {
+		for (TabItem i : tabFolder.getTabs()) {
 			if (i.getClass().equals(DonorTab.class)) {
 				((DonorTab)i).save(false);
 			}
@@ -81,7 +78,7 @@ public class DonorTabFolder extends Composite {
 	}
 
 	public boolean closeAllTabs() {
-		for (TabItem closing : tabFolder.getItems()) {
+		for (TabItem closing : tabFolder.getTabs()) {
 			if (!closing.getText().substring(0, 1).equals("*")) continue;
 			int choice = DonorTabFolder.verifyUnsaved(getShell(), closing.getText().substring(1));
 			if (choice == 2) return false;

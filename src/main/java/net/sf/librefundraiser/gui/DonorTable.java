@@ -446,7 +446,7 @@ public class DonorTable extends Composite {
 	}
 
 	public void saveAll() {
-		for (TabItem i : tabFolder.getItems()) {
+		for (TabItem i : tabFolder.getTabs()) {
 			if (i.getClass().equals(DonorTab.class)) {
 				((DonorTab)i).save(false);
 			}
