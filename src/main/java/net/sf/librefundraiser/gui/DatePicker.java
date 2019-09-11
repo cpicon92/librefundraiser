@@ -284,7 +284,7 @@ public class DatePicker extends Composite {
 			this.setSibling(sibling);
 			this.initial = initial;
 			boolean unix = SystemUtils.IS_OS_UNIX && !SystemUtils.IS_OS_MAC;
-			width = unix ? 240 : 220;
+			width = unix ? 320 : 220;
 			height = unix ? 230 : 180;
 		}
 		@Override
