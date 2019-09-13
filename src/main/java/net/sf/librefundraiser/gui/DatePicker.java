@@ -250,7 +250,7 @@ public class DatePicker extends Composite {
 						selectNumbers(text, indexes[indexes.length - 2], indexes[indexes.length - 1]);
 					}
 				} catch (Exception e) {
-//					e.printStackTrace();
+					e.printStackTrace(); //TODO figure out what Exception this is actually catching 🤦
 				}
 			}
 		});
