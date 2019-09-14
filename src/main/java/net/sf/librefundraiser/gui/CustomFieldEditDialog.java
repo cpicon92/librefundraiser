@@ -33,6 +33,7 @@ public class CustomFieldEditDialog extends Dialog {
 	private Button btnApply;
 	private Composite grpChoices;
 	private Table tblChoices;
+	private Button btnOk;
 
 	/**
 	 * Create the dialog.
@@ -87,7 +88,7 @@ public class CustomFieldEditDialog extends Dialog {
 		txtFieldName.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				changeEffected();
+				changed();
 				editing.setName(txtFieldName.getText());
 			}
 		});
@@ -110,7 +111,6 @@ public class CustomFieldEditDialog extends Dialog {
 		comboFieldType.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent e) {
-				changeEffected();
 				if (comboFieldType.getSelectionIndex() != 0 && comboFieldType.getItem(0).isEmpty()) comboFieldType.remove(0);
 				try {
 					editing.setType(CustomField.Type.valueOf(comboFieldType.getText().toUpperCase()));
@@ -118,6 +118,7 @@ public class CustomFieldEditDialog extends Dialog {
 				}
 				grpChoices.setVisible(editing.getType() == CustomField.Type.CHOICE);
 				shell.setSize(390, editing.getType() == CustomField.Type.CHOICE ? 458 : 220);
+				changed();
 			}
 		});
 		
@@ -152,7 +153,7 @@ public class CustomFieldEditDialog extends Dialog {
 				if (tblChoices.getSelectionIndex() < 0) return;
 				editing.getChoices().remove(tblChoices.getSelectionIndex());
 				refreshTable();
-				changeEffected();
+				changed();
 			}
 		});
 		
@@ -163,10 +164,10 @@ public class CustomFieldEditDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				InputDialog input = new InputDialog(shell, "New choice", "Enter value for new choice", null, null);
-				if (input.open() == 0) {
+				if (input.open() == 0 && !input.getValue().trim().isEmpty()) {
 					editing.getChoices().add(input.getValue());
 					refreshTable();
-					changeEffected();
+					changed();
 				}
 			}
 		});
@@ -181,10 +182,10 @@ public class CustomFieldEditDialog extends Dialog {
 				if (sel < 0) return;
 				String prev = editing.getChoices().get(sel);
 				InputDialog input = new InputDialog(shell, "Edit choice", "Enter new value for choice", prev, null);
-				if (input.open() == 0) {
+				if (input.open() == 0 && !input.getValue().trim().isEmpty()) {
 					editing.getChoices().set(sel, input.getValue());
 					refreshTable();
-					changeEffected();
+					changed();
 				}
 			}
 		});
@@ -193,7 +194,7 @@ public class CustomFieldEditDialog extends Dialog {
 		compositeButtons.setLayout(new RowLayout(SWT.HORIZONTAL));
 		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
-		Button btnOk = new Button(compositeButtons, SWT.NONE);
+		btnOk = new Button(compositeButtons, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -202,6 +203,7 @@ public class CustomFieldEditDialog extends Dialog {
 			}
 		});
 		btnOk.setText("OK");
+		btnOk.setEnabled(editing.getType() != null);
 		
 		Button btnCancel = new Button(compositeButtons, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -231,11 +233,15 @@ public class CustomFieldEditDialog extends Dialog {
 		}
 	}
 
-	private void changeEffected() {
-		if (btnApply != null) {
-			btnApply.setEnabled(true);
-			changeEffected = true;
-		}
+	private void changed() {
+		//form validation
+		boolean valid = true;
+		if (editing.getType() == null) valid = false;
+		else if (editing.getType() == CustomField.Type.CHOICE && editing.getChoices().isEmpty()) valid = false;
+		else if (editing.getName() == null || editing.getName().trim().isEmpty()) valid = false;
+		btnApply.setEnabled(valid);
+		changeEffected = true;
+		btnOk.setEnabled(valid);
 	}
 	
 	private void saveChanges() {

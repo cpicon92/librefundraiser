@@ -104,6 +104,7 @@ public class ColumnMatcherDialog extends Dialog {
 		tgtMap.addDropListener(new DropTargetAdapter() {
 			@Override
 			public void drop(DropTargetEvent event) {
+				if (event.item == null) return;
 				TableItem item = (TableItem) event.item;
 				item.setText(1, (String) event.data); 
 			}
