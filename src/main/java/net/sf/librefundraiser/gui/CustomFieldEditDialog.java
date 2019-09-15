@@ -120,8 +120,8 @@ public class CustomFieldEditDialog extends Dialog {
 				}
 				cmpChoices.setVisible(editing.getType() == CustomField.Type.CHOICE);
 				((GridData) cmpChoices.getLayoutData()).exclude = editing.getType() != CustomField.Type.CHOICE;
-//				shell.setSize(390, editing.getType() == CustomField.Type.CHOICE ? 458 : 220);
 				shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				refreshTable();
 				changed();
 			}
 		});
