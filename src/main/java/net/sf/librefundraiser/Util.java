@@ -27,7 +27,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.internal.DPIUtil;
 import org.eclipse.swt.widgets.Display;
 import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Column;
@@ -209,4 +211,5 @@ public class Util {
 	public static int incrementValue(int value, int increment) {
 		return Math.max(Math.min((value + increment), 255), 0);
 	}
+	
 }

@@ -26,7 +26,6 @@ import net.sf.librefundraiser.gui.MainWindow;
 import net.sf.librefundraiser.gui.NewDatabaseWizard;
 import net.sf.librefundraiser.io.Donor;
 
-//TODO: fix fixed-width dialogs to render properly on high-dpi displays
 public class Main {
 	private static FileLFD localDB = null;
 	private static NumberFormat currency = null;

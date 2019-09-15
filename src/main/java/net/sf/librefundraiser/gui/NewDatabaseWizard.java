@@ -31,7 +31,7 @@ public class NewDatabaseWizard {
 	private boolean canceled = true;
 	private String frbwImportFile = null;
 	private Display display;
-	private final int width = 450;
+	
 	/**
 	 * Open the dialog.
 	 * @return the result
@@ -40,7 +40,7 @@ public class NewDatabaseWizard {
 		createContents();
 		shell.open();
 		shell.layout();
-		display = Display.getDefault();
+		display = shell.getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
@@ -61,7 +61,6 @@ public class NewDatabaseWizard {
 				if (canceled) System.exit(0);
 			}
 		});
-		shell.setSize(shell.computeSize(width, SWT.DEFAULT));
 		shell.setImages(ResourceManager.getLogo());
 		shell.setText("LibreFundraiser");
 		final StackLayout sl_shlLibreFundraiser = new StackLayout();
@@ -81,7 +80,9 @@ public class NewDatabaseWizard {
 
 			Composite compositeBanner = new Composite(compositeFirstPage, SWT.NONE);
 			compositeBanner.setBackgroundMode(SWT.INHERIT_DEFAULT);
-			compositeBanner.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			GridData gdCmpBanner = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+			gdCmpBanner.widthHint = 450;
+			compositeBanner.setLayoutData(gdCmpBanner);
 			compositeBanner.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 
 			compositeBanner.setLayout(new GridLayout(2, false));
@@ -111,7 +112,9 @@ public class NewDatabaseWizard {
 			compositeMain.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 			Label lblThisAppearsTo = new Label(compositeMain, SWT.WRAP);
-			lblThisAppearsTo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			GridData gdLblThisAppearsTo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+			gdLblThisAppearsTo.widthHint = 450;
+			lblThisAppearsTo.setLayoutData(gdLblThisAppearsTo );
 
 			lblThisAppearsTo.setText("This appears to be the first time you are running LibreFundraiser. Before you begin, we have to make a database to store your donors. \r\n\r\nWould you like to use a local database (saved in a file), or a remote one (requires extra setup)? ");
 
@@ -295,7 +298,9 @@ public class NewDatabaseWizard {
 			btnBrowse.setText("Browse...");
 			
 			Label lblWouldYouLike = new Label(compositeMain, SWT.WRAP);
-			lblWouldYouLike.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			GridData gd_lblWouldYouLike = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+			gd_lblWouldYouLike.widthHint = 450;
+			lblWouldYouLike.setLayoutData(gd_lblWouldYouLike);
 			lblWouldYouLike.setText("Would you like this database to be blank, or would you like to import data from Fundraiser Basic?");
 
 			final Button btnBlankDb = new Button(compositeMain, SWT.RADIO);
@@ -441,7 +446,7 @@ public class NewDatabaseWizard {
 			});
 			btnCancel.setText("Cancel");
 		}
-		shell.setSize(shell.computeSize(width, SWT.DEFAULT));
+		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	public String getFrbwImportFile() {

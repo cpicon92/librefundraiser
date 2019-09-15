@@ -31,7 +31,7 @@ public class CustomFieldEditDialog extends Dialog {
 	private Text txtFieldName;
 	private boolean changeEffected = false;
 	private Button btnApply;
-	private Composite grpChoices;
+	private Composite cmpChoices;
 	private Table tblChoices;
 	private Button btnOk;
 
@@ -72,7 +72,7 @@ public class CustomFieldEditDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(390, editing.getType() == CustomField.Type.CHOICE ? 458 : 220);
+//		shell.setSize(390, editing.getType() == CustomField.Type.CHOICE ? 458 : 220);
 		shell.setText(getText());
 		shell.setLayout(new GridLayout(1, false));
 		
@@ -82,7 +82,9 @@ public class CustomFieldEditDialog extends Dialog {
 		
 		//TODO warn if name exists
 		txtFieldName = new Text(shell, SWT.BORDER);
-		txtFieldName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_txtFieldName = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_txtFieldName.widthHint = 390;
+		txtFieldName.setLayoutData(gd_txtFieldName);
 
 		txtFieldName.setText(editing.getName());
 		txtFieldName.addModifyListener(new ModifyListener() {
@@ -116,20 +118,29 @@ public class CustomFieldEditDialog extends Dialog {
 					editing.setType(CustomField.Type.valueOf(comboFieldType.getText().toUpperCase()));
 				} catch (IllegalArgumentException ex) {
 				}
-				grpChoices.setVisible(editing.getType() == CustomField.Type.CHOICE);
-				shell.setSize(390, editing.getType() == CustomField.Type.CHOICE ? 458 : 220);
+				cmpChoices.setVisible(editing.getType() == CustomField.Type.CHOICE);
+				((GridData) cmpChoices.getLayoutData()).exclude = editing.getType() != CustomField.Type.CHOICE;
+//				shell.setSize(390, editing.getType() == CustomField.Type.CHOICE ? 458 : 220);
+				shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 				changed();
 			}
 		});
 		
-		grpChoices = new Composite(shell, SWT.NONE);
-		grpChoices.setLayout(new GridLayout(1, false));
-		grpChoices.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpChoices.setVisible(editing.getType() == CustomField.Type.CHOICE);
+		cmpChoices = new Composite(shell, SWT.NONE);
+		GridLayout lyCmpChoices = new GridLayout(1, false);
+		lyCmpChoices.marginHeight = 0;
+		lyCmpChoices.marginWidth = 0;
+		cmpChoices.setLayout(lyCmpChoices );
+		GridData gdCmpChoices = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gdCmpChoices.exclude = editing.getType() != CustomField.Type.CHOICE;
+		cmpChoices.setLayoutData(gdCmpChoices);
+		cmpChoices.setVisible(editing.getType() == CustomField.Type.CHOICE);
 
-		tblChoices = new Table(grpChoices, SWT.BORDER);
+		tblChoices = new Table(cmpChoices, SWT.BORDER);
 		tblChoices.setHeaderVisible(true);
-		tblChoices.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData gd_tblChoices = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_tblChoices.heightHint = 142;
+		tblChoices.setLayoutData(gd_tblChoices);
 		
 		TableColumn tblclmnName = new TableColumn(tblChoices, SWT.NONE);
 		tblclmnName.setWidth(300);
@@ -137,7 +148,7 @@ public class CustomFieldEditDialog extends Dialog {
 		
 		refreshTable();
 		
-		Composite compositeCustomFieldButtons = new Composite(grpChoices, SWT.NONE);
+		Composite compositeCustomFieldButtons = new Composite(cmpChoices, SWT.NONE);
 		compositeCustomFieldButtons.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		GridLayout gl_compositeCustomFieldButtons = new GridLayout(3, false);
 		gl_compositeCustomFieldButtons.marginWidth = 0;
@@ -191,7 +202,9 @@ public class CustomFieldEditDialog extends Dialog {
 		});
 		
 		Composite compositeButtons = new Composite(shell, SWT.NONE);
-		compositeButtons.setLayout(new RowLayout(SWT.HORIZONTAL));
+		RowLayout rl_compositeButtons = new RowLayout(SWT.HORIZONTAL);
+		rl_compositeButtons.pack = false;
+		compositeButtons.setLayout(rl_compositeButtons);
 		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		
 		btnOk = new Button(compositeButtons, SWT.NONE);
@@ -223,6 +236,7 @@ public class CustomFieldEditDialog extends Dialog {
 		});
 		btnApply.setText("Apply");
 		btnApply.setEnabled(false);
+		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void refreshTable() {

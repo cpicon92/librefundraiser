@@ -72,13 +72,13 @@ public class DatabasePropertiesDialog extends Dialog {
 	 */
 	private void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(391, 458);
+//		shell.setSize(391, 458);
 		shell.setText(getText());
 		shell.setLayout(new GridLayout(1, false));
 		
 		Group grpGeneral = new Group(shell, SWT.NONE);
 		grpGeneral.setLayout(new GridLayout(1, false));
-		grpGeneral.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		grpGeneral.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		grpGeneral.setText("General");
 		
 		Label lblFileName = new Label(grpGeneral, SWT.NONE);
@@ -111,15 +111,19 @@ public class DatabasePropertiesDialog extends Dialog {
 		grpCustomFields.setText("Custom Fields");
 		
 		Label lblCustomFieldExplanation = new Label(grpCustomFields, SWT.WRAP);
-		lblCustomFieldExplanation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_lblCustomFieldExplanation = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblCustomFieldExplanation.widthHint = 440;
+		lblCustomFieldExplanation.setLayoutData(gd_lblCustomFieldExplanation);
 		lblCustomFieldExplanation.setText("LibreFundraiser allows an unlimited number of custom fields for your donors. When you add a field here, it will show up on the \"Custom\" tab of the donor entry. ");
 		
 		tblFields = new Table(grpCustomFields, SWT.BORDER);
 		tblFields.setHeaderVisible(true);
-		tblFields.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData gd_tblFields = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_tblFields.heightHint = 160;
+		tblFields.setLayoutData(gd_tblFields);
 		
 		TableColumn tblclmnName = new TableColumn(tblFields, SWT.NONE);
-		tblclmnName.setWidth(100);
+		tblclmnName.setWidth(240);
 		tblclmnName.setText("Name");
 		
 		TableColumn tblclmnType = new TableColumn(tblFields, SWT.NONE);
@@ -182,8 +186,10 @@ public class DatabasePropertiesDialog extends Dialog {
 		});
 		
 		Composite compositeButtons = new Composite(shell, SWT.NONE);
-		compositeButtons.setLayout(new RowLayout(SWT.HORIZONTAL));
-		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		RowLayout rl_compositeButtons = new RowLayout(SWT.HORIZONTAL);
+		rl_compositeButtons.pack = false;
+		compositeButtons.setLayout(rl_compositeButtons);
+		compositeButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.BOTTOM, false, false, 1, 1));
 		
 		Button btnOk = new Button(compositeButtons, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
@@ -213,6 +219,7 @@ public class DatabasePropertiesDialog extends Dialog {
 		});
 		btnApply.setText("Apply");
 		btnApply.setEnabled(false);
+		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 
 	private void changeEffected() {

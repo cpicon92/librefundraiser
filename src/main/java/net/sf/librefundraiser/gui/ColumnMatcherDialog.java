@@ -76,22 +76,23 @@ public class ColumnMatcherDialog extends Dialog {
 	 */
 	private void createContents(List<String> importColumns) {
 		shell = new Shell(getParent(), getStyle() | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setSize(500, 300);
 		shell.setText(getText());
 		shell.setLayout(new GridLayout(2, false));
 		
 		tblMap = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		tblMap.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData gd_tblMap = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_tblMap.heightHint = 290;
+		tblMap.setLayoutData(gd_tblMap);
 		tblMap.setHeaderVisible(true);
 		tblMap.setLinesVisible(true);
 		
 		TableColumn tblclmnImportColumn = new TableColumn(tblMap, SWT.NONE);
-		tblclmnImportColumn.setWidth(150);
+		tblclmnImportColumn.setWidth(165);
 		tblclmnImportColumn.setText("Import Column");
 		
 		
 		TableColumn tblclmnDonorField = new TableColumn(tblMap, SWT.NONE);
-		tblclmnDonorField.setWidth(100);
+		tblclmnDonorField.setWidth(165);
 		tblclmnDonorField.setText("Donor Field");
 		
 		for (String itm : importColumns) {
@@ -148,12 +149,14 @@ public class ColumnMatcherDialog extends Dialog {
 		});
 		
 		tblAvailable = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
-		tblAvailable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData gd_tblAvailable = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_tblAvailable.heightHint = 290;
+		tblAvailable.setLayoutData(gd_tblAvailable);
 		tblAvailable.setHeaderVisible(true);
 		tblAvailable.setLinesVisible(true);
 		
 		tblclmnAvailable = new TableColumn(tblAvailable, SWT.NONE);
-		tblclmnAvailable.setWidth(100);
+		tblclmnAvailable.setWidth(165);
 		tblclmnAvailable.setText("Available");
 		
 		for (String itm : FileLFD.donorFields) {
@@ -227,6 +230,7 @@ public class ColumnMatcherDialog extends Dialog {
 				shell.close();
 			}
 		});
+		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
 	}
 
